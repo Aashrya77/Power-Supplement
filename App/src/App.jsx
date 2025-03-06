@@ -26,7 +26,7 @@ import AccountLayout from './Components/Account/AccountLayout';
 import Orders from './Components/Account/Orders';
 import Settings from './Components/Account/Settings';
 import ScrollToTop from './Components/ScrollToTop.jsx';
-import CheckoutForm from './components/Checkout/CheckoutForm';
+import CheckoutForm from './Components/Checkout/CheckoutForm';
 import PaymentResult from './pages/PaymentResult/PaymentResult';
 
 function App() {
