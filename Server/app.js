@@ -12,8 +12,8 @@ const productRoutes = require('./Routes/Product')
 const categoryRoutes = require('./Routes/Category')
 const flavorRoutes = require('./Routes/Flavor')
 const cartRoutes = require('./Routes/Cart')
-const paymentRoutes = require('./routes/paymentRoutes')
-const orderRoutes = require('./routes/orderRoutes')
+const paymentRoutes = require('./Routes/paymentRoutes')
+const orderRoutes = require('./Routes/orderRoutes')
 
 // Middleware
 app.use(cors())
