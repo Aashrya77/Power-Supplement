@@ -22,11 +22,6 @@ const CheckoutForm = () => {
     });
     const [formSubmitted, setFormSubmitted] = useState(false);
 
-    // Debug cart data
-    useEffect(() => {
-        console.log('Cart data:', cart);
-        console.log('Cart items:', cart.items);
-    }, [cart]);
 
     // Check if user is logged in
     useEffect(() => {
@@ -75,7 +70,7 @@ const CheckoutForm = () => {
             };
             
             const response = await createOrder(orderData);
-            
+            console.log(response)
             if (response.success) {
                 setOrderId(response.data.orderId);
                 // Set form as submitted to show payment button
@@ -229,11 +224,11 @@ const CheckoutForm = () => {
                     </div>
                     
                     <div className="payment-options">
-                        <EsewaPayment 
-                            amount={total_amount} 
-                            productName="Power Supplement Order" 
-                            onPaymentInitiated={handlePaymentInitiated} 
-                        />
+                    <EsewaPayment 
+                        items={cartItems} 
+                        orderId={orderId}
+                        onPaymentInitiated={handlePaymentInitiated} 
+                    />
                     </div>
                 </div>
             )}

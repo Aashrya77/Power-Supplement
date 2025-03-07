@@ -20,6 +20,7 @@ const EsewaPayment = ({ amount, productName, onPaymentInitiated }) => {
       if (onPaymentInitiated) {
         onPaymentInitiated(paymentData);
       }
+   
       
       // Submit form to eSewa
       submitEsewaForm(paymentData);

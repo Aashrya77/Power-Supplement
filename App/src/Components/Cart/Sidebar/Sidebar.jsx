@@ -71,7 +71,6 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
                 <div key={item.product._id} className="cart-item">
                   <div className="item-info">
                     <div className="item-image-container">
-                    {console.log(item.product)}
                       <img 
                         src={`${BASE_URL}` + item.product.images[0]} 
                         alt={item.product.name}

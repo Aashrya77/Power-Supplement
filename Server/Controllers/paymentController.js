@@ -1,26 +1,13 @@
-const crypto = require('crypto');
-
+const CryptoJS = require('crypto-js');
+const { v4: uuidv4 } = require('uuid');
 // Secret key for eSewa (this should be in your .env file in production)
 const ESEWA_SECRET_KEY = '8gBm/:&EnhH.1/q(';
 const ESEWA_PRODUCT_CODE = 'EPAYTEST';
 
 // Generate a unique transaction ID
-const generateTransactionId = () => {
-  const date = new Date();
-  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
-  const timeStr = date.getHours().toString().padStart(2, '0') + 
-                 date.getMinutes().toString().padStart(2, '0') + 
-                 date.getSeconds().toString().padStart(2, '0');
-  const randomStr = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-  return `${dateStr}-${timeStr}-${randomStr}`;
-};
-
+const generateTransactionId = () => uuidv4();
 // Generate HMAC signature for eSewa
-const generateSignature = (data, secretKey) => {
-  const hmac = crypto.createHmac('sha256', secretKey);
-  hmac.update(data);
-  return hmac.digest('base64');
-};
+
 
 // Initiate eSewa payment
 const initiatePayment = async (req, res) => {
@@ -31,25 +18,30 @@ const initiatePayment = async (req, res) => {
       return res.status(400).json({ message: 'Amount is required' });
     }
 
-    // Calculate amounts
-    const taxAmount = 0; // Set according to your tax policy
-    const serviceCharge = 0; // Set if you have any service charge
-    const deliveryCharge = 0; // Set if you have any delivery charge
-    const totalAmount = parseFloat(amount) + parseFloat(taxAmount) + parseFloat(serviceCharge) + parseFloat(deliveryCharge);
-    
+    // Calculate total amount
+    const taxAmount = 0;
+    const serviceCharge = 0;
+    const deliveryCharge = 0;
+    const totalAmount = parseFloat(amount) + taxAmount + serviceCharge + deliveryCharge;
+
     // Generate unique transaction ID
     const transactionUuid = generateTransactionId();
-    
+
     // Define signed fields
     const signedFieldNames = 'total_amount,transaction_uuid,product_code';
-    const signedFieldValues = `${totalAmount},${transactionUuid},${ESEWA_PRODUCT_CODE}`;
-    
-    // Generate signature
-    const signature = generateSignature(signedFieldValues, ESEWA_SECRET_KEY);
-    
+    const signedFieldString = `total_amount=${totalAmount},transaction_uuid=${transactionUuid},product_code=${ESEWA_PRODUCT_CODE}`;
+
+    console.log("Signed String:", signedFieldString);
+
+    // Generate signature using Base64 encoding
+    const hash = CryptoJS.HmacSHA256(signedFieldString, ESEWA_SECRET_KEY);
+    const signature = CryptoJS.enc.Base64.stringify(hash);
+
+    console.log('Generated Signature:', signature);
+
     // Create payment data
     const paymentData = {
-      amount: amount.toString(),
+      amount: totalAmount.toString(),
       tax_amount: taxAmount.toString(),
       product_service_charge: serviceCharge.toString(),
       product_delivery_charge: deliveryCharge.toString(),
@@ -58,19 +50,20 @@ const initiatePayment = async (req, res) => {
       product_code: ESEWA_PRODUCT_CODE,
       signed_field_names: signedFieldNames,
       signature: signature,
-      success_url: `${process.env.FRONTEND_URL}/payment/success`,
-      failure_url: `${process.env.FRONTEND_URL}/payment/failure`,
+      success_url: process.env.ESEWA_SUCCESS_URL,
+      failure_url: process.env.ESEWA_FAILURE_URL,
       formUrl: process.env.NODE_ENV === 'production' 
         ? 'https://epay.esewa.com.np/api/epay/main/v2/form'
         : 'https://rc-epay.esewa.com.np/api/epay/main/v2/form'
     };
-    
+
     res.status(200).json(paymentData);
   } catch (error) {
     console.error('Error initiating payment:', error);
     res.status(500).json({ message: 'Error initiating payment', error: error.message });
   }
 };
+
 
 // Verify eSewa payment
 const verifyPayment = async (req, res) => {
@@ -100,7 +93,6 @@ const verifyPayment = async (req, res) => {
     const signedFields = signed_field_names.split(',');
     const signedValues = signedFields.map(field => paymentResponse[field]).join(',');
     const calculatedSignature = generateSignature(signedValues, ESEWA_SECRET_KEY);
-    
     if (signature !== calculatedSignature) {
       return res.status(400).json({ message: 'Invalid signature' });
     }
