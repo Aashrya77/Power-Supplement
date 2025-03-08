@@ -17,7 +17,7 @@ exports.createOrder = async (req, res) => {
         // Create new order
         const order = new Order({
             user: req.user._id,
-            items: items.map(item => ({
+            items: items.map(item => ({ 
                 product: item._id,
                 quantity: item.quantity
             })),
@@ -32,10 +32,7 @@ exports.createOrder = async (req, res) => {
         
         res.status(201).json({
             success: true,
-            data: {
-                orderId: order._id,
-                totalAmount: order.totalAmount
-            },
+            order,
             message: 'Order created successfully'
         });
     } catch (error) {

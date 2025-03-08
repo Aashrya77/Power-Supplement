@@ -14,7 +14,7 @@ export const initiatePayment = async (orderData) => {
     );
   
 console.log(response.data)
-    if (response.data) {
+    if (response.data) { 
         return response.data;
     }
     } catch (error) {
@@ -47,6 +47,10 @@ export const checkPaymentStatus = async (transaction_uuid, total_amount) => {
 
 // Helper function to submit eSewa form
 export const submitEsewaForm = (paymentData) => {
+    if (!paymentData || !paymentData.formUrl) {
+        console.error("Invalid payment data:", paymentData);
+        return;
+    }
   // Create a form element
   const form = document.createElement('form');
   form.method = 'POST';
@@ -56,7 +60,7 @@ export const submitEsewaForm = (paymentData) => {
 
   // Add all payment data as input fields
   Object.entries(paymentData).forEach(([key, value]) => {
-      if (key !== 'formUrl') {
+      if (key !== 'formUrl' && value !== undefined && value !== null) {
           const input = document.createElement('input');
           input.type = 'hidden';
           input.name = key;
@@ -72,10 +76,10 @@ export const submitEsewaForm = (paymentData) => {
   console.log('Esewa Form Data:', form.outerHTML);
 
   // Submit form
-  // form.submit();
+  form.submit();
 
     // Remove the form after a delay
   setTimeout(() => {
-      document.body.removeChild(form);
+      form.remove()
   }, 3000);
 };

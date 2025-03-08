@@ -1,35 +1,41 @@
 const CryptoJS = require('crypto-js');
 const { v4: uuidv4 } = require('uuid');
-// Secret key for eSewa (this should be in your .env file in production)
-const ESEWA_SECRET_KEY = '8gBm/:&EnhH.1/q(';
-const ESEWA_PRODUCT_CODE = 'EPAYTEST';
-
-// Generate a unique transaction ID
 const generateTransactionId = () => uuidv4();
-// Generate HMAC signature for eSewa
+const Orders = require('../Models/Order')
+
+const ESEWA_MERCHANT_CODE = process.env.ESEWA_MERCHANT_CODE
+const ESEWA_SECRET_KEY = process.env.ESEWA_SECRET_KEY;
+const ESEWA_TEST_URL = process.env.ESEWA_TEST_URL
+const ESEWA_SUCCESS_URL = process.env.ESEWA_SUCCESS_URL;
+const ESEWA_FAILURE_URL = process.env.ESEWA_FAILURE_URL;
 
 
 // Initiate eSewa payment
 const initiatePayment = async (req, res) => {
   try {
-    const { amount, productName } = req.body;
+    const { orderId } = req.body;
     
-    if (!amount) {
-      return res.status(400).json({ message: 'Amount is required' });
+    if (!orderId) {
+      return res.status(400).json({ message: 'OrderId is required' });
     }
+    const order = await Orders.findById(orderId) 
+        if(!order){
+          return res.status(404).json({msg: 'Order not found.'})
+        }
+      console.log(order)
 
     // Calculate total amount
+    const amount = order.totalAmount
     const taxAmount = 0;
     const serviceCharge = 0;
-    const deliveryCharge = 0;
+    const deliveryCharge = 150;
     const totalAmount = parseFloat(amount) + taxAmount + serviceCharge + deliveryCharge;
-
     // Generate unique transaction ID
     const transactionUuid = generateTransactionId();
 
     // Define signed fields
     const signedFieldNames = 'total_amount,transaction_uuid,product_code';
-    const signedFieldString = `total_amount=${totalAmount},transaction_uuid=${transactionUuid},product_code=${ESEWA_PRODUCT_CODE}`;
+    const signedFieldString = `total_amount=${totalAmount},transaction_uuid=${transactionUuid},product_code=${ESEWA_MERCHANT_CODE}`;
 
     console.log("Signed String:", signedFieldString);
 
@@ -41,20 +47,18 @@ const initiatePayment = async (req, res) => {
 
     // Create payment data
     const paymentData = {
-      amount: totalAmount.toString(),
+      amount: amount,
       tax_amount: taxAmount.toString(),
-      product_service_charge: serviceCharge.toString(),
-      product_delivery_charge: deliveryCharge.toString(),
       total_amount: totalAmount.toString(),
       transaction_uuid: transactionUuid,
-      product_code: ESEWA_PRODUCT_CODE,
+      product_code: ESEWA_MERCHANT_CODE,
+      product_service_charge: serviceCharge.toString(),
+      product_delivery_charge: deliveryCharge.toString(),
+      success_url: process.env.ESEWA_SUCCESS_URL,
+      failure_url: process.env.ESEWA_FAILURE_URL,      
       signed_field_names: signedFieldNames,
       signature: signature,
-      success_url: process.env.ESEWA_SUCCESS_URL,
-      failure_url: process.env.ESEWA_FAILURE_URL,
-      formUrl: process.env.NODE_ENV === 'production' 
-        ? 'https://epay.esewa.com.np/api/epay/main/v2/form'
-        : 'https://rc-epay.esewa.com.np/api/epay/main/v2/form'
+      formUrl:'https://rc-epay.esewa.com.np/api/epay/main/v2/form'
     };
 
     res.status(200).json(paymentData);
@@ -88,11 +92,16 @@ const verifyPayment = async (req, res) => {
       signed_field_names,
       signature 
     } = paymentResponse;
+
+    console.log(paymentResponse)
     
     // Verify signature
     const signedFields = signed_field_names.split(',');
     const signedValues = signedFields.map(field => paymentResponse[field]).join(',');
     const calculatedSignature = generateSignature(signedValues, ESEWA_SECRET_KEY);
+    console.log('Expected Signature:', signature);
+    console.log('Calculated Signature:', calculatedSignature);
+
     if (signature !== calculatedSignature) {
       return res.status(400).json({ message: 'Invalid signature' });
     }
@@ -126,10 +135,8 @@ const checkPaymentStatus = async (req, res) => {
     }
     
     // Construct the status check URL
-    const statusUrl = process.env.NODE_ENV === 'production'
-      ? `https://epay.esewa.com.np/api/epay/transaction/status/?product_code=${ESEWA_PRODUCT_CODE}&total_amount=${total_amount}&transaction_uuid=${transaction_uuid}`
-      : `https://rc.esewa.com.np/api/epay/transaction/status/?product_code=${ESEWA_PRODUCT_CODE}&total_amount=${total_amount}&transaction_uuid=${transaction_uuid}`;
-    
+    const statusUrl = process.env.ESEWA_TEST_URL
+      
     // Make request to eSewa status API
     const response = await fetch(statusUrl);
     const statusData = await response.json();

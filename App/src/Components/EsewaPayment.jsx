@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { initiatePayment, submitEsewaForm } from '../services/paymentService';
 
-const EsewaPayment = ({ amount, productName, onPaymentInitiated }) => {
+const EsewaPayment = ({ orderId ,onPaymentInitiated }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -12,8 +12,7 @@ const EsewaPayment = ({ amount, productName, onPaymentInitiated }) => {
       
       // Call our backend to initiate payment
       const paymentData = await initiatePayment({
-        amount,
-        productName
+        orderId
       });
       
       // Notify parent component that payment is initiated

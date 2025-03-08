@@ -45,7 +45,7 @@ const CheckoutForm = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); 
         
         // Validate form
         if (!shippingAddress.street || !shippingAddress.city || 
@@ -61,6 +61,7 @@ const CheckoutForm = () => {
             // Create order in the backend
             const orderData = {
                 items: cartItems.map(item => ({
+                    
                     _id: item._id,
                     quantity: item.quantity
                 })),
@@ -68,11 +69,13 @@ const CheckoutForm = () => {
                 shippingAddress,
                 paymentMethod: 'esewa'
             };
+
+            console.log(orderData.items)
             
             const response = await createOrder(orderData);
-            console.log(response)
             if (response.success) {
-                setOrderId(response.data.orderId);
+                setOrderId(response.order._id)
+               
                 // Set form as submitted to show payment button
                 setFormSubmitted(true);
             } else {
