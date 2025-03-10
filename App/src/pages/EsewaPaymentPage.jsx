@@ -10,7 +10,6 @@ const EsewaPaymentPage = () => {
 
   useEffect(() => {
     const paymentData = location.state?.paymentData;
-    console.log(paymentData);
     
     if (!paymentData) {
       setError('No payment data found. Please try again.');

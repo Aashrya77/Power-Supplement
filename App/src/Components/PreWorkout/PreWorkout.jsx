@@ -29,12 +29,10 @@ const PreWorkout = () => {
   const fetchCategoryId = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/api/v1/categories`);
-      console.log('Available categories:', response.data);
       const preWorkoutCategory = response.data.find(
         category => category.name.toLowerCase() === 'pre-workout'
       );
       if (preWorkoutCategory) {
-        console.log('Found pre-workout category:', preWorkoutCategory);
         setCategoryId(preWorkoutCategory._id);
       } else {
         console.error('Pre-workout category not found');

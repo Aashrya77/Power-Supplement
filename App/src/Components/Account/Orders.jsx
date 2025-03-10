@@ -1,10 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Orders.css';
+import axios from 'axios';
+import BASE_URL from '../../config';
 
 const Orders = () => {
-  // This would typically come from an API call
-  const orders = [];
+  const [orders, setOrders] = useState([])
+  const getUserOrders = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/api/v1/orders`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`
+        }
+      })
+      setOrders(response.data.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  console.log(orders)
+
+  const formatDate = (dateString) => {
+    const options = { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+  };
+
+  useEffect(() => {
+    getUserOrders()
+  },[])
 
   return (
     <div className="orders-container">
@@ -23,8 +53,46 @@ const Orders = () => {
       ) : (
         <div className="orders-list">
           {orders.map((order) => (
-            <div key={order.id} className="order-card">
-              {/* Order details would go here */}
+            <div key={order._id} className="order-card">
+              <div className="order-header">
+                <h3>Order #{order._id.slice(-6)}</h3>
+                <span className={`order-status ${order.status.toLowerCase()}`}>
+                  {order.status}
+                </span>
+              </div>
+              <div className="order-details">
+                <div className="order-info">
+                  <p>Ordered on: {formatDate(order.createdAt)}</p>
+                  <p>Total Amount: Rs. {order.paymentDetails.amount}</p>
+                  <p>Payment Method: {order.paymentMethod}</p>
+                  {order.paymentMethod === 'esewa' && (
+                    <p>Transaction ID: {order.paymentDetails.transactionId || 'Pending'}</p>
+                  )}
+                </div>
+                <div className="order-items">
+                  {order.items.map((item) => (
+                    <div key={item._id} className="order-item">
+                      {item.product && (
+                        <>
+                          <img src={item.product.image} alt={item.product.name} />
+                          <div className="item-details">
+                            <h4>{item.product.name}</h4>
+                            <p>Quantity: {item.quantity}</p>
+                            <p>Price: Rs. {item.product.price.toLocaleString()}</p>
+                            <p>Total: Rs. {(item.quantity * item.product.price).toLocaleString()}</p>
+                          </div>
+                        </>
+                      )}
+                      {!item.product && (
+                        <div className="item-details">
+                          <p className="product-unavailable">Product no longer available</p>
+                          <p>Quantity: {item.quantity}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           ))}
         </div>

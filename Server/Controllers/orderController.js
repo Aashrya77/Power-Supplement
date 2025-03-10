@@ -6,6 +6,7 @@ exports.createOrder = async (req, res) => {
     try {
         const { items, totalAmount, shippingAddress, paymentMethod } = req.body;
         
+        
         // Validate required fields
         if (!items || !totalAmount || !shippingAddress || !paymentMethod) {
             return res.status(400).json({ 
@@ -13,12 +14,30 @@ exports.createOrder = async (req, res) => {
                 message: 'Missing required fields' 
             });
         }
+
+        // Validate items array
+        if (!Array.isArray(items) || items.length === 0) { 
+            return res.status(400).json({
+                success: false,
+                message: 'Order must contain at least one item'
+            });
+        }
+
+        // Validate each item has required fields
+        for (const item of items) {
+            if (!item.product) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Each item must have a product ID'
+                });
+            }
+        }
         
         // Create new order
         const order = new Order({
             user: req.user._id,
             items: items.map(item => ({ 
-                product: item._id,
+                product: item.product,
                 quantity: item.quantity
             })),
             totalAmount,
@@ -37,6 +56,16 @@ exports.createOrder = async (req, res) => {
         });
     } catch (error) {
         console.error('Create order error:', error);
+        
+        // Handle validation errors
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid order data',
+                errors: Object.values(error.errors).map(err => err.message)
+            });
+        }
+
         res.status(500).json({
             success: false,
             message: 'Failed to create order'

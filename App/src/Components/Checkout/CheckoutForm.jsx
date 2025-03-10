@@ -61,8 +61,7 @@ const CheckoutForm = () => {
             // Create order in the backend
             const orderData = {
                 items: cartItems.map(item => ({
-                    
-                    _id: item._id,
+                    product: item.product._id,
                     quantity: item.quantity
                 })),
                 totalAmount: total_amount,
@@ -70,7 +69,7 @@ const CheckoutForm = () => {
                 paymentMethod: 'esewa'
             };
 
-            console.log(orderData.items)
+            console.log('Cart items being sent:', orderData.items)
             
             const response = await createOrder(orderData);
             if (response.success) {
@@ -123,7 +122,7 @@ const CheckoutForm = () => {
             <div className="order-summary">
                 <h3>Order Summary</h3>
                 {cartItems.map((item) => (
-                    <div key={item._id} className="order-item">
+                    <div key={item.product._id} className="order-item">
                         <span>{item.product.name} x {item.quantity}</span>
                         <span>Rs. {item.product.price * item.quantity}</span>
                     </div>
