@@ -55,11 +55,11 @@ const LatestHome = () => {
                 <div className="LatestHome-price-container">
                   {product.originalPrice && product.originalPrice > product.price && (
                     <span className="LatestHome-original-price">
-                      {product.originalPrice.toFixed(2)} NPR
+                      {product.originalPrice} NPR
                     </span>
                   )}
                   <span className="LatestHome-sale-price">
-                    Rs. {product.price.toFixed(2)} NPR
+                    Rs. {product.price} NPR
                   </span>
                 </div>
               </div>

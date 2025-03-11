@@ -30,7 +30,7 @@ const initiatePayment = async (req, res) => {
     const serviceCharge = 0;
     const deliveryCharge = 150;
     const totalAmount =
-      parseFloat(amount) + taxAmount + serviceCharge + deliveryCharge;
+      parseInt(amount) + taxAmount + serviceCharge + deliveryCharge;
     // Generate unique transaction ID
     const transactionUuid = generateTransactionId();
 
@@ -87,12 +87,14 @@ const verifyPayment = async (req, res) => {
 
     // Extract data from response
     const { total_amount, transaction_uuid } = paymentResponse;
+    let cleanedNumber = total_amount.toString().replace(",", '');
+    let actualNumber = parseInt(cleanedNumber)
 
     const response = await axios.get(
-      `https://rc-epay.esewa.com.np/api/epay/transaction/status?transaction_uuid=${transaction_uuid}&total_amount=${total_amount}&product_code=EPAYTEST`
+      `https://rc-epay.esewa.com.np/api/epay/transaction/status?transaction_uuid=${transaction_uuid}&total_amount=${actualNumber}&product_code=EPAYTEST`
     );
 
-    console.log(total_amount)
+    
 
     const esewaResponse = response.data;
     if (esewaResponse.status === "COMPLETE") {
@@ -111,6 +113,7 @@ const verifyPayment = async (req, res) => {
       });
     }
   } catch (error) {
+    
     console.error("Error verifying payment:", error);
     res
       .status(500)

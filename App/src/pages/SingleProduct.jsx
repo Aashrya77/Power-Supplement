@@ -99,8 +99,8 @@ const SingleProduct = () => {
           <ProductName>{product.name}</ProductName>
           
           <PriceContainer>
-            <OriginalPrice>Rs. {(product.price).toFixed(2)} NPR</OriginalPrice>
-            <CurrentPrice>Rs. {((product.price * 0.9)).toFixed(2)} NPR</CurrentPrice>
+            <OriginalPrice>Rs. {(product.price)} NPR</OriginalPrice>
+            <CurrentPrice>Rs. {(Math.trunc(product.price * 0.9))} NPR</CurrentPrice>
             <SaleBadge>Sale</SaleBadge>
           </PriceContainer>
 

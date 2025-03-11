@@ -82,6 +82,10 @@ const PaymentResult = () => {
                     setTransactionDetails(transactionData);
                     
                     // Update order status if order ID exists
+                    const cleanedNumber = (amt) => {
+                        let clean = amt.toString().replace(",", '')
+                        return parseInt(clean)
+                    }
                     if (orderId) {
                         try {
                             await updateOrderStatus(orderId, { 
@@ -89,7 +93,7 @@ const PaymentResult = () => {
                                 paymentDetails: {
                                     transactionId: transactionData.transactionId,
                                     referenceId: transactionData.transactionCode,
-                                    amount: transactionData.amount
+                                    amount: cleanedNumber(transactionData.amount) 
                                 }
                             });
                         } catch (updateError) {

@@ -81,7 +81,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
                     </div>
                     <div className="item-details">
                       <h4>{item.product.name}</h4>
-                      <p className="item-price">${item.product.price.toFixed(2)}</p>
+                      <p className="item-price">Rs. {item.product.price}</p>
                       {item.product.discount && (
                         <span className="coupon-code">
                           {item.product.discount}% OFF
@@ -120,7 +120,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
             <div className="cart-footer">
               <div className="cart-subtotal">
                 <span>Subtotal</span>
-                <span>${calculateSubtotal().toFixed(2)}</span>
+                <span>Rs. {calculateSubtotal().toFixed(2)}</span>
               </div>
               <Link to="/cart" className="view-cart-btn" onClick={closeSidebar}>
                 View Cart

@@ -149,6 +149,8 @@ exports.updateOrderStatus = async (req, res) => {
         if (status) {
             order.status = status;
         }
+
+        
         
         // Update payment details if provided
         if (paymentDetails) {
