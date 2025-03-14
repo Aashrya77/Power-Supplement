@@ -106,9 +106,6 @@ const FatBurner = () => {
     ));
   };
 
-  const formatPrice = (price) => {
-    return `$${(price / 100).toFixed(2)} USD`;
-  };
 
   return (
     <div className="fat-burner-container">
@@ -174,11 +171,11 @@ const FatBurner = () => {
                 <div className="product-price">
                   {product.salePrice ? (
                     <>
-                      <span className="original-price">{formatPrice(product.price)}</span>
-                      <span className="sale-price">{formatPrice(product.salePrice)}</span>
+                      <span className="original-price">{product.price}</span>
+                      <span className="sale-price">{product.salePrice}</span>
                     </>
                   ) : (
-                    <span>{formatPrice(product.price)}</span>
+                    <span>Rs. {product.price} NPR</span>
                   )}
                 </div>
               </div>
