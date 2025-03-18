@@ -14,6 +14,7 @@ const flavorRoutes = require('./Routes/Flavor')
 const cartRoutes = require('./Routes/Cart')
 const paymentRoutes = require('./Routes/paymentRoutes')
 const orderRoutes = require('./Routes/orderRoutes')
+const searchRoutes = require('./Routes/searchRoutes')
 
 // Middleware
 app.use(cors())
@@ -30,6 +31,7 @@ app.use('/api/v1/flavors', flavorRoutes)
 app.use('/api/v1/cart', cartRoutes)
 app.use('/api/v1/payments', paymentRoutes)
 app.use('/api/v1/orders', orderRoutes)
+app.use('/api/v1/search', searchRoutes)
 
 const startServer = async () => {
     try {

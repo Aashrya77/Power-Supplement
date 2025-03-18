@@ -51,7 +51,7 @@ const orderSchema = new mongoose.Schema({
     paymentDetails: {
         transactionId: String,
         referenceId: String,
-        amount: Number
+        amount: Number 
     },
     status: {
         type: String,

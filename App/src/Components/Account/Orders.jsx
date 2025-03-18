@@ -74,7 +74,7 @@ const Orders = () => {
                     <div key={item._id} className="order-item">
                       {item.product && (
                         <>
-                          <img src={item.product.image} alt={item.product.name} />
+                          <img src={`${BASE_URL}${item.product.images[0]}`} alt={item.product.name} />
                           <div className="item-details">
                             <h4>{item.product.name}</h4>
                             <p>Quantity: {item.quantity}</p>

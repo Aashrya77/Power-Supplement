@@ -9,6 +9,7 @@ import { FiMenu } from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 import axios from "axios";
+import BASE_URL from "../../config";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -18,8 +19,14 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState({
+    suggestions: [],
+    products: [],
+    categories: []
+  });
   const [isLoading, setIsLoading] = useState(false);
+  const [searchError, setSearchError] = useState(null);
+  const [useHardcodedResults, setUseHardcodedResults] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,26 +41,78 @@ const Navbar = () => {
     const searchProducts = async () => {
       if (searchQuery.trim().length > 0) {
         setIsLoading(true);
+        setSearchError(null);
+        
         try {
-          const response = await axios.get(`/api/v1/products/search?query=${encodeURIComponent(searchQuery)}`);
-          if (Array.isArray(response.data)) {
-            setSearchResults(response.data);
+          console.log('Searching for:', searchQuery);
+          
+          if (useHardcodedResults) {
+            // For testing, use hardcoded data
+            const hardcodedResults = {
+              suggestions: ['Protein Powder', 'Whey Protein', 'Best Protein'],
+              products: [
+                {
+                  _id: '1',
+                  name: 'Whey Protein Isolate',
+                  images: ['/uploads/protein1.jpg'],
+                  price: 49.99
+                },
+                {
+                  _id: '2',
+                  name: 'Plant Protein',
+                  images: ['/uploads/protein2.jpg'],
+                  price: 39.99
+                }
+              ],
+              categories: ['Proteins', 'Supplements']
+            };
+            
+            console.log('Using hardcoded results:', hardcodedResults);
+            setSearchResults(hardcodedResults);
           } else {
-            setSearchResults([]);
+            // Use actual API
+            const response = await axios.get(`/api/v1/search/suggestions?query=${encodeURIComponent(searchQuery)}`);
+            console.log('Search API response:', response.data);
+            
+            if (response.data) {
+              setSearchResults({
+                suggestions: response.data.suggestions || [],
+                products: response.data.products || [],
+                categories: response.data.categories || []
+              });
+            } else {
+              throw new Error('Invalid response from search API');
+            }
           }
         } catch (error) {
           console.error('Error searching products:', error);
-          setSearchResults([]);
+          setSearchError(error.message || 'Error searching');
+          
+          // If API fails, fall back to hardcoded results
+          if (!useHardcodedResults) {
+            setUseHardcodedResults(true);
+            console.log('Falling back to hardcoded results due to API error');
+          } else {
+            setSearchResults({
+              suggestions: [],
+              products: [],
+              categories: []
+            });
+          }
         }
         setIsLoading(false);
       } else {
-        setSearchResults([]);
+        setSearchResults({
+          suggestions: [],
+          products: [],
+          categories: []
+        });
       }
     };
 
     const debounceTimer = setTimeout(searchProducts, 300);
     return () => clearTimeout(debounceTimer);
-  }, [searchQuery]);
+  }, [searchQuery, useHardcodedResults]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -83,7 +142,11 @@ const Navbar = () => {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setIsSearchActive(false);
       setSearchQuery("");
-      setSearchResults([]);
+      setSearchResults({
+        suggestions: [],
+        products: [],
+        categories: []
+      });
     }
   };
 
@@ -95,14 +158,22 @@ const Navbar = () => {
       }, 100);
     } else {
       setSearchQuery("");
-      setSearchResults([]);
+      setSearchResults({
+        suggestions: [],
+        products: [],
+        categories: []
+      });
     }
   };
 
   const handleProductClick = (productId) => {
     setIsSearchActive(false);
     setSearchQuery("");
-    setSearchResults([]);
+    setSearchResults({
+        suggestions: [],
+        products: [],
+        categories: []
+    });
     navigate(`/product/${productId}`);
   };
 
@@ -149,49 +220,80 @@ const Navbar = () => {
         {/* Search Results Dropdown */}
         {isSearchActive && searchQuery.trim() && (
           <div className="search-results">
-            {/* Suggestions */}
+            {searchError && (
+              <div className="search-error">
+                Error: {searchError}
+                {useHardcodedResults && <span> (Using demo results)</span>}
+              </div>
+            )}
+            
             <div className="suggestions_products">
-              <div className="suggestions">
-              <h3>SUGGESTIONS</h3>
-              <div className="suggestion-items">
-                <button onClick={() => setSearchQuery("a hd")}>a hd</button>
-                <button onClick={() => setSearchQuery("best aminos")}>best aminos</button>
-                <button onClick={() => setSearchQuery("amino acids")}>amino acids</button>
-                <button onClick={() => setSearchQuery("Protein & Amino Acids - Recovery")}>
-                  Protein & Amino Acids - Recovery
-                </button>
-                <button onClick={() => setSearchQuery("Accessories")}>Accessories</button>
+              {/* Suggestions */}
+              {searchResults?.suggestions?.length > 0 && (
+                <div className="suggestions">
+                  <h3>SUGGESTIONS</h3>
+                  <div className="suggestion-items">
+                    {searchResults.suggestions.map((suggestion, index) => (
+                      <button key={index} onClick={() => setSearchQuery(suggestion)}>
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Products */}
+              <div className="products">
+                <h3>PRODUCTS</h3>
+                {isLoading ? (
+                  <div className="loading">Loading...</div>
+                ) : searchResults?.products?.length > 0 ? (
+                  <div className="product-items">
+                    {searchResults.products.map((product) => (
+                      <button
+                        key={product._id}
+                        className="product-item"
+                        onClick={() => handleProductClick(product._id)}
+                      >
+                        <img src={`${BASE_URL}${product.images[0]}`} alt={product.name} />
+                        <div className="product-info">
+                          <h4>{product.name}</h4>
+                          <p>Rs. {product.price}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="no-results">
+                    No products found
+                    <button 
+                      onClick={() => setUseHardcodedResults(!useHardcodedResults)}
+                      className="toggle-demo-btn"
+                    >
+                      {useHardcodedResults ? 'Try API search' : 'Show demo results'}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
-             {/* Products */}
-            <div className="products">
-              <h3>PRODUCTS</h3>
-              {isLoading ? (
-                <div className="loading">Loading...</div>
-              ) : searchResults.length > 0 ? (
-                <div className="product-items">
-                  {searchResults.slice(0, 3).map((product) => (
-                    <button
-                      key={product._id}
-                      className="product-item"
-                      onClick={() => handleProductClick(product._id)}
-                    >
-                      <img src={product.images[0]} alt={product.name} />
-                      <div className="product-info">
-                        <h4>{product.name}</h4>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="no-results">No products found</div>
-              )}
-            </div>
 
-            </div>
-            
+            {/* Categories */}
+            {searchResults?.categories?.length > 0 && (
+              <div className="categories-section">
+                <h3>CATEGORIES</h3>
+                {searchResults.categories.map((category, index) => (
+                  <Link 
+                    key={index} 
+                    to={`/${encodeURIComponent(category)}`}
+                    onClick={toggleSearch}
+                    style={{textDecoration: 'underline', color: 'inherit'}}
+                  >
+                    {category}
+                  </Link>
+                ))}
+              </div>
+            )}
 
-           
             {/* Pages */}
             <div className="pages-section">
               <h3>PAGES</h3>

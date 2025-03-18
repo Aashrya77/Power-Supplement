@@ -27,6 +27,7 @@ export const verifyPayment = async (data) => {
         const response = await axios.post(`${API_URL}/verify`, { data });
         return response.data;
     } catch (error) {
+        console.log(error)
         throw error.response?.data || error.message;
     }
 };

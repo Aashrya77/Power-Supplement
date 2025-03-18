@@ -527,7 +527,7 @@ body {
 
 .suggestions_products{
   display: flex;
-  flex-wrap: wrap;
+  gap: 2rem;
 }
 
 .search-results h3 {
@@ -608,6 +608,7 @@ body {
 
 .product-info {
   flex: 1;
+  color: white;
 }
 
 .product-info h4 {
@@ -650,6 +651,12 @@ body {
   color: #999;
 }
 
+.categories-section{
+  display: flex;
+  gap: .5rem;
+  flex-direction: column;
+}
+
 /* Hide elements when search is active */
 .hidden {
   opacity: 0;
@@ -669,4 +676,30 @@ body {
   .search-results {
     padding: 16px;
   }
+}
+
+.search-error {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.toggle-demo-btn {
+  display: block;
+  margin: 10px auto;
+  padding: 6px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toggle-demo-btn:hover {
+  background-color: #e0e0e0;
 }
