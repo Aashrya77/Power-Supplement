@@ -126,7 +126,7 @@ const ShopAll = () => {
                           <span className="sale-price">{product.salePrice}</span>
                         </>
                       ) : (
-                        <span>Rs. {product.price} NPR</span>
+                        <span style={{color: 'black'}}>Rs. {product.price} NPR</span>
                       )}
                     </div>
                   </div>
