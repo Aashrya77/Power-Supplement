@@ -47,15 +47,35 @@
 
 /* TRUE STRENGTH Text */
 .trueStrength {
-  font-size: 60px;
-  font-weight: bolder;
+  font-size: 80px;
+  font-weight: 900;
   text-align: center;
   display: block;
   margin-top: 20px;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  color: #222;
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+  letter-spacing: 4px;
+  background: linear-gradient(90deg, 
+    #808080, /* gray */
+    #000000, /* black */
+    #004d99, /* dark blue */
+    #0077cc, /* medium blue */
+    #3399ff, /* light blue */
+    #99ccff  /* very light blue */
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 600% 100%;
+  animation: gradientFlow 12s linear infinite;
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 600% center;
+  }
 }
 
 /* Responsive Design */
@@ -65,7 +85,8 @@
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
   .trueStrength {
-      font-size: 50px;
+      font-size: 70px;
+      letter-spacing: 3px;
   }
 }
 
@@ -75,7 +96,8 @@
       grid-template-columns: repeat(2, 1fr);
   }
   .trueStrength {
-      font-size: 40px;
+      font-size: 50px;
+      letter-spacing: 2px;
   }
 }
 
@@ -85,6 +107,7 @@
       grid-template-columns: repeat(2, 1fr);
   }
   .trueStrength {
-      font-size: 30px;
+      font-size: 40px;
+      letter-spacing: 1px;
   }
 }

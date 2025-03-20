@@ -7,10 +7,9 @@
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
-    height: 60vh; /* Set a dynamic height */
+    height: 500px;
+    padding: 0 5%;
     text-align: center;
-    padding: 2rem;
 }
 
 /* Dark Overlay */
@@ -20,7 +19,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* 50% black overlay */
+    background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%);
     z-index: 0;
 }
 
@@ -29,89 +28,75 @@
     position: relative;
     z-index: 1;
     color: white;
-    max-width: 80%;
-    padding: 3rem 2rem;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 /* Heading Styling */
 .cta1Texts h1 {
-    font-size: 3rem;
-    margin: 0;
+    font-size: 64px;
+    font-weight: 900;
+    margin: 0 0 20px 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 /* Subtitle Styling */
-.cta1Texts h4 {
-    margin: 0;
-    margin-bottom: 1.5rem;
-    color: rgb(193, 188, 188);
-    font-size: 1.2rem;
+.cta1Texts p {
+    font-size: 24px;
+    margin: 0 0 30px 0;
+    color: #e0e0e0;
+    font-weight: 400;
 }
 
 /* Button Styling */
-.cta1Texts button {
-    padding: 14px 25px;
-    background-color: cornflowerblue;
-    border: 1.5px solid cornflowerblue;
+.shop-now-btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #0077cc;
     color: white;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 18px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
 }
 
-.cta1Texts button:hover {
-    background: transparent;
-    color: cornflowerblue;
-    border: 2px solid cornflowerblue;
+.shop-now-btn:hover {
+    background-color: #0066b3;
 }
 
 /* Responsive Adjustments */
-@media (max-width: 1024px) {
-    .CTA1 {
-        height: 50vh;
-    }
-    .cta1Texts h1 {
-        font-size: 2.5rem;
-    }
-    .cta1Texts h4 {
-        font-size: 1.1rem;
-    }
-}
-
 @media (max-width: 768px) {
     .CTA1 {
-        height: 45vh;
+        height: 400px;
+        padding: 0 20px;
     }
-    .cta1Texts {
-        max-width: 90%;
-        padding: 2rem;
-    }
+
     .cta1Texts h1 {
-        font-size: 2rem;
+        font-size: 48px;
     }
-    .cta1Texts h4 {
-        font-size: 1rem;
-    }
-    .cta1Texts button {
-        padding: 12px 20px;
-        font-size: 0.9rem;
+
+    .cta1Texts p {
+        font-size: 20px;
     }
 }
 
 @media (max-width: 480px) {
     .CTA1 {
-        height: 40vh;
-        padding: 1rem;
+        height: 350px;
     }
+
     .cta1Texts h1 {
-        font-size: 1.8rem;
+        font-size: 36px;
     }
-    .cta1Texts h4 {
-        font-size: 0.9rem;
+
+    .cta1Texts p {
+        font-size: 18px;
     }
-    .cta1Texts button {
-        padding: 10px 18px;
-        font-size: 0.85rem;
+
+    .shop-now-btn {
+        padding: 10px 24px;
+        font-size: 16px;
     }
 }
