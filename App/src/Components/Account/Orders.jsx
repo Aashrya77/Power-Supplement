@@ -15,11 +15,11 @@ const Orders = () => {
       })
       setOrders(response.data.data)
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
-  console.log(orders)
+
 
   const formatDate = (dateString) => {
     const options = { 

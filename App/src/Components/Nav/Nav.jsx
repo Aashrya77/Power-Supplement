@@ -10,6 +10,9 @@ import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 import axios from "axios";
 import BASE_URL from "../../config";
+import gsap from 'gsap'
+import {useGSAP} from '@gsap/react'
+import { useRef } from "react";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -28,6 +31,25 @@ const Navbar = () => {
   const [searchError, setSearchError] = useState(null);
   const [useHardcodedResults, setUseHardcodedResults] = useState(false);
 
+  useGSAP(() => {
+    gsap.fromTo('.navLinks a', {
+      opacity: 0,
+    }, {
+      opacity: 1,
+      stagger: .1,
+      duration: 1,
+      ease: "power1.inOut",
+    })
+    gsap.fromTo('.navLink', {
+      opacity: 0,
+    }, {
+      opacity: 1,
+      stagger: .1,
+      duration: 1,
+      ease: "power1.inOut",
+    })
+  })
+
   useEffect(() => {
     const handleScroll = () => {
       setIsSticky(window.scrollY > 100);
@@ -44,7 +66,6 @@ const Navbar = () => {
         setSearchError(null);
         
         try {
-          console.log('Searching for:', searchQuery);
           
           if (useHardcodedResults) {
             // For testing, use hardcoded data
@@ -72,7 +93,6 @@ const Navbar = () => {
           } else {
             // Use actual API
             const response = await axios.get(`/api/v1/search/suggestions?query=${encodeURIComponent(searchQuery)}`);
-            console.log('Search API response:', response.data);
             
             if (response.data) {
               setSearchResults({
@@ -91,7 +111,6 @@ const Navbar = () => {
           // If API fails, fall back to hardcoded results
           if (!useHardcodedResults) {
             setUseHardcodedResults(true);
-            console.log('Falling back to hardcoded results due to API error');
           } else {
             setSearchResults({
               suggestions: [],
@@ -294,12 +313,7 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* Pages */}
-            <div className="pages-section">
-              <h3>PAGES</h3>
-              <Link to="/accessibility" onClick={toggleSearch}>Accessibility</Link>
-              <Link to="/about" onClick={toggleSearch}>About Us</Link>
-            </div>
+          
           </div>
         )}
       </div>

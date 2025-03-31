@@ -3,10 +3,37 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./LatestHome.css";
 import BASE_URL from "../../config";
+import gsap from 'gsap'
+import { useGSAP } from "@gsap/react";
+import {ScrollTrigger} from 'gsap/all'
+import { useRef } from "react";
+gsap.registerPlugin(ScrollTrigger, useGSAP) 
 
 const LatestHome = () => {
   const [latestProducts, setLatestProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const containerRef = useRef()
+
+  useGSAP(() => {
+    if(latestProducts.length > 0){
+      gsap.fromTo(".product-ani", {
+      opacity: .5,
+    }, {
+      opacity: 1,
+      ease: 'power1.inOut',
+      duration: .3,
+      stagger: .3,
+      scrollTrigger: {
+        trigger: '.LatestHome-products',
+        start: "top 60%",
+        id: 'latestId',
+        toggleActions: 'play none none none',
+        markers: true
+      }
+    })
+    }
+   
+  }, {scope: containerRef, dependencies: [latestProducts]})
 
   useEffect(() => {
     fetchLatestProducts();
@@ -34,12 +61,12 @@ const LatestHome = () => {
   }
 
   return (
-    <div className="LatestHome">
+    <div className="LatestHome" ref={containerRef}>
       <h1>LATEST RELEASES</h1>
 
       <div className="LatestHome-products">
         {latestProducts.map((product) => (
-          <div className="LatestHome-product" key={product._id}>
+          <div className="LatestHome-product product-ani" key={product._id}>
             <Link to={`/product/${product._id}`} className="LatestHome-product-link">
               {product.onSale && <span className="sale-badge">Sale</span>}
               <div className="LatestHomeImg">

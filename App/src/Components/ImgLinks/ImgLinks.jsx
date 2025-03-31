@@ -1,7 +1,35 @@
 import React from "react";
 import "./ImgLinks.css";
 import {Link} from 'react-router-dom'
+import gsap from 'gsap'
+import { useGSAP } from "@gsap/react";
+import {ScrollTrigger} from 'gsap/all'
+import { useRef } from "react";
+gsap.registerPlugin(ScrollTrigger, useGSAP) 
 const ImgLinks = () => {
+  const imgRef = useRef()
+  useGSAP(() => {
+    
+      gsap.fromTo(".grid-item", {
+      opacity: 0,
+      
+    }, {
+      opacity: 1,
+      ease: 'power1.inOut',
+      duration: .3,
+      stagger: .3,
+      scrollTrigger: {
+        trigger: '.grid-item',
+        start: "top 80%",
+        id: 'imgId',
+        markers: true,
+        toggleActions: 'play none none none'
+      }
+    })
+    
+   
+  }, {scope: imgRef})
+
   const imgs = [
     {
       id: 1,
@@ -36,7 +64,7 @@ const ImgLinks = () => {
   ];
 
   return (
-    <>
+    <div className="img-container" ref={imgRef}>
     <div className="img-links">
       {imgs.map((item) => (
         <div key={item.id} className="grid-item">
@@ -49,7 +77,7 @@ const ImgLinks = () => {
       ))}
     </div>
     <span className="trueStrength">TRUE STRENGTH</span>
-    </>
+    </div>
     
   );
 };
