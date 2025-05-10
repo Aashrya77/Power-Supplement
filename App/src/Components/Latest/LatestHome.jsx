@@ -28,7 +28,6 @@ const LatestHome = () => {
         start: "top 60%",
         id: 'latestId',
         toggleActions: 'play none none none',
-        markers: true
       }
     })
     }

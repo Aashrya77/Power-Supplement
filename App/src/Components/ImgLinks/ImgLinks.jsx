@@ -22,7 +22,6 @@ const ImgLinks = () => {
         trigger: '.grid-item',
         start: "top 80%",
         id: 'imgId',
-        markers: true,
         toggleActions: 'play none none none'
       }
     })
