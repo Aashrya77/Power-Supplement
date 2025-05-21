@@ -21,12 +21,12 @@ const Footer = () => {
           </div>
           <div className="quickLinks">
             <h3>POWER SUPPLEMENT</h3>
-            <a href="">Login/Register</a>
+            <a href="/auth">Login/Register</a>
             <a href="">About Us</a>
             <a href="">Contact Us</a>
             <a href="">Articles</a>
             <a href="">FAQ</a>
-            <a href="">JOIN TEAM POWER</a>
+            <a href="/partner-program">JOIN TEAM POWER</a>
           </div>
           <div className="legalTerms">
             <h3>LEGAL</h3>
