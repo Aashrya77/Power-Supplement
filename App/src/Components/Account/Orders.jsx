@@ -63,9 +63,9 @@ const Orders = () => {
               <div className="order-details">
                 <div className="order-info">
                   <p>Ordered on: {formatDate(order.createdAt)}</p>
-                  <p>Total Amount: Rs. {order.paymentDetails.amount}</p>
+                  <p>Total Amount: Rs. {order.totalAmount ? order.totalAmount : 'N/A'}</p>
                   <p>Payment Method: {order.paymentMethod}</p>
-                  {order.paymentMethod === 'esewa' && (
+                  {order.paymentMethod === 'esewa' && order.paymentDetails && (
                     <p>Transaction ID: {order.paymentDetails.transactionId || 'Pending'}</p>
                   )}
                 </div>

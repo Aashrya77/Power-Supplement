@@ -1,49 +1,104 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
+import Preloader from "./Components/Preloader/Preloader";
+import HomeSEO from "./Components/SEO/HomeSEO";
+// Essential components loaded immediately
 import Navbar from "./Components/Nav/Nav";
-import Home from "./Components/Home/Home";
-import LatestHome from "./Components/Latest/LatestHome";
-import ImgLinks from "./Components/ImgLinks/ImgLinks";
-import CTA1 from "./Components/CTA1/CTA1.jsx";
-import CTA2 from "./Components/CTA2/CTA2.jsx";
-import BestSeller from "./Components/BestSeller/BestSeller.jsx";
-import Testimonials from "./Components/Testimonials/Testimonials.jsx";
 import Footer from "./Components/Footer/Footer.jsx";
-import Auth from "./Auth/Auth.jsx";
-import { Route, Routes } from "react-router-dom";
-import TeamPower from "./Components/TeamPower/TeamPower.jsx";
-import Stack_Save from "./Components/Stack&Save/Stack&Save.jsx";
-import PreWorkout from "./Components/PreWorkout/PreWorkout.jsx";
-import SingleProduct from "./pages/SingleProduct.jsx";
-import FatBurner from './Components/FatBurner/FatBurner';
-import Protein from './Components/Protein/Protein';
-import ShopAll from './Components/ShopAll/ShopAll';
 import Sidebar from './Components/Cart/Sidebar/Sidebar';
+import { Route, Routes } from "react-router-dom";
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
-import Cart from './Components/Cart/Cart';
-import UserProfile from './Components/UserProfile/UserProfile';
-import AccountLayout from './Components/Account/AccountLayout';
-import Orders from './Components/Account/Orders';
-import Settings from './Components/Account/Settings';
 import ScrollToTop from './Components/ScrollToTop.jsx';
-import CheckoutForm from './Components/Checkout/CheckoutForm';
-import PaymentResult from './pages/PaymentResult/PaymentResult';
+
+// Simple loading component
+const ComponentLoader = () => (
+  <div style={{ 
+    display: 'flex', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    padding: '2rem',
+    fontFamily: 'Poppins, sans-serif'
+  }}>
+    <div>Loading...</div>
+  </div>
+);
+
+// Lazy load non-critical components
+const Home = lazy(() => import("./Components/Home/Home"));
+const LatestHome = lazy(() => import("./Components/Latest/LatestHome"));
+const ImgLinks = lazy(() => import("./Components/ImgLinks/ImgLinks"));
+const CTA1 = lazy(() => import("./Components/CTA1/CTA1.jsx"));
+const CTA2 = lazy(() => import("./Components/CTA2/CTA2.jsx"));
+const BestSeller = lazy(() => import("./Components/BestSeller/BestSeller.jsx"));
+const Testimonials = lazy(() => import("./Components/Testimonials/Testimonials.jsx"));
+const Auth = lazy(() => import("./Auth/Auth.jsx"));
+const TeamPower = lazy(() => import("./Components/TeamPower/TeamPower.jsx"));
+const Stack_Save = lazy(() => import("./Components/Stack&Save/Stack&Save.jsx"));
+const PreWorkout = lazy(() => import("./Components/PreWorkout/PreWorkout.jsx"));
+const SingleProduct = lazy(() => import("./pages/SingleProduct.jsx"));
+const FatBurner = lazy(() => import('./Components/FatBurner/FatBurner'));
+const Protein = lazy(() => import('./Components/Protein/Protein'));
+const ShopAll = lazy(() => import('./Components/ShopAll/ShopAll'));
+const Cart = lazy(() => import('./Components/Cart/Cart'));
+const UserProfile = lazy(() => import('./Components/UserProfile/UserProfile'));
+const AccountLayout = lazy(() => import('./Components/Account/AccountLayout'));
+const Orders = lazy(() => import('./Components/Account/Orders'));
+const Settings = lazy(() => import('./Components/Account/Settings'));
+const CheckoutForm = lazy(() => import('./Components/Checkout/CheckoutForm'));
+const PaymentResult = lazy(() => import('./pages/PaymentResult/PaymentResult'));
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Check if the app is ready to render
+  useEffect(() => {
+    // Simulate checking API connection
+    const checkApiConnection = async () => {
+      try {
+        // Add a small delay to ensure backend is ready
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error initializing app:', error);
+        setIsLoading(false); // Still proceed even if there's an error
+      }
+    };
+
+    checkApiConnection();
+  }, []);
+
+  // Show a minimal loading state while checking API
+  if (isLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontFamily: 'Poppins, sans-serif',
+        fontSize: '1.5rem'
+      }}>
+        <div>Initializing Power Supplement...</div>
+      </div>
+    );
+  }
 
   return (
     <AuthProvider>
       <CartProvider>
         <>
+          <Preloader />
           <ScrollToTop />
           <Navbar setCartOpen={setIsCartOpen} />
           <Sidebar isOpen={isCartOpen} closeSidebar={() => setIsCartOpen(false)} />
+          <Suspense fallback={<ComponentLoader />}>
           <Routes>
             <Route
               path="/"
               element={
                 <>
+                  <HomeSEO />
                   <Home setCartOpen={setIsCartOpen} />
                   <LatestHome />
                   <ImgLinks />
@@ -75,6 +130,7 @@ function App() {
             <Route path="/payment/success" element={<PaymentResult />} />
             <Route path="/payment/failure" element={<PaymentResult />} />
           </Routes>
+          </Suspense>
           <Footer />
         </>
       </CartProvider>

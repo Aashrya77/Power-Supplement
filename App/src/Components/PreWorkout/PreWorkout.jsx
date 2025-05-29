@@ -4,6 +4,7 @@ import axios from 'axios';
 import './PreWorkout.css';
 import { FaStar } from 'react-icons/fa';
 import BASE_URL from '../../config';
+import CategorySEO from '../SEO/CategorySEO';
 
 const PreWorkout = () => {
   const [products, setProducts] = useState([]);
@@ -11,6 +12,7 @@ const PreWorkout = () => {
   const [selectedFlavor, setSelectedFlavor] = useState('all');
   const [sortBy, setSortBy] = useState('featured');
   const [categoryId, setCategoryId] = useState(null);
+  const [category, setCategory] = useState(null);
 
   useEffect(() => {
     fetchCategoryId();
@@ -34,6 +36,7 @@ const PreWorkout = () => {
       );
       if (preWorkoutCategory) {
         setCategoryId(preWorkoutCategory._id);
+        setCategory(preWorkoutCategory);
       } else {
         console.error('Pre-workout category not found');
       }
@@ -119,6 +122,7 @@ const PreWorkout = () => {
 
   return (
     <div className="pre-workout-container">
+      {category && <CategorySEO category={category} products={filteredProducts} />}
       <div className="preworkout-header">
         <h1>Pre-Workout Supplements</h1>
         <p>

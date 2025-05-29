@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import BASE_URL from '../config';
+import ProductSEO from '../Components/SEO/ProductSEO';
 
 const SingleProduct = () => {
   const { id } = useParams();
@@ -78,6 +79,7 @@ const SingleProduct = () => {
 
   return (
     <ProductContainer>
+      <ProductSEO product={product} />
       <ProductGrid>
         <ImageSection>
           <MainImage src={mainImage} alt={product.name} />
