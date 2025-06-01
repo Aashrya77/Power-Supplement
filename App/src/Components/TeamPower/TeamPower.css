@@ -1,0 +1,360 @@
+/* General Styles */
+.team section {
+  background-image: url("\TeamPower(1).jpeg");
+  color: #fff;
+  position: relative;
+}
+
+.team section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.team-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
+  z-index: 1000;
+  width: 100%; /* Adjusted width for responsiveness */
+  max-width: 42rem;
+  margin: auto;
+  padding-top: 3rem;
+  text-align: center;
+}
+
+.team-content h1 {
+  font-size: 3rem;
+  margin: 0;
+}
+
+.team-content p {
+  font-size: 1.125rem; /* 18px */
+  letter-spacing: 1.5;
+  margin-top: 5px;
+  color: #e0e0e0;
+}
+
+.join-btn {
+  padding: 15px 30px;
+  background: #d32f2f; /* Strong red */
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 1.5px;
+  transition: background 0.3s ease;
+}
+
+.big3-desktop {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin: 60px;
+}
+
+.big3-desktop img {
+  width: 20rem;
+}
+
+.team-cta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 50rem;
+  text-align: center;
+  margin: 0px auto;
+  margin-bottom: 40px;
+  letter-spacing: 1.2px;
+}
+
+.team-cta p {
+  color: #6d6d6d;
+  margin-top: 0;
+}
+
+.howToSignUp h2 {
+  text-align: center;
+}
+
+/* General Styles */
+.steps-container {
+  padding: 20px 50px;
+  margin: 0 100px;
+}
+
+.steps-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.steps-nav button {
+  padding: 10px 15px;
+  background: #ccc;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.steps-nav .active-step {
+  background: #d32f2f;
+  color: #fff;
+  font-weight: bold;
+}
+
+.step-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 16px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+
+.step-image {
+  width: 350px;
+  height: auto;
+}
+
+.step-des {
+  flex: 1;
+  padding: 20px;
+}
+.teamPhotoes {
+  text-align: center;
+}
+
+.teamPhotoesImgs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3rem;
+  justify-content: center;
+  margin: 40px 20px;
+  margin-bottom: 60px;
+}
+
+.teamPhotoes img {
+  width: 250px;
+  height: 250px;
+}
+
+/* Hide Swiper and Mobile Layout on Large Screens */
+.big3-mobile,
+.swiper {
+  display: none !important; /* Using !important to override Swiper's default styles */
+}
+
+/* Show Original Layout on Large Screens */
+.big3-desktop {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin: 60px;
+}
+
+/* Media Query for Mobile Devices */
+@media (max-width: 768px) {
+  .big3-desktop {
+    display: none;
+  }
+  
+  .big3-mobile,
+  .swiper {
+    display: block !important;
+    width: 90%;
+    max-width: 500px;
+    margin: 20px auto;
+  }
+  
+  .big3-mobile img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+}
+
+/* Media Queries for Responsiveness */
+
+/* For Tablets and smaller screens (width <= 768px) */
+@media (max-width: 768px) {
+  .team-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .team-content p {
+    font-size: 1rem;
+  }
+
+  .join-btn {
+    padding: 12px 25px;
+  }
+
+  .big3 img {
+    width: 18rem; /* Smaller image width for tablets */
+  }
+
+  .team-cta {
+    width: 90%;
+    max-width: 90%;
+  }
+
+  .steps-container {
+    margin: 0 20px;
+  }
+
+  .steps-nav {
+    flex-direction: column; /* Stack navigation buttons vertically */
+  }
+
+  .step-image {
+    width: 100%; /* Full-width images on smaller screens */
+  }
+
+  .teamPhotoesImgs {
+    gap: 2rem;
+  }
+
+  .teamPhotoes img {
+    width: 200px; /* Adjust image size for smaller screens */
+    height: 200px;
+  }
+}
+
+/* For Mobile devices (width <= 480px) */
+@media (max-width: 480px) {
+  .team-content h1 {
+    font-size: 2rem;
+  }
+
+  .team-content p {
+    font-size: 0.875rem;
+  }
+
+  .join-btn {
+    padding: 10px 20px;
+  }
+
+  .big3 img {
+    width: 100%; /* Full-width images for mobile */
+    height: auto;
+  }
+
+  .team-cta {
+    width: 100%;
+  }
+
+  .steps-container {
+    margin: 0 10px;
+  }
+
+  .steps-nav button {
+    padding: 8px 12px;
+    font-size: 0.875rem;
+  }
+
+  .teamPhotoesImgs {
+    flex-direction: column; /* Stack images vertically on small screens */
+    gap: 1rem;
+  }
+
+  .teamPhotoes img {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+/* For Desktop screens (width >= 1024px) */
+@media (min-width: 1024px) {
+  .team-content {
+    max-width: 50rem; /* Allow more space on larger screens */
+  }
+
+  .team-cta {
+    max-width: 60rem;
+  }
+
+  .teamPhotoesImgs {
+    gap: 3rem;
+  }
+
+  .teamPhotoes img {
+    width: 250px;
+    height: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .steps-container {
+    margin: 0 20px;
+    padding: 30px;
+  }
+
+  .steps-nav {
+    flex-direction: column; /* Stack navigation buttons vertically */
+    align-items: center;
+  }
+
+  .steps-nav button {
+    width: 100%; /* Make buttons take full width */
+    padding: 12px 0;
+    margin-bottom: 10px;
+  }
+
+  .step-content {
+    flex-direction: column; /* Stack image and description vertically */
+    gap: 15px;
+  }
+
+  .step-image {
+    width: 100%; /* Make image full width */
+    max-width: 300px; /* Prevent it from becoming too large */
+    margin: 0 auto;
+  }
+
+  .step-des {
+    padding: 10px;
+  }
+}
+
+/* For Mobile devices (width <= 480px) */
+@media (max-width: 480px) {
+  .steps-container {
+    margin: 0 10px;
+    padding: 20px;
+  }
+
+  .steps-nav {
+    flex-direction: column; /* Stack navigation buttons vertically */
+  }
+
+  .steps-nav button {
+    padding: 10px 0;
+    font-size: 14px;
+  }
+
+  .step-content {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .step-image {
+    width: 100%;
+    max-width: 250px; /* Limit max width for very small screens */
+    margin: 0 auto;
+  }
+
+  .step-des {
+    font-size: 14px;
+    padding: 10px;
+  }
+}

@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and private pages
+Disallow: /account/
+Disallow: /checkout/
+Disallow: /payment/
+
+# Sitemap location
+Sitemap: https://powersupplement.com/sitemap.xml
+
+# Crawl delay to prevent server overload
+Crawl-delay: 10

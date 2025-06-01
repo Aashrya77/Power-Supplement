@@ -1,0 +1,11 @@
+.stack_save_container{
+    margin: 20px 100px;
+}
+ 
+.stack_save_heading p, .stack_save_footer p{
+    color: #5c5c5c;
+}
+
+.stack_save_heading p{
+    width: 50rem;
+}
