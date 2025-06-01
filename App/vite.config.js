@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import BASE_URL from './src/config';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -7,7 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5500',
+        target: BASE_URL,
         changeOrigin: true,
         secure: false,
         // Add timeout to prevent hanging requests
@@ -24,7 +25,7 @@ export default defineConfig({
         },
       },
       '/api/health': {
-        target: 'http://localhost:5500',
+        target: BASE_URL,
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api\/health/, '/api/health'),

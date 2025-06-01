@@ -156,7 +156,7 @@ const FatBurner = () => {
               <div className="product-image">
                 {product.images && product.images.length > 0 && (
                   <img
-                    src={`http://localhost:5500${product.images[0]}`}
+                    src={`${BASE_URL}${product.images[0]}`}
                     alt={product.name} 
                   />
                 )}
