@@ -19,7 +19,7 @@ const sitemapRoutes = require('./Routes/sitemapRoutes')
 
 // Middleware
 app.use(cors({
-    origin: ['http://powersupplement.net', 'http://localhost:5173'],
+    origin: ['https://powersupplement.net', 'http://localhost:5173'],
     credentials: true,  
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
