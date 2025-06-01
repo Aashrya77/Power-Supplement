@@ -10,12 +10,12 @@ lerna-debug.log*
 node_modules/
 .env
 build/
-dist/
+
 coverage/
 
 
 
-dist/
+
 dist-ssr/
 *.local/
 

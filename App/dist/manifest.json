@@ -1,0 +1,21 @@
+{
+  "name": "Power Supplement - Premium Sports Supplements",
+  "short_name": "Power Supplement",
+  "description": "Premium quality sports supplements for athletes and fitness enthusiasts. Shop pre-workouts, protein powders, fat burners and more.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3498db",
+  "icons": [
+    {
+      "src": "/PowerLogo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/PowerLogo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
