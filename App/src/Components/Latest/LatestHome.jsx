@@ -41,7 +41,7 @@ const LatestHome = () => {
   const fetchLatestProducts = async () => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/api/v1/products?sort=-createdAt&limit=4`
+        `https://powersupplement.net/api/v1/products?sort=-createdAt&limit=4`
       );
       setLatestProducts(response.data.products || []);
     } catch (error) {
