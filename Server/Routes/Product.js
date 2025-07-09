@@ -15,5 +15,6 @@ router.put('/:id', authenticateToken, upload.array('images', 5), productControll
 router.delete('/:id', authenticateToken, productController.deleteProduct);
 router.patch('/:id/stock', authenticateToken, productController.updateStock);
 router.patch('/:id/price', authenticateToken, productController.updatePrice);
+router.delete('/:id', authenticateToken, productController.deleteProduct);
 
 module.exports = router;
