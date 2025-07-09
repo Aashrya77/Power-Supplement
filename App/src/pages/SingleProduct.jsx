@@ -102,8 +102,6 @@ const SingleProduct = () => {
           
           <PriceContainer>
             <OriginalPrice>Rs. {(product.price)} NPR</OriginalPrice>
-            {/* <CurrentPrice>Rs. {(Math.trunc(product.price * 0.9))} NPR</CurrentPrice>
-            <SaleBadge>Sale</SaleBadge> */}
           </PriceContainer>
 
           <ServingInfo>
