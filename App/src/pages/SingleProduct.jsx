@@ -101,7 +101,8 @@ const SingleProduct = () => {
           <ProductName>{product.name}</ProductName>
           
           <PriceContainer>
-            <OriginalPrice>Rs. {(product.price)} NPR</OriginalPrice>
+            <CurrentPrice>Rs. {(product.price)} NPR</CurrentPrice>
+            {console.log(product)}
           </PriceContainer>
 
           <ServingInfo>
