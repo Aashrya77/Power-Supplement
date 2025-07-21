@@ -26,7 +26,6 @@ const Protein = () => {
   const fetchCategoryId = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/api/v1/categories`);
-      console.log('All categories:', response.data);
       
       // Try different possible category names
       const possibleNames = ['Protein', 'protein', 'proteins', 'Proteins'];
@@ -37,17 +36,14 @@ const Protein = () => {
           category => category.name.toLowerCase() === name.toLowerCase()
         );
         if (found) {
-          console.log(`Found category with name: ${name}`, found);
           proteinCategory = found;
           break;
         }
       }
 
       if (proteinCategory) {
-        console.log('Setting category ID:', proteinCategory._id);
         setCategoryId(proteinCategory._id);
       } else {
-        console.log('Available category names:', response.data.map(c => c.name));
         console.error('Protein category not found in any format');
       }
     } catch (error) {
@@ -71,9 +67,7 @@ const Protein = () => {
     }
     
     try {
-      console.log('Fetching products for category:', categoryId);
       const response = await axios.get(`${BASE_URL}/api/v1/products?category=${categoryId}`);
-      console.log('Fetched products:', response.data);
       setProducts(response.data.products || []); // Fix: access products from response.data.products
     } catch (error) {
       console.error('Error fetching products:', error.response?.data || error.message);
