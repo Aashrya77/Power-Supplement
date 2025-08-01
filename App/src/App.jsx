@@ -46,6 +46,9 @@ const Orders = lazy(() => import('./Components/Account/Orders'));
 const Settings = lazy(() => import('./Components/Account/Settings'));
 const CheckoutForm = lazy(() => import('./Components/Checkout/CheckoutForm'));
 const PaymentResult = lazy(() => import('./pages/PaymentResult/PaymentResult'));
+const NotFound = lazy(() => import('./Components/NotFound/NotFound'));
+const UnderConstruction = lazy(() => import('./Components/UnderConstruction/UnderConstruction'));
+const Contact = lazy(() => import('./Components/Contact/Contact'));
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -129,6 +132,19 @@ function App() {
             <Route path="/checkout" element={<CheckoutForm />} />
             <Route path="/payment/success" element={<PaymentResult />} />
             <Route path="/payment/failure" element={<PaymentResult />} />
+            {/* Under Construction routes */}
+            <Route path="/about" element={<UnderConstruction />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/articles" element={<UnderConstruction />} />
+            <Route path="/faq" element={<UnderConstruction />} />
+            <Route path="/terms" element={<UnderConstruction />} />
+            <Route path="/refund-policy" element={<UnderConstruction />} />
+            <Route path="/shipping-policy" element={<UnderConstruction />} />
+            <Route path="/privacy-policy" element={<UnderConstruction />} />
+            <Route path="/accessibility" element={<UnderConstruction />} />
+            <Route path="/personal-info" element={<UnderConstruction />} />
+            {/* Catch-all route for 404 - must be last */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
           </Suspense>
           <Footer />

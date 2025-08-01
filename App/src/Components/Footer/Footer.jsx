@@ -1,5 +1,6 @@
 import React from "react";
 import "./Footer.css";
+import { Link } from "react-router-dom";
 import { FaFacebook } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
@@ -21,21 +22,21 @@ const Footer = () => {
           </div>
           <div className="quickLinks">
             <h3>POWER SUPPLEMENT</h3>
-            <a href="/auth">Login/Register</a>
-            <a href="">About Us</a>
-            <a href="">Contact Us</a>
-            <a href="">Articles</a>
-            <a href="">FAQ</a>
-            <a href="/partner-program">JOIN TEAM POWER</a>
+            <Link to="/auth">Login/Register</Link>
+            <Link to="/about">About Us</Link>
+            <Link to="/contact">Contact Us</Link>
+            <Link to="/articles">Articles</Link>
+            <Link to="/faq">FAQ</Link>
+            <Link to="/partner-program">JOIN TEAM POWER</Link>
           </div>
           <div className="legalTerms">
             <h3>LEGAL</h3>
-            <a href="">Terms of service</a>
-            <a href="">Refund policy</a>
-            <a href="">Shipping Policy</a>
-            <a href="">Privacy Policy</a>
-            <a href="">Accessibility</a>
-            <a href="">Do not sell or share my personal information</a>
+            <Link to="/terms">Terms of service</Link>
+            <Link to="/refund-policy">Refund policy</Link>
+            <Link to="/shipping-policy">Shipping Policy</Link>
+            <Link to="/privacy-policy">Privacy Policy</Link>
+            <Link to="/accessibility">Accessibility</Link>
+            <Link to="/personal-info">Do not sell or share my personal information</Link>
           </div>
           <div className="moneyback">
             <h3>100% MONEY BACK GUARANTEE</h3>

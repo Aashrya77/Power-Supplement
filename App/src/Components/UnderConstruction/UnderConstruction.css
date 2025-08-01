@@ -1,0 +1,159 @@
+.under-construction-container {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #111111;
+  font-family: 'Poppins', sans-serif;
+}
+
+.under-construction-content {
+  text-align: center;
+  background: rgba(17, 17, 17, 0.95);
+  padding: 3rem 2rem;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid #333;
+  max-width: 500px;
+  width: 100%;
+}
+
+.construction-icon {
+  margin-bottom: 1.5rem;
+}
+
+.construction-icon span {
+  font-size: 4rem;
+  display: block;
+  line-height: 1;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.under-construction-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.under-construction-content p {
+  font-size: 1.1rem;
+  color: #e0e0e0;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.construction-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.btn-home,
+.btn-shop {
+  padding: 12px 24px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  display: inline-block;
+}
+
+.btn-home {
+  background: #d32f2f;
+  color: white;
+}
+
+.btn-home:hover {
+  background: #b71c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
+}
+
+.btn-shop {
+  background: transparent;
+  color: #d32f2f;
+  border-color: #d32f2f;
+}
+
+.btn-shop:hover {
+  background: #d32f2f;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background-color: #333;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(45deg, #d32f2f, #ff6b6b);
+  width: 65%;
+  border-radius: 2px;
+  animation: pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: #d32f2f;
+  margin: 0;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .under-construction-content {
+    padding: 2rem 1.5rem;
+  }
+  
+  .construction-icon span {
+    font-size: 3rem;
+  }
+  
+  .under-construction-content h1 {
+    font-size: 2rem;
+  }
+  
+  .construction-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-home,
+  .btn-shop {
+    width: 200px;
+  }
+}

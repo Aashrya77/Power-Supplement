@@ -4,6 +4,7 @@ import LazyImage from '../LazyImage.jsx';
 const Home = () => {
   return (
     <div className="home">
+      
         <LazyImage src="/Originals/Originals/Homebg.webp" alt="Home background" className="home-hero" />
     </div>
   )

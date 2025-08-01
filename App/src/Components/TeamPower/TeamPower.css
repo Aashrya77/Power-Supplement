@@ -1,55 +1,400 @@
 /* General Styles */
-.team section {
-  background-image: url("\TeamPower(1).jpeg");
-  color: #fff;
-  position: relative;
+.team {
+  background-color: #111111;
+  color: white;
+  font-family: 'Poppins', sans-serif;
 }
 
-.team section::before {
-  content: "";
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Hero Section */
+.hero-section {
+  background-image: url("/TeamPower(1).jpeg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(17, 17, 17, 0.6) 100%);
+  z-index: 1;
 }
 
 .team-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  height: 100vh;
   position: relative;
-  z-index: 1000;
-  width: 100%; /* Adjusted width for responsiveness */
-  max-width: 42rem;
-  margin: auto;
-  padding-top: 3rem;
+  z-index: 2;
   text-align: center;
+  max-width: 800px;
+  padding: 2rem;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: linear-gradient(45deg, #d32f2f, #ff6b6b);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1.5rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
 }
 
 .team-content h1 {
-  font-size: 3rem;
-  margin: 0;
+  font-size: 4rem;
+  font-weight: 900;
+  margin: 0 0 1.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: linear-gradient(45deg, white, #e0e0e0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
 }
 
 .team-content p {
-  font-size: 1.125rem; /* 18px */
-  letter-spacing: 1.5;
-  margin-top: 5px;
+  font-size: 1.3rem;
+  line-height: 1.6;
   color: #e0e0e0;
+  margin-bottom: 2.5rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #d32f2f;
+  line-height: 1;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 0.5rem;
 }
 
 .join-btn {
-  padding: 15px 30px;
-  background: #d32f2f; /* Strong red */
-  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 40px;
+  background: linear-gradient(45deg, #d32f2f, #b71c1c);
+  color: white;
   border: none;
+  border-radius: 50px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   cursor: pointer;
-  letter-spacing: 1.5px;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(211, 47, 47, 0.3);
+}
+
+.join-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(211, 47, 47, 0.4);
+  background: linear-gradient(45deg, #b71c1c, #d32f2f);
+}
+
+/* Benefits Section */
+.benefits-section {
+  padding: 6rem 0;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.benefits-section h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 3rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: white;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.benefit-card {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2.5rem 2rem;
+  border-radius: 15px;
+  text-align: center;
+  border: 1px solid #333;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.benefit-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(211, 47, 47, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.benefit-card:hover::before {
+  left: 100%;
+}
+
+.benefit-card:hover {
+  transform: translateY(-5px);
+  border-color: #d32f2f;
+  box-shadow: 0 15px 30px rgba(211, 47, 47, 0.2);
+}
+
+.benefit-icon {
+  font-size: 2.5rem;
+  color: #d32f2f;
+  margin-bottom: 1.5rem;
+}
+
+.benefit-card h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.benefit-card p {
+  color: #e0e0e0;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Team CTA Section */
+.team-cta {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, rgba(211, 47, 47, 0.1) 0%, rgba(17, 17, 17, 0.9) 100%);
+  text-align: center;
+}
+
+.team-cta h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: white;
+}
+
+.team-cta > p {
+  font-size: 1.2rem;
+  color: #e0e0e0;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto 3rem;
+}
+
+.ideal-candidates {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.candidate-type {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2rem;
+  border-radius: 10px;
+  border: 1px solid #333;
+  transition: all 0.3s ease;
+}
+
+.candidate-type:hover {
+  border-color: #d32f2f;
+  transform: translateY(-3px);
+}
+
+.candidate-type h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #d32f2f;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.candidate-type p {
+  color: #e0e0e0;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 35px;
+  background: transparent;
+  color: #d32f2f;
+  border: 2px solid #d32f2f;
+  border-radius: 50px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cta-btn:hover {
+  background: #d32f2f;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
+}
+
+/* Signup Process Section */
+.signup-process {
+  padding: 4rem 0 2rem;
+  text-align: center;
+}
+
+.signup-process h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: white;
+}
+
+.signup-process p {
+  font-size: 1.2rem;
+  color: #e0e0e0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Team Gallery Section */
+.team-gallery {
+  padding: 6rem 0;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.team-gallery h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: white;
+}
+
+.team-gallery > .container > p {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #e0e0e0;
+  margin-bottom: 3rem;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.gallery-item {
+  position: relative;
+  border-radius: 15px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.1);
+}
+
+.gallery-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: white;
+  padding: 2rem 1rem 1rem;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover .gallery-overlay {
+  transform: translateY(0);
+}
+
+.gallery-overlay span {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #d32f2f;
 }
 
 .big3-desktop {
@@ -293,7 +638,61 @@
   }
 }
 
+/* Responsive Design */
 @media (max-width: 768px) {
+  .hero-section {
+    background-attachment: scroll;
+    min-height: 80vh;
+  }
+  
+  .team-content {
+    padding: 1rem;
+  }
+  
+  .team-content h1 {
+    font-size: 2.5rem;
+  }
+  
+  .team-content p {
+    font-size: 1.1rem;
+  }
+  
+  .hero-stats {
+    gap: 2rem;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+  
+  .benefits-section,
+  .team-cta,
+  .team-gallery {
+    padding: 3rem 0;
+  }
+  
+  .benefits-section h2,
+  .team-cta h2,
+  .team-gallery h2,
+  .signup-process h2 {
+    font-size: 2rem;
+  }
+  
+  .benefits-grid,
+  .ideal-candidates,
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .benefit-card {
+    padding: 2rem 1.5rem;
+  }
+  
+  .container {
+    padding: 0 1rem;
+  }
+  
   .steps-container {
     margin: 0 20px;
     padding: 30px;
