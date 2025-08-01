@@ -248,3 +248,4 @@ exports.updateStock = async (req, res) => {
     res.status(400).json({ message: 'Error updating stock', error: error.message });
   }
 };
+
