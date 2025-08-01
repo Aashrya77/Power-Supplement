@@ -53,6 +53,8 @@ const BestSeller = () => {
                   <img
                     src={`${BASE_URL}${product.images[0]}`}
                     alt={product.name}
+                    loading="lazy"
+                    decoding="async"
                   />
                 )}
               </div>
