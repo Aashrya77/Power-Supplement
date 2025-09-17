@@ -218,6 +218,9 @@ const Navbar = () => {
           <Link to="/shop-all">SHOP</Link>
           {/* <Link to="/collections/stacks">STACK & SAVE</Link> */}
           <Link to="/partner-program">TEAM POWER</Link>
+          {isLoggedIn && user?.isAdmin && (
+            <Link to="/admin" className="admin-link">DASHBOARD</Link>
+          )}
         </div>
       </div>
 
@@ -358,6 +361,11 @@ const Navbar = () => {
         <Link to="/partner-program" onClick={toggleMobileMenu} className="mobile-link">
           TEAM POWER
         </Link>
+        {isLoggedIn && user?.isAdmin && (
+          <Link to="/admin" onClick={toggleMobileMenu} className="mobile-link admin-mobile-link">
+            📊 DASHBOARD
+          </Link>
+        )}
 
         <div className="mobile-menu-bottom">
           {isLoggedIn ? (

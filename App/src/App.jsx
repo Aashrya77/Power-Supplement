@@ -41,6 +41,8 @@ const PaymentResult = lazy(() => import('./pages/PaymentResult/PaymentResult'));
 const NotFound = lazy(() => import('./Components/NotFound/NotFound'));
 const UnderConstruction = lazy(() => import('./Components/UnderConstruction/UnderConstruction'));
 const Contact = lazy(() => import('./Components/Contact/Contact'));
+const AdminDashboard = lazy(() => import('./Components/AdminDashboard/AdminDashboard'));
+const AdminProtectedRoute = lazy(() => import('./Components/AdminDashboard/AdminProtectedRoute'));
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -92,6 +94,11 @@ function App() {
             {/* Under Construction routes */}
             <Route path="/about" element={<UnderConstruction />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/admin" element={
+              <AdminProtectedRoute>
+                <AdminDashboard />
+              </AdminProtectedRoute>
+            } />
             <Route path="/articles" element={<UnderConstruction />} />
             <Route path="/faq" element={<UnderConstruction />} />
             <Route path="/terms" element={<UnderConstruction />} />
