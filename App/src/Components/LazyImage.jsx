@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { SkeletonImage } from './Skeleton/Skeleton';
 
 /**
  * Generic lazy-loading image component using IntersectionObserver.
- * Adds native `loading="lazy"` attribute as a fallback.
+ * Shows skeleton while loading and adds native `loading="lazy"` attribute as a fallback.
  */
 const LazyImage = ({ src, alt = '', className = '', ...rest }) => {
   const imgRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const current = imgRef.current;
@@ -32,16 +34,41 @@ const LazyImage = ({ src, alt = '', className = '', ...rest }) => {
     setIsVisible(true);
   }, []);
 
+  const handleImageLoad = () => {
+    setIsLoaded(true);
+  };
+
   return (
-    <img
-      ref={imgRef}
-      src={isVisible ? src : ''}
-      data-src={src}
-      alt={alt}
-      className={className}
-      loading="lazy"
-      {...rest}
-    />
+    <div ref={imgRef} className={`lazy-image-container ${className}`} style={{ position: 'relative' }}>
+      {!isLoaded && isVisible && (
+        <SkeletonImage 
+          width="100%" 
+          height={rest.height || '200px'} 
+          className="lazy-image-skeleton"
+        />
+      )}
+      {isVisible && (
+        <img
+          src={src}
+          data-src={src}
+          alt={alt}
+          className={`lazy-image ${isLoaded ? 'loaded' : 'loading'}`}
+          loading="lazy"
+          onLoad={handleImageLoad}
+          style={{
+            opacity: isLoaded ? 1 : 0,
+            transition: 'opacity 0.3s ease-in-out',
+            position: isLoaded ? 'static' : 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover'
+          }}
+          {...rest}
+        />
+      )}
+    </div>
   );
 };
 

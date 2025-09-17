@@ -1,5 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from "react";
-import Preloader from "./Components/Preloader/Preloader";
+import React, { useState, lazy, Suspense } from "react";
 import HomeSEO from "./Components/SEO/HomeSEO";
 // Essential components loaded immediately
 import Navbar from "./Components/Nav/Nav";
@@ -10,18 +9,11 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import ScrollToTop from './Components/ScrollToTop.jsx';
 
-// Simple loading component
-const ComponentLoader = () => (
-  <div style={{ 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    padding: '2rem',
-    fontFamily: 'Poppins, sans-serif'
-  }}>
-    <div>Loading...</div>
-  </div>
-);
+// Import skeleton components
+import { PageSkeleton } from './Components/Skeleton/Skeleton';
+
+// Modern skeleton loader component
+const ComponentLoader = () => <PageSkeleton />;
 
 // Lazy load non-critical components
 const Home = lazy(() => import("./Components/Home/Home"));
@@ -52,46 +44,11 @@ const Contact = lazy(() => import('./Components/Contact/Contact'));
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Check if the app is ready to render
-  useEffect(() => {
-    // Simulate checking API connection
-    const checkApiConnection = async () => {
-      try {
-        // Add a small delay to ensure backend is ready
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error initializing app:', error);
-        setIsLoading(false); // Still proceed even if there's an error
-      }
-    };
-
-    checkApiConnection();
-  }, []);
-
-  // Show a minimal loading state while checking API
-  if (isLoading) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontFamily: 'Poppins, sans-serif',
-        fontSize: '1.5rem'
-      }}>
-        <div>Initializing Power Supplement...</div>
-      </div>
-    );
-  }
 
   return (
     <AuthProvider>
       <CartProvider>
         <>
-          <Preloader />
           <ScrollToTop />
           <Navbar setCartOpen={setIsCartOpen} />
           <Sidebar isOpen={isCartOpen} closeSidebar={() => setIsCartOpen(false)} />

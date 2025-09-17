@@ -183,9 +183,9 @@ const Protein = () => {
               </div>
               <div className="product-info">
                 <h3>{product.name}</h3>
-                <div className="product-rating">
+                {/* <div className="product-rating">
                   {renderStars(product.rating || 0)}
-                </div>
+                </div> */}
                 <div className="product-price">
                   {product.salePrice ? (
                     <>
