@@ -20,22 +20,33 @@ const AdminDashboard = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, product: null });
   const [deleting, setDeleting] = useState(false);
+  const [editModal, setEditModal] = useState({ isOpen: false, product: null, activeTab: 'price' });
+  const [updating, setUpdating] = useState(false);
+  const [editForm, setEditForm] = useState({
+    price: '',
+    stock: '',
+    stockStatus: 'In Stock'
+  });
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Handle ESC key press to close modal
+  // Handle ESC key press to close modals
   useEffect(() => {
     const handleEscKey = (e) => {
-      if (e.key === 'Escape' && deleteModal.isOpen) {
-        handleDeleteCancel();
+      if (e.key === 'Escape') {
+        if (deleteModal.isOpen) {
+          handleDeleteCancel();
+        } else if (editModal.isOpen) {
+          handleEditCancel();
+        }
       }
     };
     
     window.addEventListener('keydown', handleEscKey);
     return () => window.removeEventListener('keydown', handleEscKey);
-  }, [deleteModal.isOpen]);
+  }, [deleteModal.isOpen, editModal.isOpen]);
 
   const fetchData = async () => {
     try {
@@ -175,6 +186,117 @@ const AdminDashboard = () => {
     setDeleteModal({ isOpen: false, product: null });
     // Restore scrolling when modal is closed
     document.body.style.overflow = '';
+  };
+
+  // Handle edit product
+  const handleEditClick = (product) => {
+    setEditModal({ isOpen: true, product, activeTab: 'price' });
+    setEditForm({
+      price: product.price.toString(),
+      stock: product.stock.toString(),
+      stockStatus: getStockStatus(product.stock)
+    });
+    // Prevent background scrolling when modal is open
+    document.body.style.overflow = 'hidden';
+  };
+
+  const handleEditCancel = () => {
+    setEditModal({ isOpen: false, product: null, activeTab: 'price' });
+    setEditForm({ price: '', stock: '', stockStatus: 'In Stock' });
+    // Restore scrolling when modal is closed
+    document.body.style.overflow = '';
+  };
+
+  const handleEditTabChange = (tab) => {
+    setEditModal(prev => ({ ...prev, activeTab: tab }));
+  };
+
+  const handleEditFormChange = (field, value) => {
+    setEditForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleUpdatePrice = async () => {
+    if (!editModal.product || !editForm.price) return;
+
+    try {
+      setUpdating(true);
+      const token = localStorage.getItem('authToken');
+      
+      const response = await axios.patch(
+        `${BASE_URL}/api/v1/products/${editModal.product._id}/price`,
+        { price: parseFloat(editForm.price) },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (response.status === 200) {
+        // Update product in local state
+        setProducts(prev => prev.map(p => 
+          p._id === editModal.product._id 
+            ? { ...p, price: parseFloat(editForm.price) }
+            : p
+        ));
+        
+        // Update stats
+        const priceDifference = parseFloat(editForm.price) - editModal.product.price;
+        setStats(prev => ({
+          ...prev,
+          totalRevenue: prev.totalRevenue + priceDifference
+        }));
+
+        handleEditCancel();
+        console.log('Price updated successfully');
+      }
+    } catch (error) {
+      console.error('Error updating price:', error);
+      alert('Failed to update price. Please try again.');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleUpdateStock = async () => {
+    if (!editModal.product || !editForm.stock) return;
+
+    try {
+      setUpdating(true);
+      const token = localStorage.getItem('authToken');
+      
+      const response = await axios.patch(
+        `${BASE_URL}/api/v1/products/${editModal.product._id}/stock`,
+        { 
+          stock: parseInt(editForm.stock),
+          stockStatus: editForm.stockStatus
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (response.status === 200) {
+        // Update product in local state
+        setProducts(prev => prev.map(p => 
+          p._id === editModal.product._id 
+            ? { ...p, stock: parseInt(editForm.stock) }
+            : p
+        ));
+
+        handleEditCancel();
+        console.log('Stock updated successfully');
+      }
+    } catch (error) {
+      console.error('Error updating stock:', error);
+      alert('Failed to update stock. Please try again.');
+    } finally {
+      setUpdating(false);
+    }
   };
 
   const renderOverview = () => (
@@ -395,7 +517,13 @@ const AdminDashboard = () => {
                   <td>
                     <div className="action-buttons">
                       <button className="btn-view" title="View Product">👁️</button>
-                      <button className="btn-edit" title="Edit Product">✏️</button>
+                      <button 
+                        className="btn-edit" 
+                        title="Edit Product"
+                        onClick={() => handleEditClick(product)}
+                      >
+                        ✏️
+                      </button>
                       <button 
                         className="btn-delete" 
                         title="Delete Product"
@@ -617,6 +745,147 @@ const AdminDashboard = () => {
               >
                 {deleting ? 'Deleting...' : 'Delete Product'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Product Modal */}
+      {editModal.isOpen && (
+        <div className="modal-overlay" onClick={handleEditCancel}>
+          <div className="edit-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>✏️ Edit Product</h2>
+              <button className="modal-close" onClick={handleEditCancel}>×</button>
+            </div>
+            
+            {/* Product Info */}
+            <div className="edit-product-info">
+              {editModal.product?.images && editModal.product.images[0] && (
+                <img 
+                  src={`${BASE_URL}${editModal.product.images[0]}`} 
+                  alt={editModal.product.name}
+                  className="edit-product-image"
+                />
+              )}
+              <div className="edit-product-details">
+                <h3>{editModal.product?.name}</h3>
+                <p><strong>Category:</strong> {editModal.product?.category?.name}</p>
+                <p><strong>Current Price:</strong> Rs. {editModal.product?.price}</p>
+                <p><strong>Current Stock:</strong> {editModal.product?.stock} units</p>
+              </div>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div className="edit-tabs">
+              <button 
+                className={`edit-tab ${editModal.activeTab === 'price' ? 'active' : ''}`}
+                onClick={() => handleEditTabChange('price')}
+              >
+                💰 Update Price
+              </button>
+              <button 
+                className={`edit-tab ${editModal.activeTab === 'stock' ? 'active' : ''}`}
+                onClick={() => handleEditTabChange('stock')}
+              >
+                📦 Update Stock
+              </button>
+            </div>
+
+            {/* Tab Content */}
+            <div className="edit-content">
+              {editModal.activeTab === 'price' && (
+                <div className="price-update-form">
+                  <h4>Update Product Price</h4>
+                  <div className="form-group">
+                    <label htmlFor="price">New Price (NPR)</label>
+                    <input
+                      type="number"
+                      id="price"
+                      value={editForm.price}
+                      onChange={(e) => handleEditFormChange('price', e.target.value)}
+                      placeholder="Enter new price"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
+                  <div className="price-comparison">
+                    <p><strong>Current Price:</strong> Rs. {editModal.product?.price}</p>
+                    <p><strong>New Price:</strong> Rs. {editForm.price || '0'}</p>
+                    <p className={`price-difference ${parseFloat(editForm.price) > editModal.product?.price ? 'increase' : 'decrease'}`}>
+                      <strong>Difference:</strong> Rs. {editForm.price ? Math.abs(parseFloat(editForm.price) - editModal.product?.price).toFixed(2) : '0'} 
+                      {editForm.price && parseFloat(editForm.price) !== editModal.product?.price && (
+                        <span className="arrow">
+                          {parseFloat(editForm.price) > editModal.product?.price ? ' ↗️' : ' ↘️'}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {editModal.activeTab === 'stock' && (
+                <div className="stock-update-form">
+                  <h4>Update Stock & Status</h4>
+                  <div className="form-group">
+                    <label htmlFor="stock">Stock Quantity</label>
+                    <input
+                      type="number"
+                      id="stock"
+                      value={editForm.stock}
+                      onChange={(e) => handleEditFormChange('stock', e.target.value)}
+                      placeholder="Enter stock quantity"
+                      min="0"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="stockStatus">Stock Status</label>
+                    <select
+                      id="stockStatus"
+                      value={editForm.stockStatus}
+                      onChange={(e) => handleEditFormChange('stockStatus', e.target.value)}
+                    >
+                      <option value="In Stock">In Stock</option>
+                      <option value="Out of Stock">Out of Stock</option>
+                      <option value="Coming Soon">Coming Soon</option>
+                    </select>
+                  </div>
+                  <div className="stock-comparison">
+                    <p><strong>Current Stock:</strong> {editModal.product?.stock} units</p>
+                    <p><strong>New Stock:</strong> {editForm.stock || '0'} units</p>
+                    <p><strong>Status:</strong> {editForm.stockStatus}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions */}
+            <div className="modal-actions">
+              <button 
+                className="btn-cancel" 
+                onClick={handleEditCancel}
+                disabled={updating}
+              >
+                Cancel
+              </button>
+              {editModal.activeTab === 'price' && (
+                <button 
+                  className="btn-update" 
+                  onClick={handleUpdatePrice}
+                  disabled={updating || !editForm.price}
+                >
+                  {updating ? 'Updating...' : 'Update Price'}
+                </button>
+              )}
+              {editModal.activeTab === 'stock' && (
+                <button 
+                  className="btn-update" 
+                  onClick={handleUpdateStock}
+                  disabled={updating || !editForm.stock}
+                >
+                  {updating ? 'Updating...' : 'Update Stock'}
+                </button>
+              )}
             </div>
           </div>
         </div>

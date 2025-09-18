@@ -855,6 +855,193 @@
   cursor: not-allowed;
 }
 
+/* Edit Modal Styles */
+.edit-modal {
+  background: #111111;
+  border: 1px solid #333;
+  border-radius: 15px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+  position: relative;
+  top: -20px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.edit-product-info {
+  display: flex;
+  gap: 20px;
+  margin: 20px 25px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid #333;
+}
+
+.edit-product-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.edit-product-details h3 {
+  margin: 0 0 10px 0;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.edit-product-details p {
+  margin: 5px 0;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.edit-product-details strong {
+  color: white;
+}
+
+/* Edit Tabs */
+.edit-tabs {
+  display: flex;
+  border-bottom: 1px solid #333;
+  margin: 0 25px;
+}
+
+.edit-tab {
+  flex: 1;
+  padding: 15px 20px;
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.edit-tab:hover {
+  color: #e0e0e0;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.edit-tab.active {
+  color: #d32f2f;
+  border-bottom-color: #d32f2f;
+  background: rgba(211, 47, 47, 0.1);
+}
+
+/* Edit Content */
+.edit-content {
+  padding: 25px;
+}
+
+.price-update-form h4,
+.stock-update-form h4 {
+  margin: 0 0 20px 0;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #e0e0e0;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #d32f2f;
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+}
+
+.form-group input::placeholder {
+  color: #666;
+}
+
+/* Price and Stock Comparison */
+.price-comparison,
+.stock-comparison {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  margin-top: 15px;
+}
+
+.price-comparison p,
+.stock-comparison p {
+  margin: 8px 0;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.price-comparison strong,
+.stock-comparison strong {
+  color: white;
+}
+
+.price-difference.increase {
+  color: #4ade80;
+}
+
+.price-difference.decrease {
+  color: #f87171;
+}
+
+.arrow {
+  font-size: 1.1rem;
+}
+
+/* Update Button */
+.btn-update {
+  background: #d32f2f;
+  border: 1px solid #d32f2f;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-update:hover:not(:disabled) {
+  background: #b71c1c;
+  border-color: #b71c1c;
+  box-shadow: 0 5px 15px rgba(211, 47, 47, 0.3);
+}
+
+.btn-update:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .admin-dashboard {
@@ -959,6 +1146,48 @@
 
   .btn-cancel,
   .btn-delete-confirm {
+    width: 100%;
+  }
+
+  /* Mobile Edit Modal Styles */
+  .edit-modal {
+    width: 95%;
+    margin: 10px;
+    max-height: 90vh;
+    top: -30px;
+  }
+
+  .edit-product-info {
+    flex-direction: column;
+    text-align: center;
+    margin: 15px;
+    padding: 15px;
+  }
+
+  .edit-product-image {
+    align-self: center;
+  }
+
+  .edit-tabs {
+    margin: 0 15px;
+  }
+
+  .edit-tab {
+    padding: 12px 15px;
+    font-size: 0.9rem;
+  }
+
+  .edit-content {
+    padding: 20px 15px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .btn-cancel,
+  .btn-update {
     width: 100%;
   }
 }
