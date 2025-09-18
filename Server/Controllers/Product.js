@@ -123,6 +123,19 @@ exports.createProduct = async (req, res) => {
     if (req.files && req.files.length > 0) {
       productData.images = req.files.map(file => `/uploads/${file.filename}`);
     }
+    
+    // Set stockStatus based on stock quantity if not provided
+    if (!productData.stockStatus) {
+      productData.stockStatus = productData.stock > 0 ? "In Stock" : "Out of Stock";
+    } else {
+      // Validate stockStatus if provided
+      const validStatuses = ["In Stock", "Out of Stock", "Coming Soon"];
+      if (!validStatuses.includes(productData.stockStatus)) {
+        return res.status(400).json({ 
+          message: 'Invalid stock status. Must be one of: In Stock, Out of Stock, Coming Soon' 
+        });
+      }
+    }
 
     const newProduct = new Product(productData);
     const savedProduct = await newProduct.save();
@@ -158,6 +171,19 @@ exports.updateProduct = async (req, res) => {
     // Handle image uploads for updates
     if (req.files && req.files.length > 0) {
       updateData.images = req.files.map(file => `/uploads/${file.filename}`);
+    }
+    
+    // Validate stockStatus if provided
+    if (updateData.stockStatus) {
+      const validStatuses = ["In Stock", "Out of Stock", "Coming Soon"];
+      if (!validStatuses.includes(updateData.stockStatus)) {
+        return res.status(400).json({ 
+          message: 'Invalid stock status. Must be one of: In Stock, Out of Stock, Coming Soon' 
+        });
+      }
+    } else if (updateData.stock !== undefined) {
+      // Update stockStatus based on stock if stock is being updated but stockStatus is not provided
+      updateData.stockStatus = updateData.stock > 0 ? "In Stock" : "Out of Stock";
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(
@@ -233,14 +259,35 @@ exports.searchProducts = async (req, res) => {
 // Update product stock
 exports.updateStock = async (req, res) => {
   try {
-    const { quantity } = req.body;
+    const { stock, stockStatus } = req.body;
     const product = await Product.findById(req.params.id);
     
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
     
-    product.stock = quantity;
+    // Update stock quantity if provided
+    if (stock !== undefined) {
+      product.stock = stock;
+    }
+    
+    // Update stock status if provided
+    if (stockStatus !== undefined) {
+      // Validate that stockStatus is one of the allowed values
+      const validStatuses = ["In Stock", "Out of Stock", "Coming Soon"];
+      if (!validStatuses.includes(stockStatus)) {
+        return res.status(400).json({ 
+          message: 'Invalid stock status. Must be one of: In Stock, Out of Stock, Coming Soon' 
+        });
+      }
+      product.stockStatus = stockStatus;
+    } else {
+      // Automatically set stockStatus based on quantity if not explicitly provided
+      if (stock !== undefined) {
+        product.stockStatus = stock > 0 ? "In Stock" : "Out of Stock";
+      }
+    }
+    
     await product.save();
     
     res.status(200).json(product);
