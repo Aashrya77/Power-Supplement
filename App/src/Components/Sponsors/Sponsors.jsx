@@ -41,8 +41,7 @@ const Sponsors = () => {
                 <img
                   src={sponsor.logo}
                   alt={sponsor.name}
-                  loading="lazy"
-                  decoding="async"
+
                 />
               </div>
               <div className="sponsor-info">
