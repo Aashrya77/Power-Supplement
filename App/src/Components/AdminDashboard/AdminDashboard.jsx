@@ -15,6 +15,7 @@ const AdminDashboard = () => {
   });
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [flavors, setFlavors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -27,6 +28,19 @@ const AdminDashboard = () => {
     stock: '',
     stockStatus: 'In Stock'
   });
+  const [addModal, setAddModal] = useState({ isOpen: false });
+  const [adding, setAdding] = useState(false);
+  const [addForm, setAddForm] = useState({
+    name: '',
+    description: '',
+    category: '',
+    flavors: [],
+    price: '',
+    images: [],
+    stock: '',
+    stockStatus: 'In Stock'
+  });
+  const [newFlavor, setNewFlavor] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -40,17 +54,33 @@ const AdminDashboard = () => {
           handleDeleteCancel();
         } else if (editModal.isOpen) {
           handleEditCancel();
+        } else if (addModal.isOpen) {
+          handleAddCancel();
         }
       }
     };
     
     window.addEventListener('keydown', handleEscKey);
     return () => window.removeEventListener('keydown', handleEscKey);
-  }, [deleteModal.isOpen, editModal.isOpen]);
+  }, [deleteModal.isOpen, editModal.isOpen, addModal.isOpen]);
+
+  // Utility function to validate token
+  const validateToken = () => {
+    const token = localStorage.getItem('authToken');
+    return token;
+  };
 
   const fetchData = async () => {
     try {
       setLoading(true);
+      
+      // Check if user is authenticated
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        console.warn('No auth token found, redirecting to login');
+        logout();
+        return;
+      }
       
       // Fetch products
       const productsResponse = await axios.get(`${BASE_URL}/api/v1/products`);
@@ -60,6 +90,10 @@ const AdminDashboard = () => {
       // Fetch categories
       const categoriesResponse = await axios.get(`${BASE_URL}/api/v1/categories`);
       setCategories(categoriesResponse.data || []);
+
+      // Fetch flavors
+      const flavorsResponse = await axios.get(`${BASE_URL}/api/v1/flavors`);
+      setFlavors(flavorsResponse.data || []);
 
       // Calculate stats from real data
       const totalRevenue = productsData.reduce((sum, product) => sum + product.price, 0);
@@ -72,7 +106,10 @@ const AdminDashboard = () => {
       });
       
     } catch (error) {
-      console.error('Error fetching data:', error);
+      if (error.response?.status === 401) {
+        alert('Your session has expired. Please login again.');
+        logout();
+      }
     } finally {
       setLoading(false);
     }
@@ -87,6 +124,12 @@ const AdminDashboard = () => {
     
     return Array.from({ length: count }, (_, index) => {
       const randomProduct = products[index % products.length];
+      
+      // Safety check for product
+      if (!randomProduct || !randomProduct.name) {
+        return null;
+      }
+      
       const randomCustomer = customers[index % customers.length];
       const randomStatus = statuses[index % statuses.length];
       const date = new Date();
@@ -100,7 +143,7 @@ const AdminDashboard = () => {
         status: randomStatus,
         date: date.toISOString().split('T')[0]
       };
-    });
+    }).filter(order => order !== null);
   };
 
   // Helper function to format price
@@ -115,16 +158,27 @@ const AdminDashboard = () => {
   };
 
   // Helper function to get stock status
-  const getStockStatus = (stock) => {
-    if (stock === 0) return 'Out of Stock';
-    if (stock < 10) return 'Low Stock';
+  const getStockStatus = (product) => {
+    // If stockStatus is provided by the server, use it
+    if (product.stockStatus) {
+      return product.stockStatus;
+    }
+    
+    // Fallback to calculating based on stock quantity
+    if (product.stock === 0) return 'Out of Stock';
+    if (product.stock < 10) return 'Low Stock';
     return 'In Stock';
   };
 
   // Filter products based on search term and category
   const filteredProducts = products.filter(product => {
+    // Safety check to ensure product exists and has required properties
+    if (!product || !product.name) {
+      return false;
+    }
+    
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.category?.name.toLowerCase().includes(searchTerm.toLowerCase());
+                         product.category?.name?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || product.category?._id === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -144,6 +198,12 @@ const AdminDashboard = () => {
       
       // Get auth token from localStorage
       const token = localStorage.getItem('authToken');
+      
+      if (!token) {
+        alert('Authentication token not found. Please login again.');
+        logout();
+        return;
+      }
       
       const response = await axios.delete(
         `${BASE_URL}/api/v1/products/${deleteModal.product._id}`,
@@ -194,7 +254,7 @@ const AdminDashboard = () => {
     setEditForm({
       price: product.price.toString(),
       stock: product.stock.toString(),
-      stockStatus: getStockStatus(product.stock)
+      stockStatus: product.stockStatus || getStockStatus(product)
     });
     // Prevent background scrolling when modal is open
     document.body.style.overflow = 'hidden';
@@ -221,6 +281,12 @@ const AdminDashboard = () => {
     try {
       setUpdating(true);
       const token = localStorage.getItem('authToken');
+      
+      if (!token) {
+        alert('Authentication token not found. Please login again.');
+        logout();
+        return;
+      }
       
       const response = await axios.patch(
         `${BASE_URL}/api/v1/products/${editModal.product._id}/price`,
@@ -253,7 +319,12 @@ const AdminDashboard = () => {
       }
     } catch (error) {
       console.error('Error updating price:', error);
-      alert('Failed to update price. Please try again.');
+      if (error.response?.status === 401) {
+        alert('Authentication failed. Please login again.');
+        logout();
+      } else {
+        alert(`Failed to update price: ${error.response?.data?.message || error.message}`);
+      }
     } finally {
       setUpdating(false);
     }
@@ -265,6 +336,12 @@ const AdminDashboard = () => {
     try {
       setUpdating(true);
       const token = localStorage.getItem('authToken');
+      
+      if (!token) {
+        alert('Authentication token not found. Please login again.');
+        logout();
+        return;
+      }
       
       const response = await axios.patch(
         `${BASE_URL}/api/v1/products/${editModal.product._id}/stock`,
@@ -284,7 +361,7 @@ const AdminDashboard = () => {
         // Update product in local state
         setProducts(prev => prev.map(p => 
           p._id === editModal.product._id 
-            ? { ...p, stock: parseInt(editForm.stock) }
+            ? { ...p, stock: parseInt(editForm.stock), stockStatus: editForm.stockStatus }
             : p
         ));
 
@@ -293,9 +370,162 @@ const AdminDashboard = () => {
       }
     } catch (error) {
       console.error('Error updating stock:', error);
-      alert('Failed to update stock. Please try again.');
+      if (error.response?.status === 401) {
+        alert('Authentication failed. Please login again.');
+        logout();
+      } else {
+        alert(`Failed to update stock: ${error.response?.data?.message || error.message}`);
+      }
     } finally {
       setUpdating(false);
+    }
+  };
+
+  // Handle add product
+  const handleAddClick = () => {
+    setAddModal({ isOpen: true });
+    setAddForm({
+      name: '',
+      description: '',
+      category: '',
+      flavors: [],
+      price: '',
+      images: [],
+      stock: '',
+      stockStatus: 'In Stock'
+    });
+    // Prevent background scrolling when modal is open
+    document.body.style.overflow = 'hidden';
+  };
+
+  const handleAddCancel = () => {
+    setAddModal({ isOpen: false });
+    setAddForm({
+      name: '',
+      description: '',
+      category: '',
+      flavors: [],
+      price: '',
+      images: [],
+      stock: '',
+      stockStatus: 'In Stock'
+    });
+    // Restore scrolling when modal is closed
+    document.body.style.overflow = '';
+  };
+
+  const handleAddFormChange = (field, value) => {
+    setAddForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleAddFlavor = (flavorId) => {
+    const selectedFlavor = flavors.find(f => f._id === flavorId);
+    if (selectedFlavor && !addForm.flavors.some(f => f._id === selectedFlavor._id)) {
+      setAddForm(prev => ({
+        ...prev,
+        flavors: [...prev.flavors, selectedFlavor]
+      }));
+    }
+  };
+
+  const handleRemoveFlavor = (index) => {
+    setAddForm(prev => ({
+      ...prev,
+      flavors: prev.flavors.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files);
+    setAddForm(prev => ({
+      ...prev,
+      images: [...prev.images, ...files]
+    }));
+  };
+
+  const handleRemoveImage = (index) => {
+    setAddForm(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleAddProduct = async () => {
+    if (!addForm.name || !addForm.description || !addForm.category || !addForm.price || !addForm.stock) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      setAdding(true);
+      const token = validateToken();
+      
+      if (!token) {
+        alert('Authentication token not found. Please login again.');
+        logout();
+        return;
+      }
+      
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('name', addForm.name);
+      formData.append('description', addForm.description);
+      formData.append('category', addForm.category);
+      formData.append('price', parseFloat(addForm.price));
+      formData.append('stock', parseInt(addForm.stock));
+      formData.append('stockStatus', addForm.stockStatus);
+      
+      // Add flavors (send flavor IDs)
+      addForm.flavors.forEach((flavor, index) => {
+        formData.append(`flavors[${index}]`, flavor._id);
+      });
+      
+      // Add images
+      addForm.images.forEach((image) => {
+        formData.append('images', image);
+      });
+
+      const response = await axios.post(
+        `${BASE_URL}/api/v1/products`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+
+      if (response.status === 201) {
+        // Add new product to local state
+        const newProduct = response.data.product || response.data;
+        
+        if (newProduct && newProduct._id) {
+          setProducts(prev => [newProduct, ...prev]);
+          
+          // Update stats
+          setStats(prev => ({
+            ...prev,
+            totalProducts: prev.totalProducts + 1,
+            totalRevenue: prev.totalRevenue + parseFloat(addForm.price)
+          }));
+          
+          handleAddCancel();
+        } else {
+          alert('Product was created but there was an issue with the response data. Please refresh the page.');
+        }
+      }
+    } catch (error) {
+      if (error.response?.status === 401) {
+        alert('Authentication failed. Please login again.');
+        logout();
+      } else if (error.response?.status === 403) {
+        alert('You do not have permission to add products.');
+      } else {
+        alert(`Failed to add product: ${error.response?.data?.message || error.message}`);
+      }
+    } finally {
+      setAdding(false);
     }
   };
 
@@ -455,7 +685,7 @@ const AdminDashboard = () => {
                 </option>
               ))}
             </select>
-            <button className="btn-primary">Add Product</button>
+            <button className="btn-primary" onClick={handleAddClick}>Add Product</button>
           </div>
         </div>
         <div className="table-container">
@@ -510,8 +740,8 @@ const AdminDashboard = () => {
                     )}
                   </td>
                   <td>
-                    <span className={`status ${getStockStatus(product.stock).toLowerCase().replace(' ', '-')}`}>
-                      {getStockStatus(product.stock)}
+                    <span className={`status ${getStockStatus(product).toLowerCase().replace(/ /g, '-')}`}>
+                      {getStockStatus(product)}
                     </span>
                   </td>
                   <td>
@@ -886,6 +1116,230 @@ const AdminDashboard = () => {
                   {updating ? 'Updating...' : 'Update Stock'}
                 </button>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Product Modal */}
+      {addModal.isOpen && (
+        <div className="modal-overlay" onClick={handleAddCancel}>
+          <div className="add-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>➕ Add New Product</h2>
+              <button className="modal-close" onClick={handleAddCancel}>×</button>
+            </div>
+            
+            <div className="add-content">
+              <form onSubmit={(e) => { e.preventDefault(); handleAddProduct(); }}>
+                {/* Basic Information */}
+                <div className="form-section">
+                  <h3>📝 Basic Information</h3>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="productName">Product Name *</label>
+                      <input
+                        type="text"
+                        id="productName"
+                        value={addForm.name}
+                        onChange={(e) => handleAddFormChange('name', e.target.value)}
+                        placeholder="Enter product name"
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="productCategory">Category *</label>
+                      <select
+                        id="productCategory"
+                        value={addForm.category}
+                        onChange={(e) => handleAddFormChange('category', e.target.value)}
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map(category => (
+                          <option key={category._id} value={category._id}>
+                            {category.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label htmlFor="productDescription">Product Description *</label>
+                    <div className="textarea-container">
+                      <textarea
+                        id="productDescription"
+                        value={addForm.description}
+                        onChange={(e) => handleAddFormChange('description', e.target.value)}
+                        placeholder="Describe your product in detail... Include benefits, ingredients, usage instructions, and any special features that make this product unique."
+                        rows="5"
+                        maxLength="1000"
+                        required
+                      />
+                      <div className="character-counter">
+                        <span className={addForm.description.length > 800 ? 'warning' : ''}>
+                          {addForm.description.length}/1000 characters
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pricing & Stock */}
+                <div className="form-section">
+                  <h3>💰 Pricing & Stock</h3>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="productPrice">Price (NPR) *</label>
+                      <input
+                        type="number"
+                        id="productPrice"
+                        value={addForm.price}
+                        onChange={(e) => handleAddFormChange('price', e.target.value)}
+                        placeholder="Enter price"
+                        min="0"
+                        step="0.01"
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="productStock">Stock Quantity *</label>
+                      <input
+                        type="number"
+                        id="productStock"
+                        value={addForm.stock}
+                        onChange={(e) => handleAddFormChange('stock', e.target.value)}
+                        placeholder="Enter stock quantity"
+                        min="0"
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="productStockStatus">Stock Status</label>
+                      <select
+                        id="stockStatus"
+                        value={addForm.stockStatus}
+                        onChange={(e) => handleAddFormChange('stockStatus', e.target.value)}
+                      >
+                        <option value="In Stock">In Stock</option>
+                        <option value="Out of Stock">Out of Stock</option>
+                        <option value="Coming Soon">Coming Soon</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Flavors */}
+                <div className="form-section">
+                  <h3>🍓 Product Flavors</h3>
+                  <div className="flavor-selection-group">
+                    <div className="form-group">
+                      <label htmlFor="flavorSelect">Select Flavors</label>
+                      <select
+                        id="flavorSelect"
+                        onChange={(e) => {
+                          const selectedFlavor = flavors.find(f => f._id === e.target.value);
+                          if (selectedFlavor && !addForm.flavors.some(f => f._id === selectedFlavor._id)) {
+                            setAddForm(prev => ({
+                              ...prev,
+                              flavors: [...prev.flavors, selectedFlavor]
+                            }));
+                          }
+                          e.target.value = '';
+                        }}
+                        className="flavor-dropdown"
+                      >
+                        <option value="">Choose a flavor to add</option>
+                        {flavors.map(flavor => (
+                          <option 
+                            key={flavor._id} 
+                            value={flavor._id}
+                            disabled={addForm.flavors.some(f => f._id === flavor._id)}
+                          >
+                            {flavor.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  
+                  {addForm.flavors.length > 0 && (
+                    <div className="selected-flavors">
+                      <h4>Selected Flavors:</h4>
+                      <div className="flavors-grid">
+                        {addForm.flavors.map((flavor, index) => (
+                          <div key={flavor._id || index} className="flavor-card">
+                            <span className="flavor-name">{flavor.name}</span>
+                            <button 
+                              type="button" 
+                              onClick={() => handleRemoveFlavor(index)}
+                              className="btn-remove-flavor"
+                              title="Remove flavor"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Images */}
+                <div className="form-section">
+                  <h3>📸 Product Images</h3>
+                  <div className="form-group">
+                    <label htmlFor="productImages">Upload Images</label>
+                    <input
+                      type="file"
+                      id="productImages"
+                      multiple
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="file-input"
+                    />
+                  </div>
+                  {addForm.images.length > 0 && (
+                    <div className="images-preview">
+                      {addForm.images.map((image, index) => (
+                        <div key={index} className="image-preview-item">
+                          <img 
+                            src={URL.createObjectURL(image)} 
+                            alt={`Preview ${index + 1}`}
+                            className="preview-image"
+                          />
+                          <button 
+                            type="button" 
+                            onClick={() => handleRemoveImage(index)}
+                            className="btn-remove-image"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </form>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="modal-actions">
+              <button 
+                className="btn-cancel" 
+                onClick={handleAddCancel}
+                disabled={adding}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn-add-product" 
+                onClick={handleAddProduct}
+                disabled={adding || !addForm.name || !addForm.description || !addForm.category || !addForm.price || !addForm.stock}
+              >
+                {adding ? 'Adding Product...' : 'Add Product'}
+              </button>
             </div>
           </div>
         </div>

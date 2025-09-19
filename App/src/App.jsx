@@ -21,7 +21,7 @@ const LatestHome = lazy(() => import("./Components/Latest/LatestHome"));
 const ImgLinks = lazy(() => import("./Components/ImgLinks/ImgLinks"));
 const CTA1 = lazy(() => import("./Components/CTA1/CTA1.jsx"));
 const CTA2 = lazy(() => import("./Components/CTA2/CTA2.jsx"));
-const LazyBestSeller = lazy(() => import("./Components/BestSeller/LazyBestSeller.jsx"));
+const LazySponsors = lazy(() => import("./Components/Sponsors/LazySponsors.jsx"));
 const Testimonials = lazy(() => import("./Components/Testimonials/Testimonials.jsx"));
 const Auth = lazy(() => import("./Auth/Auth.jsx"));
 const TeamPower = lazy(() => import("./Components/TeamPower/TeamPower.jsx"));
@@ -66,7 +66,7 @@ function App() {
                   <ImgLinks />
                   <CTA1 />
                   <CTA2 />
-                  <LazyBestSeller />
+                  <LazySponsors />
                   <Testimonials />
                 </>
               }
