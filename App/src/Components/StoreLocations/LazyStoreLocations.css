@@ -1,0 +1,6 @@
+.lazy-store-locations-container {
+  width: 100%;
+  min-height: 100vh;
+  background: #111111;
+  transition: opacity 0.3s ease-in-out;
+}

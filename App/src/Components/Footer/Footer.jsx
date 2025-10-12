@@ -24,6 +24,7 @@ const Footer = () => {
             <h3>POWER SUPPLEMENT</h3>
             <Link to="/auth">Login/Register</Link>
             <Link to="/about">About Us</Link>
+            <Link to="/stores">Store Locations</Link>
             <Link to="/contact">Contact Us</Link>
             <Link to="/articles">Articles</Link>
             <Link to="/faq">FAQ</Link>

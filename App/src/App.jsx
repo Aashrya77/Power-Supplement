@@ -22,6 +22,7 @@ const ImgLinks = lazy(() => import("./Components/ImgLinks/ImgLinks"));
 const CTA1 = lazy(() => import("./Components/CTA1/CTA1.jsx"));
 const CTA2 = lazy(() => import("./Components/CTA2/CTA2.jsx"));
 const LazySponsors = lazy(() => import("./Components/Sponsors/LazySponsors.jsx"));
+const LazyStoreLocations = lazy(() => import("./Components/StoreLocations/LazyStoreLocations.jsx"));
 const Testimonials = lazy(() => import("./Components/Testimonials/Testimonials.jsx"));
 const Auth = lazy(() => import("./Auth/Auth.jsx"));
 const TeamPower = lazy(() => import("./Components/TeamPower/TeamPower.jsx"));
@@ -94,6 +95,7 @@ function App() {
             {/* Under Construction routes */}
             <Route path="/about" element={<UnderConstruction />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/stores" element={<LazyStoreLocations />} />
             <Route path="/admin" element={
               <AdminProtectedRoute>
                 <AdminDashboard />
