@@ -128,14 +128,14 @@ Make sure blog posts use one of these exact category names.
 
 ## Frontend Integration
 
-Once your backend is ready, update the `fetchBlogs` function in `Blogs.jsx`:
+✅ **INTEGRATED** - The frontend is now connected to the backend API at `${BASE_URL}/api/v1/blogs`
 
-```javascript
-const response = await fetch('YOUR_API_URL/api/blogs');
-if (!response.ok) throw new Error('Failed to fetch blogs');
-const data = await response.json();
-setBlogs(data);
-```
+The integration includes:
+- Automatic API endpoint configuration from `config.js`
+- Proper handling of backend response format (`data.blogs`)
+- Full URL construction for images and videos
+- Support for both relative and absolute URLs
+- Video thumbnail support with poster images
 
 ## Features Already Implemented
 

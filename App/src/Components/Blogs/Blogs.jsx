@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Blogs.css";
 import { useNavigate } from "react-router-dom";
 import LazyImage from "../LazyImage";
+import BASE_URL from "../../config";
 
 const Blogs = () => {
   const navigate = useNavigate();
@@ -17,37 +18,25 @@ const Blogs = () => {
         setLoading(true);
         setError(null);
         
-        // TODO: Replace with your actual API endpoint
-        // Expected API Response Format:
-        // [
-        //   {
-        //     _id: "unique-blog-id",
-        //     title: "Blog Title",
-        //     excerpt: "Brief description or preview text",
-        //     category: "Supplements" | "Nutrition" | "Training" | "Weight Loss" | "Recovery",
-        //     author: "Author Name",
-        //     date: "2025-01-10T00:00:00.000Z", // ISO date string
-        //     readTime: "5 min read",
-        //     mediaType: "image" | "video", // Type of media
-        //     image: "https://example.com/image.jpg", // For images (optional if imageUrl is used)
-        //     imageUrl: "https://example.com/image.jpg", // Alternative field for images
-        //     videoUrl: "https://example.com/video.mp4", // For videos (only if mediaType is 'video')
-        //     thumbnail: "https://example.com/thumbnail.jpg", // Video thumbnail (optional)
-        //   },
-        //   ...
-        // ]
-        //
-        // const response = await fetch('YOUR_API_ENDPOINT/api/blogs');
-        // if (!response.ok) throw new Error('Failed to fetch blogs');
-        // const data = await response.json();
-        // setBlogs(data);
+        const response = await fetch(`${BASE_URL}/api/v1/blogs`);
         
-        // Temporary: Set empty array until backend is ready
-        setBlogs([]);
+        if (!response.ok) {
+          throw new Error('Failed to fetch blogs');
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.blogs) {
+          setBlogs(data.blogs);
+        } else {
+          setBlogs([]);
+        }
+        
         setLoading(false);
       } catch (err) {
         console.error('Error fetching blogs:', err);
         setError(err.message);
+        setBlogs([]);
         setLoading(false);
       }
     };
@@ -69,21 +58,27 @@ const Blogs = () => {
   // Helper function to render media (image or video)
   const renderMedia = (blog) => {
     if (blog.mediaType === 'video' && blog.videoUrl) {
+      const videoUrl = blog.videoUrl.startsWith('http') ? blog.videoUrl : `${BASE_URL}${blog.videoUrl}`;
+      const posterUrl = blog.thumbnail ? (blog.thumbnail.startsWith('http') ? blog.thumbnail : `${BASE_URL}${blog.thumbnail}`) : '';
+      
       return (
         <video 
           className="blog-video" 
           controls 
-          poster={blog.thumbnail || ''}
+          poster={posterUrl}
           preload="metadata"
         >
-          <source src={blog.videoUrl} type="video/mp4" />
+          <source src={videoUrl} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       );
     } else if (blog.image || blog.imageUrl) {
+      const imageUrl = (blog.image || blog.imageUrl);
+      const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : `${BASE_URL}${imageUrl}`;
+      
       return (
         <LazyImage
-          src={blog.image || blog.imageUrl}
+          src={fullImageUrl}
           alt={blog.title}
           className="blog-image"
         />
@@ -147,16 +142,20 @@ const Blogs = () => {
         {filteredBlogs.map((blog) => (
           <article 
             className="blog-card" 
-            key={blog.id}
-            onClick={() => handleBlogClick(blog.id)}
+            key={blog._id || blog.id}
+            onClick={() => handleBlogClick(blog._id || blog.id)}
           >
             <div className="blog-image-wrapper">
-              <LazyImage
-                src={blog.image}
-                alt={blog.title}
-                className="blog-image"
-              />
+              {renderMedia(blog)}
               <div className="blog-category-tag">{blog.category}</div>
+              {blog.mediaType === 'video' && (
+                <div className="video-indicator">
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <circle cx="24" cy="24" r="24" fill="rgba(0,0,0,0.7)"/>
+                    <path d="M18 14L34 24L18 34V14Z" fill="white"/>
+                  </svg>
+                </div>
+              )}
             </div>
             <div className="blog-content">
               <div className="blog-meta">

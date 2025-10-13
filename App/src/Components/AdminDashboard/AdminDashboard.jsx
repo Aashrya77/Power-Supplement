@@ -42,8 +42,32 @@ const AdminDashboard = () => {
   });
   const [newFlavor, setNewFlavor] = useState('');
 
+  // Blog management state
+  const [blogs, setBlogs] = useState([]);
+  const [blogLoading, setBlogLoading] = useState(false);
+  const [blogSearchTerm, setBlogSearchTerm] = useState('');
+  const [selectedBlogCategory, setSelectedBlogCategory] = useState('all');
+  const [blogDeleteModal, setBlogDeleteModal] = useState({ isOpen: false, blog: null });
+  const [blogEditModal, setBlogEditModal] = useState({ isOpen: false, blog: null });
+  const [blogAddModal, setBlogAddModal] = useState({ isOpen: false });
+  const [blogForm, setBlogForm] = useState({
+    title: '',
+    excerpt: '',
+    content: '',
+    category: 'Supplements',
+    author: 'Power Team',
+    readTime: '5 min read',
+    mediaType: 'image',
+    published: true,
+    imageFile: null,
+    videoFile: null,
+    thumbnailFile: null
+  });
+  const [blogSubmitting, setBlogSubmitting] = useState(false);
+
   useEffect(() => {
     fetchData();
+    fetchBlogs();
   }, []);
 
   // Handle ESC key press to close modals
@@ -56,13 +80,19 @@ const AdminDashboard = () => {
           handleEditCancel();
         } else if (addModal.isOpen) {
           handleAddCancel();
+        } else if (blogDeleteModal.isOpen) {
+          handleBlogDeleteCancel();
+        } else if (blogEditModal.isOpen) {
+          handleBlogEditCancel();
+        } else if (blogAddModal.isOpen) {
+          handleBlogAddCancel();
         }
       }
     };
     
     window.addEventListener('keydown', handleEscKey);
     return () => window.removeEventListener('keydown', handleEscKey);
-  }, [deleteModal.isOpen, editModal.isOpen, addModal.isOpen]);
+  }, [deleteModal.isOpen, editModal.isOpen, addModal.isOpen, blogDeleteModal.isOpen, blogEditModal.isOpen, blogAddModal.isOpen]);
 
   // Utility function to validate token
   const validateToken = () => {
@@ -529,6 +559,333 @@ const AdminDashboard = () => {
     }
   };
 
+  // ==================== BLOG MANAGEMENT FUNCTIONS ====================
+
+  // Fetch all blogs
+  const fetchBlogs = async () => {
+    try {
+      setBlogLoading(true);
+      const response = await axios.get(`${BASE_URL}/api/v1/blogs`);
+      if (response.data.success) {
+        setBlogs(response.data.blogs || []);
+      }
+    } catch (error) {
+      console.error('Error fetching blogs:', error);
+    } finally {
+      setBlogLoading(false);
+    }
+  };
+
+  // Filter blogs
+  const filteredBlogs = blogs.filter(blog => {
+    const matchesSearch = blog.title?.toLowerCase().includes(blogSearchTerm.toLowerCase()) ||
+                         blog.excerpt?.toLowerCase().includes(blogSearchTerm.toLowerCase());
+    const matchesCategory = selectedBlogCategory === 'all' || blog.category === selectedBlogCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Handle blog form changes
+  const handleBlogFormChange = (field, value) => {
+    setBlogForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle file uploads for blogs
+  const handleBlogFileChange = (field, file) => {
+    setBlogForm(prev => ({ ...prev, [field]: file }));
+  };
+
+  // Create new blog
+  const handleCreateBlog = async () => {
+    if (!blogForm.title || !blogForm.excerpt || !blogForm.content || !blogForm.category) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    if (blogForm.mediaType === 'image' && !blogForm.imageFile) {
+      alert('Please upload an image');
+      return;
+    }
+
+    if (blogForm.mediaType === 'video' && !blogForm.videoFile) {
+      alert('Please upload a video');
+      return;
+    }
+
+    try {
+      setBlogSubmitting(true);
+      const token = validateToken();
+      
+      if (!token) {
+        alert('Authentication token not found. Please login again.');
+        logout();
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('title', blogForm.title);
+      formData.append('excerpt', blogForm.excerpt);
+      formData.append('content', blogForm.content);
+      formData.append('category', blogForm.category);
+      formData.append('author', blogForm.author);
+      formData.append('readTime', blogForm.readTime);
+      formData.append('mediaType', blogForm.mediaType);
+      formData.append('published', blogForm.published);
+
+      if (blogForm.mediaType === 'image' && blogForm.imageFile) {
+        formData.append('image', blogForm.imageFile);
+      }
+
+      if (blogForm.mediaType === 'video') {
+        if (blogForm.videoFile) {
+          formData.append('video', blogForm.videoFile);
+        }
+        if (blogForm.thumbnailFile) {
+          formData.append('thumbnail', blogForm.thumbnailFile);
+        }
+      }
+
+      const response = await axios.post(
+        `${BASE_URL}/api/v1/blogs`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+
+      if (response.data.success) {
+        setBlogs(prev => [response.data.blog, ...prev]);
+        setBlogAddModal({ isOpen: false });
+        setBlogForm({
+          title: '',
+          excerpt: '',
+          content: '',
+          category: 'Supplements',
+          author: 'Power Team',
+          readTime: '5 min read',
+          mediaType: 'image',
+          published: true,
+          imageFile: null,
+          videoFile: null,
+          thumbnailFile: null
+        });
+        document.body.style.overflow = '';
+        alert('Blog created successfully!');
+      }
+    } catch (error) {
+      console.error('Error creating blog:', error);
+      alert('Failed to create blog. Please try again.');
+    } finally {
+      setBlogSubmitting(false);
+    }
+  };
+
+  // Update blog
+  const handleUpdateBlog = async () => {
+    if (!blogForm.title || !blogForm.excerpt || !blogForm.content) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      setBlogSubmitting(true);
+      const token = validateToken();
+      
+      if (!token) {
+        alert('Authentication token not found. Please login again.');
+        logout();
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('title', blogForm.title);
+      formData.append('excerpt', blogForm.excerpt);
+      formData.append('content', blogForm.content);
+      formData.append('category', blogForm.category);
+      formData.append('author', blogForm.author);
+      formData.append('readTime', blogForm.readTime);
+      formData.append('mediaType', blogForm.mediaType);
+      formData.append('published', blogForm.published);
+
+      if (blogForm.imageFile) {
+        formData.append('image', blogForm.imageFile);
+      }
+
+      if (blogForm.videoFile) {
+        formData.append('video', blogForm.videoFile);
+      }
+
+      if (blogForm.thumbnailFile) {
+        formData.append('thumbnail', blogForm.thumbnailFile);
+      }
+
+      const response = await axios.put(
+        `${BASE_URL}/api/v1/blogs/${blogEditModal.blog._id}`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+
+      if (response.data.success) {
+        setBlogs(prev => prev.map(b => 
+          b._id === blogEditModal.blog._id ? response.data.blog : b
+        ));
+        setBlogEditModal({ isOpen: false, blog: null });
+        document.body.style.overflow = '';
+        alert('Blog updated successfully!');
+      }
+    } catch (error) {
+      console.error('Error updating blog:', error);
+      alert('Failed to update blog. Please try again.');
+    } finally {
+      setBlogSubmitting(false);
+    }
+  };
+
+  // Delete blog
+  const handleDeleteBlog = async () => {
+    if (!blogDeleteModal.blog) return;
+
+    try {
+      const token = validateToken();
+      
+      if (!token) {
+        alert('Authentication token not found. Please login again.');
+        logout();
+        return;
+      }
+
+      const response = await axios.delete(
+        `${BASE_URL}/api/v1/blogs/${blogDeleteModal.blog._id}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.data.success) {
+        setBlogs(prev => prev.filter(b => b._id !== blogDeleteModal.blog._id));
+        setBlogDeleteModal({ isOpen: false, blog: null });
+        document.body.style.overflow = '';
+        alert('Blog deleted successfully!');
+      }
+    } catch (error) {
+      console.error('Error deleting blog:', error);
+      alert('Failed to delete blog. Please try again.');
+    }
+  };
+
+  // Toggle blog published status
+  const handleToggleBlogPublished = async (blog) => {
+    try {
+      const token = validateToken();
+      
+      if (!token) {
+        alert('Authentication token not found. Please login again.');
+        logout();
+        return;
+      }
+
+      const response = await axios.patch(
+        `${BASE_URL}/api/v1/blogs/${blog._id}/toggle-published`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.data.success) {
+        setBlogs(prev => prev.map(b => 
+          b._id === blog._id ? response.data.blog : b
+        ));
+      }
+    } catch (error) {
+      console.error('Error toggling blog status:', error);
+      alert('Failed to toggle blog status. Please try again.');
+    }
+  };
+
+  // Blog modal handlers
+  const handleBlogAddClick = () => {
+    setBlogAddModal({ isOpen: true });
+    document.body.style.overflow = 'hidden';
+  };
+
+  const handleBlogEditClick = (blog) => {
+    setBlogEditModal({ isOpen: true, blog });
+    setBlogForm({
+      title: blog.title,
+      excerpt: blog.excerpt,
+      content: blog.content,
+      category: blog.category,
+      author: blog.author,
+      readTime: blog.readTime,
+      mediaType: blog.mediaType,
+      published: blog.published,
+      imageFile: null,
+      videoFile: null,
+      thumbnailFile: null
+    });
+    document.body.style.overflow = 'hidden';
+  };
+
+  const handleBlogDeleteClick = (blog) => {
+    setBlogDeleteModal({ isOpen: true, blog });
+    document.body.style.overflow = 'hidden';
+  };
+
+  const handleBlogAddCancel = () => {
+    setBlogAddModal({ isOpen: false });
+    setBlogForm({
+      title: '',
+      excerpt: '',
+      content: '',
+      category: 'Supplements',
+      author: 'Power Team',
+      readTime: '5 min read',
+      mediaType: 'image',
+      published: true,
+      imageFile: null,
+      videoFile: null,
+      thumbnailFile: null
+    });
+    document.body.style.overflow = '';
+  };
+
+  const handleBlogEditCancel = () => {
+    setBlogEditModal({ isOpen: false, blog: null });
+    setBlogForm({
+      title: '',
+      excerpt: '',
+      content: '',
+      category: 'Supplements',
+      author: 'Power Team',
+      readTime: '5 min read',
+      mediaType: 'image',
+      published: true,
+      imageFile: null,
+      videoFile: null,
+      thumbnailFile: null
+    });
+    document.body.style.overflow = '';
+  };
+
+  const handleBlogDeleteCancel = () => {
+    setBlogDeleteModal({ isOpen: false, blog: null });
+    document.body.style.overflow = '';
+  };
+
+  // ==================== END BLOG MANAGEMENT FUNCTIONS ====================
+
   const renderOverview = () => (
     <div className="admin-overview">
       <div className="stats-grid">
@@ -840,6 +1197,123 @@ const AdminDashboard = () => {
     </div>
   );
 
+  const renderBlogs = () => (
+    <div className="admin-products">
+      <div className="products-header">
+        <div className="header-left">
+          <h2>📝 Blog Management</h2>
+          <p className="products-count">{blogs.length} total blogs</p>
+        </div>
+        <button className="btn-add" onClick={handleBlogAddClick}>
+          ➕ Create New Blog
+        </button>
+      </div>
+
+      <div className="products-controls">
+        <div className="search-box">
+          <input
+            type="text"
+            placeholder="Search blogs..."
+            value={blogSearchTerm}
+            onChange={(e) => setBlogSearchTerm(e.target.value)}
+            className="search-input"
+          />
+        </div>
+        <select 
+          className="category-filter"
+          value={selectedBlogCategory}
+          onChange={(e) => setSelectedBlogCategory(e.target.value)}
+        >
+          <option value="all">All Categories</option>
+          <option value="Supplements">Supplements</option>
+          <option value="Nutrition">Nutrition</option>
+          <option value="Training">Training</option>
+          <option value="Weight Loss">Weight Loss</option>
+          <option value="Recovery">Recovery</option>
+        </select>
+      </div>
+
+      {blogLoading ? (
+        <div className="loading-state">Loading blogs...</div>
+      ) : filteredBlogs.length === 0 ? (
+        <div className="empty-state">
+          <p>No blogs found</p>
+        </div>
+      ) : (
+        <div className="table-container">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th>Author</th>
+                <th>Views</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredBlogs.map((blog) => (
+                <tr key={blog._id}>
+                  <td>
+                    <div className="product-info">
+                      <div className="product-details">
+                        <span className="product-name">{blog.title}</span>
+                        <span className="product-meta">
+                          {blog.excerpt.substring(0, 60)}...
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span className="category-badge">{blog.category}</span>
+                  </td>
+                  <td>
+                    <span className={`status-badge ${blog.mediaType}`}>
+                      {blog.mediaType === 'video' ? '🎥 Video' : '🖼️ Image'}
+                    </span>
+                  </td>
+                  <td>{blog.author}</td>
+                  <td>{blog.views || 0}</td>
+                  <td>
+                    <button
+                      className={`status-badge ${blog.published ? 'in-stock' : 'out-of-stock'}`}
+                      onClick={() => handleToggleBlogPublished(blog)}
+                      style={{ cursor: 'pointer', border: 'none', padding: '4px 8px' }}
+                    >
+                      {blog.published ? '✓ Published' : '✗ Draft'}
+                    </button>
+                  </td>
+                  <td>{new Date(blog.date).toLocaleDateString()}</td>
+                  <td>
+                    <div className="action-buttons">
+                      <button 
+                        className="btn-edit"
+                        onClick={() => handleBlogEditClick(blog)}
+                        title="Edit"
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        className="btn-delete"
+                        onClick={() => handleBlogDeleteClick(blog)}
+                        title="Delete"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+
   const renderSettings = () => (
     <div className="admin-settings">
       <h2>Settings</h2>
@@ -910,6 +1384,12 @@ const AdminDashboard = () => {
           🏷️ Products
         </button>
         <button 
+          className={`nav-btn ${activeTab === 'blogs' ? 'active' : ''}`}
+          onClick={() => setActiveTab('blogs')}
+        >
+          📝 Blogs
+        </button>
+        <button 
           className={`nav-btn ${activeTab === 'users' ? 'active' : ''}`}
           onClick={() => setActiveTab('users')}
         >
@@ -927,6 +1407,7 @@ const AdminDashboard = () => {
         {activeTab === 'overview' && renderOverview()}
         {activeTab === 'orders' && renderOrders()}
         {activeTab === 'products' && renderProducts()}
+        {activeTab === 'blogs' && renderBlogs()}
         {activeTab === 'users' && renderUsers()}
         {activeTab === 'settings' && renderSettings()}
       </div>
@@ -1339,6 +1820,368 @@ const AdminDashboard = () => {
                 disabled={adding || !addForm.name || !addForm.description || !addForm.category || !addForm.price || !addForm.stock}
               >
                 {adding ? 'Adding Product...' : 'Add Product'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== BLOG MODALS ==================== */}
+      
+      {/* Blog Add Modal */}
+      {blogAddModal.isOpen && (
+        <div className="modal-overlay" onClick={handleBlogAddCancel}>
+          <div className="add-modal blog-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>📝 Create New Blog Post</h2>
+              <button className="close-btn" onClick={handleBlogAddCancel}>×</button>
+            </div>
+
+            <div className="modal-content">
+              <div className="form-group">
+                <label>Title *</label>
+                <input
+                  type="text"
+                  placeholder="Enter blog title"
+                  value={blogForm.title}
+                  onChange={(e) => handleBlogFormChange('title', e.target.value)}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Excerpt (Short Description) *</label>
+                <textarea
+                  placeholder="Brief description (max 300 characters)"
+                  value={blogForm.excerpt}
+                  onChange={(e) => handleBlogFormChange('excerpt', e.target.value)}
+                  className="form-textarea"
+                  rows="2"
+                  maxLength="300"
+                />
+                <small>{blogForm.excerpt.length}/300 characters</small>
+              </div>
+
+              <div className="form-group">
+                <label>Content *</label>
+                <textarea
+                  placeholder="Full blog content"
+                  value={blogForm.content}
+                  onChange={(e) => handleBlogFormChange('content', e.target.value)}
+                  className="form-textarea"
+                  rows="8"
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Category *</label>
+                  <select
+                    value={blogForm.category}
+                    onChange={(e) => handleBlogFormChange('category', e.target.value)}
+                    className="form-select"
+                  >
+                    <option value="Supplements">Supplements</option>
+                    <option value="Nutrition">Nutrition</option>
+                    <option value="Training">Training</option>
+                    <option value="Weight Loss">Weight Loss</option>
+                    <option value="Recovery">Recovery</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Media Type *</label>
+                  <select
+                    value={blogForm.mediaType}
+                    onChange={(e) => handleBlogFormChange('mediaType', e.target.value)}
+                    className="form-select"
+                  >
+                    <option value="image">Image</option>
+                    <option value="video">Video</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Author</label>
+                  <input
+                    type="text"
+                    value={blogForm.author}
+                    onChange={(e) => handleBlogFormChange('author', e.target.value)}
+                    className="form-input"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Read Time</label>
+                  <input
+                    type="text"
+                    placeholder="5 min read"
+                    value={blogForm.readTime}
+                    onChange={(e) => handleBlogFormChange('readTime', e.target.value)}
+                    className="form-input"
+                  />
+                </div>
+              </div>
+
+              {blogForm.mediaType === 'image' && (
+                <div className="form-group">
+                  <label>Upload Image *</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleBlogFileChange('imageFile', e.target.files[0])}
+                    className="form-input"
+                  />
+                  {blogForm.imageFile && <small>✓ {blogForm.imageFile.name}</small>}
+                </div>
+              )}
+
+              {blogForm.mediaType === 'video' && (
+                <>
+                  <div className="form-group">
+                    <label>Upload Video *</label>
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={(e) => handleBlogFileChange('videoFile', e.target.files[0])}
+                      className="form-input"
+                    />
+                    {blogForm.videoFile && <small>✓ {blogForm.videoFile.name}</small>}
+                  </div>
+
+                  <div className="form-group">
+                    <label>Upload Thumbnail (Optional)</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleBlogFileChange('thumbnailFile', e.target.files[0])}
+                      className="form-input"
+                    />
+                    {blogForm.thumbnailFile && <small>✓ {blogForm.thumbnailFile.name}</small>}
+                  </div>
+                </>
+              )}
+
+              <div className="form-group">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={blogForm.published}
+                    onChange={(e) => handleBlogFormChange('published', e.target.checked)}
+                  />
+                  <span>Publish immediately</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button 
+                className="btn-cancel" 
+                onClick={handleBlogAddCancel}
+                disabled={blogSubmitting}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn-add-product" 
+                onClick={handleCreateBlog}
+                disabled={blogSubmitting}
+              >
+                {blogSubmitting ? 'Creating...' : 'Create Blog'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Blog Edit Modal */}
+      {blogEditModal.isOpen && (
+        <div className="modal-overlay" onClick={handleBlogEditCancel}>
+          <div className="add-modal blog-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>✏️ Edit Blog Post</h2>
+              <button className="close-btn" onClick={handleBlogEditCancel}>×</button>
+            </div>
+
+            <div className="modal-content">
+              <div className="form-group">
+                <label>Title *</label>
+                <input
+                  type="text"
+                  value={blogForm.title}
+                  onChange={(e) => handleBlogFormChange('title', e.target.value)}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Excerpt *</label>
+                <textarea
+                  value={blogForm.excerpt}
+                  onChange={(e) => handleBlogFormChange('excerpt', e.target.value)}
+                  className="form-textarea"
+                  rows="2"
+                  maxLength="300"
+                />
+                <small>{blogForm.excerpt.length}/300 characters</small>
+              </div>
+
+              <div className="form-group">
+                <label>Content *</label>
+                <textarea
+                  value={blogForm.content}
+                  onChange={(e) => handleBlogFormChange('content', e.target.value)}
+                  className="form-textarea"
+                  rows="8"
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Category *</label>
+                  <select
+                    value={blogForm.category}
+                    onChange={(e) => handleBlogFormChange('category', e.target.value)}
+                    className="form-select"
+                  >
+                    <option value="Supplements">Supplements</option>
+                    <option value="Nutrition">Nutrition</option>
+                    <option value="Training">Training</option>
+                    <option value="Weight Loss">Weight Loss</option>
+                    <option value="Recovery">Recovery</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Media Type *</label>
+                  <select
+                    value={blogForm.mediaType}
+                    onChange={(e) => handleBlogFormChange('mediaType', e.target.value)}
+                    className="form-select"
+                  >
+                    <option value="image">Image</option>
+                    <option value="video">Video</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Author</label>
+                  <input
+                    type="text"
+                    value={blogForm.author}
+                    onChange={(e) => handleBlogFormChange('author', e.target.value)}
+                    className="form-input"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Read Time</label>
+                  <input
+                    type="text"
+                    value={blogForm.readTime}
+                    onChange={(e) => handleBlogFormChange('readTime', e.target.value)}
+                    className="form-input"
+                  />
+                </div>
+              </div>
+
+              {blogForm.mediaType === 'image' && (
+                <div className="form-group">
+                  <label>Update Image (Optional)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleBlogFileChange('imageFile', e.target.files[0])}
+                    className="form-input"
+                  />
+                  {blogForm.imageFile && <small>✓ New: {blogForm.imageFile.name}</small>}
+                </div>
+              )}
+
+              {blogForm.mediaType === 'video' && (
+                <>
+                  <div className="form-group">
+                    <label>Update Video (Optional)</label>
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={(e) => handleBlogFileChange('videoFile', e.target.files[0])}
+                      className="form-input"
+                    />
+                    {blogForm.videoFile && <small>✓ New: {blogForm.videoFile.name}</small>}
+                  </div>
+
+                  <div className="form-group">
+                    <label>Update Thumbnail (Optional)</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleBlogFileChange('thumbnailFile', e.target.files[0])}
+                      className="form-input"
+                    />
+                    {blogForm.thumbnailFile && <small>✓ New: {blogForm.thumbnailFile.name}</small>}
+                  </div>
+                </>
+              )}
+
+              <div className="form-group">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={blogForm.published}
+                    onChange={(e) => handleBlogFormChange('published', e.target.checked)}
+                  />
+                  <span>Published</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button 
+                className="btn-cancel" 
+                onClick={handleBlogEditCancel}
+                disabled={blogSubmitting}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn-add-product" 
+                onClick={handleUpdateBlog}
+                disabled={blogSubmitting}
+              >
+                {blogSubmitting ? 'Updating...' : 'Update Blog'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Blog Delete Modal */}
+      {blogDeleteModal.isOpen && (
+        <div className="modal-overlay" onClick={handleBlogDeleteCancel}>
+          <div className="delete-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>🗑️ Delete Blog Post</h2>
+              <button className="close-btn" onClick={handleBlogDeleteCancel}>×</button>
+            </div>
+            <div className="modal-content">
+              <p>Are you sure you want to delete this blog post?</p>
+              <div className="product-preview">
+                <h4>{blogDeleteModal.blog?.title}</h4>
+                <p>{blogDeleteModal.blog?.category}</p>
+              </div>
+              <p className="warning-text">⚠️ This action cannot be undone. The blog and all associated media will be permanently deleted.</p>
+            </div>
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={handleBlogDeleteCancel}>
+                Cancel
+              </button>
+              <button className="btn-delete-confirm" onClick={handleDeleteBlog}>
+                Delete Blog
               </button>
             </div>
           </div>
