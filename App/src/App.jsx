@@ -24,6 +24,7 @@ const CTA2 = lazy(() => import("./Components/CTA2/CTA2.jsx"));
 const LazySponsors = lazy(() => import("./Components/Sponsors/LazySponsors.jsx"));
 const LazyStoreLocations = lazy(() => import("./Components/StoreLocations/LazyStoreLocations.jsx"));
 const Testimonials = lazy(() => import("./Components/Testimonials/Testimonials.jsx"));
+const LazyBlogs = lazy(() => import("./Components/Blogs/LazyBlogs.jsx"));
 const Auth = lazy(() => import("./Auth/Auth.jsx"));
 const TeamPower = lazy(() => import("./Components/TeamPower/TeamPower.jsx"));
 const Stack_Save = lazy(() => import("./Components/Stack&Save/Stack&Save.jsx"));
@@ -101,7 +102,8 @@ function App() {
                 <AdminDashboard />
               </AdminProtectedRoute>
             } />
-            <Route path="/articles" element={<UnderConstruction />} />
+            <Route path="/articles" element={<LazyBlogs />} />
+            <Route path="/blog/:id" element={<UnderConstruction />} />
             <Route path="/faq" element={<UnderConstruction />} />
             <Route path="/terms" element={<UnderConstruction />} />
             <Route path="/refund-policy" element={<UnderConstruction />} />
