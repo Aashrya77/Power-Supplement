@@ -1,2 +1,0 @@
-import{j as s}from"./index-dbGsJFH1.js";import{L as e}from"./vendor-MgaVaktg.js";import"./ui-BzfpwB1b.js";const r=()=>s.jsxs("div",{className:"CTA1",children:[s.jsx("div",{className:"img-overlay"}),s.jsxs("div",{className:"cta1Texts",children:[s.jsx("h1",{children:"STACK & SAVE"}),s.jsx("p",{children:"Checkout some serious bundles with large savings!"}),s.jsx(e,{to:"/shop-all",className:"shop-now-btn",children:"Shop Now"})]})]});export{r as default};
-//# sourceMappingURL=CTA1-C7Y8Exfg.js.map
