@@ -110,7 +110,7 @@
 }
 
 .sale-badge {
-  background: #d32f2f;
+  background: #00AEEF;
   color: white;
 }
 
@@ -159,7 +159,7 @@
 }
 
 .sale-price {
-  color: #d32f2f;
+  color: #00AEEF;
 }
 
 .choose-options, .sold-out {
@@ -366,9 +366,9 @@
 
 .preworkout button{
   padding: 12px;
-  border: 1px solid #d32f2f;
+  border: 1px solid #00AEEF;
   background: transparent;
-  color: #d32f2f;
+  color: #00AEEF;
   cursor: pointer;
   letter-spacing: 1px;
   transition: .2s ease-out;

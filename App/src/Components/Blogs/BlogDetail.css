@@ -28,8 +28,8 @@
 
 .back-to-blogs-btn:hover {
   background: rgba(211, 47, 47, 0.1);
-  border-color: #d32f2f;
-  color: #d32f2f;
+  border-color: #00AEEF;
+  color: #00AEEF;
   transform: translateX(-5px);
 }
 
@@ -45,7 +45,7 @@
   width: 50px;
   height: 50px;
   border: 4px solid rgba(211, 47, 47, 0.1);
-  border-top-color: #d32f2f;
+  border-top-color: #00AEEF;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 20px;
@@ -69,7 +69,7 @@
 
 .blog-detail-error h2 {
   font-size: 2rem;
-  color: #d32f2f;
+  color: #00AEEF;
   margin-bottom: 12px;
 }
 
@@ -80,7 +80,7 @@
 }
 
 .back-btn {
-  background: #d32f2f;
+  background: #00AEEF;
   border: none;
   color: #ffffff;
   padding: 12px 32px;
@@ -118,7 +118,7 @@
 
 .blog-detail-category-tag {
   display: inline-block;
-  background: #d32f2f;
+  background: #00AEEF;
   color: #ffffff;
   padding: 8px 16px;
   border-radius: 6px;
@@ -156,7 +156,7 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+  background: linear-gradient(135deg, #00AEEF 0%, #b71c1c 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -217,8 +217,8 @@
 }
 
 .share-btn:hover {
-  background: #d32f2f;
-  border-color: #d32f2f;
+  background: #00AEEF;
+  border-color: #00AEEF;
   color: #ffffff;
   transform: translateY(-3px);
 }
@@ -251,7 +251,7 @@
   font-weight: 500;
   font-style: italic;
   padding-left: 20px;
-  border-left: 4px solid #d32f2f;
+  border-left: 4px solid #00AEEF;
 }
 
 .blog-body {
@@ -289,7 +289,7 @@
 }
 
 .blog-body a {
-  color: #d32f2f;
+  color: #00AEEF;
   text-decoration: underline;
 }
 
@@ -305,7 +305,7 @@
 }
 
 .blog-body blockquote {
-  border-left: 4px solid #d32f2f;
+  border-left: 4px solid #00AEEF;
   padding-left: 20px;
   margin: 30px 0;
   font-style: italic;
@@ -330,8 +330,8 @@
 
 .tag {
   background: rgba(211, 47, 47, 0.1);
-  border: 1px solid #d32f2f;
-  color: #d32f2f;
+  border: 1px solid #00AEEF;
+  color: #00AEEF;
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -369,7 +369,7 @@
 
 .related-card:hover {
   transform: translateY(-5px);
-  border-color: #d32f2f;
+  border-color: #00AEEF;
   box-shadow: 0 8px 30px rgba(211, 47, 47, 0.2);
 }
 
@@ -407,7 +407,7 @@
   position: absolute;
   top: 12px;
   left: 12px;
-  background: #d32f2f;
+  background: #00AEEF;
   color: #ffffff;
   padding: 5px 12px;
   border-radius: 6px;
@@ -455,7 +455,7 @@
 .blog-detail-newsletter {
   max-width: 800px;
   margin: 80px auto 0;
-  background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+  background: linear-gradient(135deg, #00AEEF 0%, #b71c1c 100%);
   padding: 50px 40px;
   border-radius: 12px;
   text-align: center;

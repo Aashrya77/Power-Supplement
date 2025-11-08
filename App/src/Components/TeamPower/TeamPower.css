@@ -44,7 +44,7 @@
 
 .hero-badge {
   display: inline-block;
-  background: linear-gradient(45deg, #d32f2f, #ff6b6b);
+  background: linear-gradient(45deg, #00AEEF, #ff6b6b);
   color: white;
   padding: 8px 20px;
   border-radius: 25px;
@@ -100,7 +100,7 @@
   display: block;
   font-size: 2.5rem;
   font-weight: 900;
-  color: #d32f2f;
+  color: #00AEEF;
   line-height: 1;
 }
 
@@ -118,7 +118,7 @@
   align-items: center;
   gap: 10px;
   padding: 18px 40px;
-  background: linear-gradient(45deg, #d32f2f, #b71c1c);
+  background: linear-gradient(45deg, #00AEEF, #b71c1c);
   color: white;
   border: none;
   border-radius: 50px;
@@ -135,7 +135,7 @@
 .join-btn:hover {
   transform: translateY(-3px);
   box-shadow: 0 15px 40px rgba(211, 47, 47, 0.4);
-  background: linear-gradient(45deg, #b71c1c, #d32f2f);
+  background: linear-gradient(45deg, #b71c1c, #00AEEF);
 }
 
 /* Benefits Section */
@@ -189,13 +189,13 @@
 
 .benefit-card:hover {
   transform: translateY(-5px);
-  border-color: #d32f2f;
+  border-color: #00AEEF;
   box-shadow: 0 15px 30px rgba(211, 47, 47, 0.2);
 }
 
 .benefit-icon {
   font-size: 2.5rem;
-  color: #d32f2f;
+  color: #00AEEF;
   margin-bottom: 1.5rem;
 }
 
@@ -254,7 +254,7 @@
 }
 
 .candidate-type:hover {
-  border-color: #d32f2f;
+  border-color: #00AEEF;
   transform: translateY(-3px);
 }
 
@@ -262,7 +262,7 @@
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #d32f2f;
+  color: #00AEEF;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -279,8 +279,8 @@
   gap: 10px;
   padding: 15px 35px;
   background: transparent;
-  color: #d32f2f;
-  border: 2px solid #d32f2f;
+  color: #00AEEF;
+  border: 2px solid #00AEEF;
   border-radius: 50px;
   font-family: 'Poppins', sans-serif;
   font-size: 1rem;
@@ -292,7 +292,7 @@
 }
 
 .cta-btn:hover {
-  background: #d32f2f;
+  background: #00AEEF;
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
@@ -394,7 +394,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #d32f2f;
+  color: #00AEEF;
 }
 
 .big3-desktop {
@@ -453,7 +453,7 @@
 }
 
 .steps-nav .active-step {
-  background: #d32f2f;
+  background: #00AEEF;
   color: #fff;
   font-weight: bold;
 }

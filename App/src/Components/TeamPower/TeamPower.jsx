@@ -84,7 +84,7 @@ const TeamPower = () => {
    <div className="big3 big3-desktop">
         <img src="/Big3(1).jpg" alt="" />
         <img src="/Big3.jpg" alt="" />
-        <img src="/Big3(2).jpg" alt="" />
+        <img src="/WhatsApp Image 2025-11-07 at 22.21.32_cc66a559.jpg" alt="" />
       </div>
 
       {/* Swiper for Small Screens */}
@@ -98,7 +98,7 @@ const TeamPower = () => {
       >
         <SwiperSlide><img src="/Big3(1).jpg" alt="Big 3 - 1" /></SwiperSlide>
         <SwiperSlide><img src="/Big3.jpg" alt="Big 3 - 2" /></SwiperSlide>
-        <SwiperSlide><img src="/Big3(2).jpg" alt="Big 3 - 3" /></SwiperSlide>
+        <SwiperSlide><img src="/WhatsApp Image 2025-11-07 at 22.21.32_cc66a559.jpg" alt="Big 3 - 3" /></SwiperSlide>
       </Swiper>
 
 

@@ -12,7 +12,7 @@ const Footer = () => {
         <div className="footer">
           <div className="logoSide">
             <div className="logoImg">
-              <img src="\PowerLogo.png" alt="" />
+              <img src="\BlueLogo.png" alt="" />
             </div>
 
             <div className="icons">
@@ -43,7 +43,7 @@ const Footer = () => {
             <h3>100% MONEY BACK GUARANTEE</h3>
             <p>
               Not happy with your purchase? Send it back within 30 days for your
-              money back. <span style={{color: '#d32f2f'}}>Money Back Guarantee</span> 
+              money back. <span style={{color: '#00AEEF'}}>Money Back Guarantee</span> 
             </p>
           </div>
         </div>

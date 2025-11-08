@@ -62,18 +62,18 @@ body {
 }
 
 .hamburger-btn:hover {
-  color: #d32f2f;
+  color: #00AEEF;
   transform: scale(1.1);
 }
 
 .hamburger-btn.links a:hover {
-  color: #d32f2f;
+  color: #00AEEF;
   transform: translateY(-2px);
 }
 
 /* Admin Dashboard Link Styles */
 .admin-link {
-  background: linear-gradient(45deg, #d32f2f, #ff6b6b) !important;
+  background: linear-gradient(45deg, #00AEEF, #6bffeb) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
@@ -88,7 +88,7 @@ body {
   left: 0;
   width: 100%;
   height: 2px;
-  background: linear-gradient(45deg, #d32f2f, #ff6b6b);
+  background: linear-gradient(45deg, #00AEEF, #6bffeb);
   transform: scaleX(0);
   transition: transform 0.3s ease;
 }
@@ -103,7 +103,7 @@ body {
 
 /* Mobile Admin Dashboard Link */
 .admin-mobile-link {
-  background: linear-gradient(45deg, #d32f2f, #ff6b6b) !important;
+  background: linear-gradient(45deg, #00AEEF, #6bffeb) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
@@ -116,7 +116,7 @@ body {
 
 .admin-mobile-link:hover {
   background: rgba(211, 47, 47, 0.1) !important;
-  border-color: #d32f2f !important;
+  border-color: #00AEEF !important;
 }
 
 /* Desktop Navigation Links */
@@ -168,7 +168,7 @@ body {
 }
 
 .navLink:hover {
-  color: #d32f2f;
+  color: #00AEEF;
 }
 
 .user-menu {
@@ -205,11 +205,11 @@ body {
 }
 
 .navLink:hover {
-  color: #d32f2f;
+  color: #00AEEF;
 }
 
 .navLinks a:hover{
-  color: #d32f2f;
+  color: #00AEEF;
   transition: .3s ease;
 }
 
@@ -234,7 +234,7 @@ body {
   position: absolute;
   top: -8px;
   right: -8px;
-  background-color: #d32f2f;
+  background-color: #00AEEF;
   color: white;
   font-size: 12px;
   min-width: 18px;
@@ -293,7 +293,7 @@ body {
 }
 
 .mobile-link:hover {
-  color: #d32f2f;
+  color: #00AEEF;
   padding-left: 1rem;
 }
 
@@ -323,7 +323,7 @@ body {
 .mobile-login:hover,
 .mobile-logout:hover,
 .mobile-menu-item:hover {
-  color: #d32f2f;
+  color: #00AEEF;
   padding-left: 1rem;
 }
 
@@ -352,7 +352,7 @@ body {
 }
 
 .social-link:hover {
-  color: #d32f2f;
+  color: #00AEEF;
   background: rgba(211, 47, 47, 0.1);
   transform: translateY(-3px);
 }
@@ -414,7 +414,7 @@ body {
 }
 
 .user-menu .navLink:hover {
-  color: #d32f2f;
+  color: #00AEEF;
 }
 
 .mobile-user-menu {
@@ -437,7 +437,7 @@ body {
 }
 
 .mobile-user-menu .mobile-menu-item:hover {
-  color: #d32f2f;
+  color: #00AEEF;
   padding-left: 1rem;
   background: rgba(211, 47, 47, 0.1);
 }

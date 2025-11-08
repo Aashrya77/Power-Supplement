@@ -212,7 +212,7 @@ const Navbar = () => {
           {isMobileMenuOpen ? <FiX size={30} /> : <FiMenu size={30} />}
         </button>
         <Link to="/">
-          <img src="/PowerLogo.png" alt="Power Logo" />
+          <img src="/BlueLogo.png" alt="Power Logo" />
         </Link>
         <div className="navLinks desktopNav">
           <Link to="/shop-all">SHOP</Link>

@@ -78,7 +78,7 @@
 }
 
 .btn-home {
-  background: #d32f2f;
+  background: #00AEEF;
   color: white;
 }
 
@@ -90,12 +90,12 @@
 
 .btn-shop {
   background: transparent;
-  color: #d32f2f;
-  border-color: #d32f2f;
+  color: #00AEEF;
+  border-color: #00AEEF;
 }
 
 .btn-shop:hover {
-  background: #d32f2f;
+  background: #00AEEF;
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
@@ -112,7 +112,7 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(45deg, #d32f2f, #ff6b6b);
+  background: linear-gradient(45deg, #00AEEF, #ff6b6b);
   width: 65%;
   border-radius: 2px;
   animation: pulse 2s ease-in-out infinite alternate;
@@ -129,7 +129,7 @@
 
 .progress-text {
   font-size: 0.9rem;
-  color: #d32f2f;
+  color: #00AEEF;
   margin: 0;
   font-weight: 600;
 }

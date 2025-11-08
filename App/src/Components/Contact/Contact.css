@@ -17,7 +17,7 @@
   margin: 0 0 1rem 0;
   text-transform: uppercase;
   letter-spacing: 2px;
-  background: linear-gradient(45deg, #d32f2f, #ff6b6b);
+  background: linear-gradient(45deg, #00AEEF, #ff6b6b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -73,12 +73,12 @@
 
 .contact-item:hover {
   background: rgba(211, 47, 47, 0.1);
-  border-color: #d32f2f;
+  border-color: #00AEEF;
   transform: translateY(-2px);
 }
 
 .contact-icon {
-  color: #d32f2f;
+  color: #00AEEF;
   font-size: 1.5rem;
   margin-top: 0.25rem;
   min-width: 24px;
@@ -128,7 +128,7 @@
 }
 
 .social-link:hover {
-  background: #d32f2f;
+  background: #00AEEF;
   color: white;
   transform: translateY(-3px);
   box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
@@ -174,7 +174,7 @@
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #d32f2f;
+  border-color: #00AEEF;
   background: rgba(255, 255, 255, 0.15);
   box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.2);
 }
@@ -192,7 +192,7 @@
 .submit-btn {
   width: 100%;
   padding: 15px;
-  background: #d32f2f;
+  background: #00AEEF;
   color: white;
   border: none;
   border-radius: 50px;
@@ -239,7 +239,7 @@
 .cta-button {
   display: inline-block;
   padding: 15px 30px;
-  background: #d32f2f;
+  background: #00AEEF;
   color: white;
   text-decoration: none;
   border-radius: 50px;

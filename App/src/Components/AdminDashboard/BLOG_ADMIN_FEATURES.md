@@ -132,7 +132,7 @@ PATCH /api/v1/blogs/:id/toggle-published
 All modals include:
 - Dark theme styling (#111111 background)
 - Poppins font
-- Red accents (#d32f2f)
+- Red accents (#00AEEF)
 - ESC key to close
 - Click outside to close
 - Loading states during operations

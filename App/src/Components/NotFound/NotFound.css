@@ -26,7 +26,7 @@
 .not-found-icon span {
   font-size: 6rem;
   font-weight: 800;
-  background: linear-gradient(45deg, #d32f2f, #ff6b6b);
+  background: linear-gradient(45deg, #00AEEF, #ff6b6b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -69,7 +69,7 @@
 }
 
 .btn-home {
-  background: #d32f2f;
+  background: #00AEEF;
   color: white;
 }
 
@@ -81,12 +81,12 @@
 
 .btn-shop {
   background: transparent;
-  color: #d32f2f;
-  border-color: #d32f2f;
+  color: #00AEEF;
+  border-color: #00AEEF;
 }
 
 .btn-shop:hover {
-  background: #d32f2f;
+  background: #00AEEF;
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);

@@ -16,7 +16,7 @@
 4. ✅ **Lazy Loading** - Performance optimized
 5. ✅ **Navigation** - Added to navbar (desktop + mobile)
 6. ✅ **Video Support** - Full video playback with thumbnails
-7. ✅ **Dark Theme** - Matches site design (#111111, #d32f2f)
+7. ✅ **Dark Theme** - Matches site design (#111111, #00AEEF)
 
 ---
 

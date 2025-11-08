@@ -40,7 +40,7 @@ const Spinner = styled.div`
   margin: 0 auto;
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
-  border-top-color: #3498db;
+  border-top-color: #00AEEF;
   animation: spin 1s ease-in-out infinite;
 
   @keyframes spin {
