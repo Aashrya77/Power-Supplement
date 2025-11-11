@@ -22,12 +22,23 @@ const storage = multer.diskStorage({
 // File filter for images and videos
 const fileFilter = (req, file, cb) => {
     const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    const allowedVideoTypes = ['video/mp4', 'video/mpeg', 'video/quicktime'];
+    const allowedVideoTypes = [
+        'video/mp4',
+        'video/mpeg',
+        'video/quicktime',
+        'video/webm',
+        'video/ogg',
+        'video/x-msvideo',
+        'video/x-matroska',
+        'video/3gpp',
+        'video/x-flv',
+        'application/octet-stream' // Fallback for some browsers
+    ];
     
     if (allowedImageTypes.includes(file.mimetype) || allowedVideoTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error('Invalid file type. Only JPEG, PNG, WebP images and MP4, MPEG, MOV videos are allowed.'), false);
+        cb(new Error('Invalid file type. Only JPEG, PNG, WebP images and MP4, MPEG, MOV, WebM, OGG, AVI, MKV, 3GP, and FLV videos are allowed.'), false);
     }
 };
 
