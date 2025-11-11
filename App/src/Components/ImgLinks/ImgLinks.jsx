@@ -56,6 +56,13 @@ const ImgLinks = () => {
     },
     {
       id: 5,
+      img: "/RECOVERY.png",
+      name: "Recovery",
+      link: "/recovery",
+    },
+
+    {
+      id: 6,
       img: "/ShopAll.png",
       name: "Shop All",
       link: "/shop-all",

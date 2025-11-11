@@ -12,6 +12,7 @@ import ScrollToTop from './Components/ScrollToTop.jsx';
 // Import skeleton components
 import { PageSkeleton } from './Components/Skeleton/Skeleton';
 
+
 // Modern skeleton loader component
 const ComponentLoader = () => <PageSkeleton />;
 
@@ -46,6 +47,8 @@ const UnderConstruction = lazy(() => import('./Components/UnderConstruction/Unde
 const Contact = lazy(() => import('./Components/Contact/Contact'));
 const AdminDashboard = lazy(() => import('./Components/AdminDashboard/AdminDashboard'));
 const AdminProtectedRoute = lazy(() => import('./Components/AdminDashboard/AdminProtectedRoute'));
+const Recovery = lazy(() => import('./Components/Recovery/Recovery.jsx'));
+const Aminos = lazy(() => import('./Components/Aminos/Aminos.jsx'));
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -90,6 +93,8 @@ function App() {
             <Route path="/product/:id" element={<SingleProduct setCartOpen={setIsCartOpen} />} />
             <Route path="/fat-burner" element={<FatBurner setCartOpen={setIsCartOpen} />} />
             <Route path="/protein" element={<Protein setCartOpen={setIsCartOpen} />} />
+            <Route path="/recovery" element={<Recovery setCartOpen={setIsCartOpen} />} />
+            <Route path="/aminos" element={<Aminos setCartOpen={setIsCartOpen} />} />
             <Route path="/shop-all" element={<ShopAll setCartOpen={setIsCartOpen} />} />
             <Route path="/checkout" element={<CheckoutForm />} />
             <Route path="/payment/success" element={<PaymentResult />} />

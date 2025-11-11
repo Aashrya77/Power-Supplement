@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import './Aminos.css';
+import './Recovery.css';
 import { FaStar } from 'react-icons/fa';
 import BASE_URL from '../../config';
 
-const Aminos = () => {
+const Recovery = () => {
   const [products, setProducts] = useState([]);
   const [flavors, setFlavors] = useState([]);
   const [selectedFlavor, setSelectedFlavor] = useState('all');
@@ -28,23 +28,23 @@ const Aminos = () => {
       const response = await axios.get(`${BASE_URL}/api/v1/categories`);
       
       // Try different possible category names
-      const possibleNames = ['Aminos', 'aminos', 'amino acids', 'amino-acids'];
-      let aminosCategory = null;
+      const possibleNames = ['Recovery', 'recovery', 'recoveries', 'Recoveries'];
+      let recoveryCategory = null;
       
       for (const name of possibleNames) {
         const found = response.data.find(
           category => category.name.toLowerCase() === name.toLowerCase()
         );
         if (found) {
-          aminosCategory = found;
+          recoveryCategory = found;
           break;
         }
       }
 
-      if (aminosCategory) {
-        setCategoryId(aminosCategory._id);
+      if (recoveryCategory) {
+        setCategoryId(recoveryCategory._id);
       } else {
-        console.error('Aminos category not found in any format');
+        console.error('Recovery category not found in any format');
       }
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -126,13 +126,13 @@ const Aminos = () => {
 
  
   return (
-    <div className="aminos-container">
-      <div className="aminos-header">
-        <h1>Amino Acid Supplements</h1>
+    <div className="recovery-container">
+      <div className="recovery-header">
+        <h1>Recovery Supplements</h1>
         <p>
-          Support your muscle recovery and performance with our premium amino acid supplements.
-          Our scientifically formulated products deliver essential amino acids to enhance
-          your fitness results and overall athletic performance.
+          Optimize your post-workout recovery with our premium recovery supplements.
+          Our scientifically formulated products deliver the nutrients your body needs
+          to recover faster and perform better.
         </p>
       </div>
       <div className="filters-header">
@@ -202,38 +202,38 @@ const Aminos = () => {
         ))}
       </div>
 
-      <div className="descriptions-aminos">
+      <div className="descriptions-recovery">
         <div className="paragraph">
-          <h2>Premium Amino Acid Supplements</h2>
+          <h2>Premium Recovery Supplements</h2>
           <p>
-            Our amino acid supplements are crafted with the finest ingredients to support
-            your muscle recovery and athletic performance. Whether you're an athlete, bodybuilder,
-            or fitness enthusiast, our premium amino acid products are designed to help
-            you achieve your fitness goals.
+            Our recovery supplements are crafted with the finest ingredients to support
+            your body's natural recovery process. Whether you're an athlete, bodybuilder,
+            or fitness enthusiast, our premium recovery products are designed to help
+            you recover faster and perform better.
           </p>
         </div>
         <div className="paragraph">
-          <h2>Why Choose Our Amino Acid Supplements?</h2>
+          <h2>Why Choose Our Recovery Supplements?</h2>
           <p>
-            <strong>Quality amino acid supplements</strong> are essential for muscle
-            recovery and performance enhancement. Our products are formulated with essential
-            amino acids and are designed to support muscle protein synthesis and athletic endurance.
+            <strong>Quality recovery supplements</strong> are essential for muscle
+            repair and regeneration. Our products are formulated with high-quality ingredients
+            and are designed to reduce recovery time and enhance performance.
           </p>
         </div>
         <div className="paragraph">
-          <h2>Benefits of Amino Acid Supplements</h2>
+          <h2>Benefits of Recovery Supplements</h2>
           <ul>
             <li>
-              <strong>Muscle Recovery:</strong> Support your body's natural recovery
+              <strong>Faster Recovery:</strong> Support your body's natural recovery
               process after intense workouts.
             </li>
             <li>
-              <strong>Performance Enhancement:</strong> Enhance endurance and reduce
-              fatigue during training sessions.
+              <strong>Reduced Soreness:</strong> Minimize muscle soreness and fatigue
+              for better performance.
             </li>
             <li>
-              <strong>Quality Ingredients:</strong> Made with premium amino acids
-              and carefully selected ingredients.
+              <strong>Quality Ingredients:</strong> Made with premium ingredients
+              and carefully selected nutrients.
             </li>
             <li>
               <strong>Great Taste:</strong> Available in a variety of delicious
@@ -246,4 +246,4 @@ const Aminos = () => {
   );
 };
 
-export default Aminos;
+export default Recovery;

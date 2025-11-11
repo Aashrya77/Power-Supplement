@@ -1,21 +1,21 @@
-.aminos-container {
+.recovery-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
   }
   
-  .aminos-header {
+  .recovery-header {
     text-align: center;
     margin-bottom: 2rem;
   }
   
-  .aminos-header h1 {
+  .recovery-header h1 {
     font-size: 2.5rem;
     color: #333;
     margin-bottom: 1rem;
   }
   
-  .aminos-header p {
+  .recovery-header p {
     color: #666;
     max-width: 800px;
     margin: 0 auto;
@@ -153,37 +153,37 @@
     color: #00AEEF;
   }
   
-  .descriptions-aminos {
+  .descriptions-recovery {
     margin-top: 4rem;
     padding: 2rem 0;
   }
   
-  .descriptions-aminos .paragraph {
+  .descriptions-recovery .paragraph {
     margin-bottom: 2rem;
   }
   
-  .descriptions-aminos h2 {
+  .descriptions-recovery h2 {
     color: #333;
     margin-bottom: 1rem;
     font-size: 1.5rem;
   }
   
-  .descriptions-aminos p {
+  .descriptions-recovery p {
     color: #666;
     line-height: 1.6;
     margin-bottom: 1rem;
   }
   
-  .descriptions-aminos ul {
+  .descriptions-recovery ul {
     list-style: none;
     padding: 0;
   }
   
-  .descriptions-aminos li {
+  .descriptions-recovery li {
     margin-bottom: 1rem;
     color: #666;
   }
   
-  .descriptions-aminos strong {
+  .descriptions-recovery strong {
     color: #333;
   }
