@@ -68,12 +68,30 @@ const BlogDetail = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [id]);
 
+  const getVideoMimeType = (url) => {
+    if (!url) return 'video/mp4';
+    const ext = url.split('.').pop().toLowerCase();
+    const mimeTypes = {
+      'mp4': 'video/mp4',
+      'webm': 'video/webm',
+      'ogg': 'video/ogg',
+      'ogv': 'video/ogg',
+      'mov': 'video/quicktime',
+      'avi': 'video/x-msvideo',
+      'mkv': 'video/x-matroska',
+      '3gp': 'video/3gpp',
+      'flv': 'video/x-flv'
+    };
+    return mimeTypes[ext] || 'video/mp4';
+  };
+
   const renderMedia = (blog) => {
     if (!blog) return null;
     
     if (blog.mediaType === 'video' && blog.videoUrl) {
       const videoUrl = blog.videoUrl.startsWith('http') ? blog.videoUrl : `${BASE_URL}${blog.videoUrl}`;
       const posterUrl = blog.thumbnail ? (blog.thumbnail.startsWith('http') ? blog.thumbnail : `${BASE_URL}${blog.thumbnail}`) : '';
+      const videoMimeType = getVideoMimeType(videoUrl);
       
       return (
         <video 
@@ -82,7 +100,7 @@ const BlogDetail = () => {
           poster={posterUrl}
           preload="metadata"
         >
-          <source src={videoUrl} type="video/mp4" />
+          <source src={videoUrl} type={videoMimeType} />
           Your browser does not support the video tag.
         </video>
       );
