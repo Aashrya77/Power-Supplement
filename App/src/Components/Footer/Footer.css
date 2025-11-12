@@ -11,6 +11,11 @@
     padding: 4rem;
     border-bottom: 1px solid grey;
   }
+
+  .icons a{
+    text-decoration: none;
+    color: white;
+  }
   
   .footerSection2 {
     background-color: #111111;

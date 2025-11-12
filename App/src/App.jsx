@@ -49,6 +49,13 @@ const AdminDashboard = lazy(() => import('./Components/AdminDashboard/AdminDashb
 const AdminProtectedRoute = lazy(() => import('./Components/AdminDashboard/AdminProtectedRoute'));
 const Recovery = lazy(() => import('./Components/Recovery/Recovery.jsx'));
 const Aminos = lazy(() => import('./Components/Aminos/Aminos.jsx'));
+const TermsOfService = lazy(() => import('./pages/Legal/TermsOfService.jsx'));
+const RefundPolicy = lazy(() => import('./pages/Legal/RefundPolicy.jsx'));
+const ShippingPolicy = lazy(() => import('./pages/Legal/ShippingPolicy.jsx'));
+const PrivacyPolicy = lazy(() => import('./pages/Legal/PrivacyPolicy.jsx'));
+const Accessibility = lazy(() => import('./pages/Legal/Accessibility.jsx'));
+const PersonalInfo = lazy(() => import('./pages/Legal/PersonalInfo.jsx'));
+const FAQ = lazy(() => import('./pages/FAQ/FAQ.jsx'));
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -110,13 +117,13 @@ function App() {
             } />
             <Route path="/articles" element={<LazyBlogs />} />
             <Route path="/blog/:id" element={<LazyBlogDetail />} />
-            <Route path="/faq" element={<UnderConstruction />} />
-            <Route path="/terms" element={<UnderConstruction />} />
-            <Route path="/refund-policy" element={<UnderConstruction />} />
-            <Route path="/shipping-policy" element={<UnderConstruction />} />
-            <Route path="/privacy-policy" element={<UnderConstruction />} />
-            <Route path="/accessibility" element={<UnderConstruction />} />
-            <Route path="/personal-info" element={<UnderConstruction />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/refund-policy" element={<RefundPolicy />} />
+            <Route path="/shipping-policy" element={<ShippingPolicy />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/accessibility" element={<Accessibility />} />
+            <Route path="/personal-info" element={<PersonalInfo />} />
             {/* Catch-all route for 404 - must be last */}
             <Route path="*" element={<NotFound />} />
           </Routes>

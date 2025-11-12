@@ -5,6 +5,7 @@ import { FaFacebook } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 import { FaCcMastercard } from "react-icons/fa";
+import { AiFillTikTok } from "react-icons/ai";
 const Footer = () => {
   return (
     <>
@@ -16,8 +17,9 @@ const Footer = () => {
             </div>
 
             <div className="icons">
-              <FaFacebook className="icon"/>
-              <FaInstagram className="icon"/>
+             <Link to='https://www.facebook.com/share/1B4NWaGKAX/?mibextid=wwXIfr'><FaFacebook className="icon"/></Link> 
+              <Link to='https://www.instagram.com/powersupplement8/'><FaInstagram className="icon"/></Link>
+              <Link to='https://www.tiktok.com/@powersupplement'><AiFillTikTok className="icon"/></Link>
             </div>
           </div>
           <div className="quickLinks">
