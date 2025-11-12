@@ -33,7 +33,7 @@ const initiatePayment = async (req, res) => {
       parseInt(amount) + taxAmount + serviceCharge + deliveryCharge;
     // Generate unique transaction ID
     const transactionUuid = generateTransactionId();
-
+console.log(amount, totalAmount)
     // Define signed fields
     const signedFieldNames = "total_amount,transaction_uuid,product_code";
     const signedFieldString = `total_amount=${totalAmount},transaction_uuid=${transactionUuid},product_code=${ESEWA_MERCHANT_CODE}`;
@@ -60,7 +60,7 @@ const initiatePayment = async (req, res) => {
       failure_url: ESEWA_FAILURE_URL,
       signed_field_names: signedFieldNames,
       signature: signature,
-      formUrl: "https://rc-epay.esewa.com.np/api/epay/main/v2/form",
+      formUrl: "https://epay.esewa.com.np/api/epay/main/v2/form",
     };
 
     res.status(200).json(paymentData);
@@ -91,7 +91,7 @@ const verifyPayment = async (req, res) => {
     let actualNumber = parseInt(cleanedNumber)
 
     const response = await axios.get(
-      `https://rc-epay.esewa.com.np/api/epay/transaction/status?transaction_uuid=${transaction_uuid}&total_amount=${actualNumber}&product_code=EPAYTEST`
+      `https://epay.esewa.com.np/api/epay/transaction/status?transaction_uuid=${transaction_uuid}&total_amount=${actualNumber}&product_code=NP-ES-PS`
     );
 
     

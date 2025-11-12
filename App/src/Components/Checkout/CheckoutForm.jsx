@@ -34,7 +34,7 @@ const CheckoutForm = () => {
     const cartItems = cart?.items || [];
     const amount = cartItems.reduce((total, item) => total + (item.product.price * item.quantity), 0);
     const delivery_charge = 150; // Example delivery charge
-    const total_amount = amount + delivery_charge;
+    const total_amount = amount;
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -139,7 +139,7 @@ const CheckoutForm = () => {
                 </div>
                 <div className="total">
                     <strong>Total</strong>
-                    <strong>Rs. {total_amount}</strong>
+                    <strong>Rs. {total_amount + delivery_charge}</strong>
                 </div>
             </div>
 

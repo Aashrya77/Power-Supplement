@@ -5,7 +5,7 @@ const User = require('../Models/User');
 exports.createOrder = async (req, res) => {
     try {
         const { items, totalAmount, shippingAddress, paymentMethod } = req.body;
-        
+        console.log(totalAmount)
         
         // Validate required fields
         if (!items || !totalAmount || !shippingAddress || !paymentMethod) {
