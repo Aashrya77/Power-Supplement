@@ -52,7 +52,7 @@ const initiatePayment = async (req, res) => {
       tax_amount: taxAmount.toString(),
       total_amount: totalAmount.toString(),
       transaction_uuid: transactionUuid,
-      product_code: ESEWA_MERCHANT_CODE,
+      product_code: NP-ES-PS,
       product_service_charge: serviceCharge.toString(),
       product_delivery_charge: deliveryCharge.toString(),
       success_url: ESEWA_SUCCESS_URL,
