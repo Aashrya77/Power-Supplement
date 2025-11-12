@@ -5,7 +5,7 @@ const generateTransactionId = () => uuidv4();
 const Orders = require("../Models/Order");
 
 const ESEWA_MERCHANT_CODE = process.env.ESEWA_MERCHANT_CODE;
-const ESEWA_SECRET_KEY = process.env.ESEWA_SECRET_KEY;
+const ESEWA_SECRET_KEY = 'NRwSEhNTOBAJFR8AGgAdH183NV4gJEwjOF88NTI8KCAwKCAqNiwuMjg=';
 const ESEWA_TEST_URL = process.env.ESEWA_TEST_URL;
 const ESEWA_SUCCESS_URL = process.env.ESEWA_SUCCESS_URL;
 const ESEWA_FAILURE_URL = process.env.ESEWA_FAILURE_URL;
@@ -35,13 +35,13 @@ const initiatePayment = async (req, res) => {
     const transactionUuid = generateTransactionId();
     // Define signed fields
     const signedFieldNames = "total_amount,transaction_uuid,product_code";
-    const signedFieldString = `total_amount=${totalAmount},transaction_uuid=${transactionUuid},product_code=${ESEWA_MERCHANT_CODE}`;
+    const signedFieldString = `total_amount=${totalAmount},transaction_uuid=${transactionUuid},product_code=NP-ES-PS`;
 
    
     // Generate signature using Base64 encoding
 
     const hash = crypto
-      .createHmac("sha256", ESEWA_SECRET_KEY)
+      .createHmac("sha256", 'NRwSEhNTOBAJFR8AGgAdH183NV4gJEwjOF88NTI8KCAwKCAqNiwuMjg=')
       .update(signedFieldString, "utf8") // Ensure utf8
       .digest("base64"); // Ensure base64
 
