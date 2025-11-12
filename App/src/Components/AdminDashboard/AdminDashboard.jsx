@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import BASE_URL from '../../config';
 import { useAuth } from '../../context/AuthContext';
+import { getAllOrders } from '../../services/orderService';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -16,7 +17,9 @@ const AdminDashboard = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [flavors, setFlavors] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [ordersLoading, setOrdersLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, product: null });
@@ -67,6 +70,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     fetchData();
+    fetchOrders();
     fetchBlogs();
   }, []);
 
@@ -143,6 +147,47 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchOrders = async () => {
+    try {
+      setOrdersLoading(true);
+      const response = await getAllOrders();
+      if (response.success && response.data) {
+        setOrders(response.data);
+      } else {
+        setOrders([]);
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      setOrders([]);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  // Format orders for display
+  const formatOrdersForDisplay = (ordersData) => {
+    if (!Array.isArray(ordersData)) return [];
+    
+    return ordersData.map((order, index) => {
+      const firstProduct = order.items && order.items[0] ? order.items[0].product : null;
+      const productName = firstProduct?.name || 'Unknown Product';
+      const customerName = order.user?.username || order.user?.email || 'Unknown Customer';
+      const orderDate = new Date(order.createdAt).toISOString().split('T')[0];
+      const status = order.status || 'pending';
+      
+      return {
+        id: `#${order._id.slice(-6).toUpperCase()}`,
+        customer: customerName,
+        product: productName.length > 35 ? productName.substring(0, 35) + '...' : productName,
+        amount: `Rs. ${order.totalAmount}`,
+        status: status.charAt(0).toUpperCase() + status.slice(1),
+        date: orderDate,
+        phone: order.shippingAddress?.phone || 'N/A',
+        fullOrder: order
+      };
+    });
   };
 
   // Generate sample orders with real product names (for demo purposes)
@@ -957,55 +1002,70 @@ const AdminDashboard = () => {
     </div>
   );
 
-  const renderOrders = () => (
-    <div className="admin-orders">
-      <div className="section-header">
-        <h2>Orders Management</h2>
-        <div className="header-actions">
-          <input type="search" placeholder="Search orders..." className="search-input" />
-          <select className="filter-select">
-            <option value="">All Status</option>
-            <option value="completed">Completed</option>
-            <option value="processing">Processing</option>
-            <option value="shipped">Shipped</option>
-          </select>
+  const renderOrders = () => {
+    const displayOrders = orders.length > 0 ? formatOrdersForDisplay(orders) : [];
+    
+    return (
+      <div className="admin-orders">
+        <div className="section-header">
+          <h2>Orders Management ({displayOrders.length})</h2>
+          <div className="header-actions">
+            <input type="search" placeholder="Search orders..." className="search-input" />
+            <select className="filter-select">
+              <option value="">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="paid">Paid</option>
+              <option value="delivered">Delivered</option>
+              <option value="failed">Failed</option>
+            </select>
+          </div>
+        </div>
+        <div className="table-container">
+          {ordersLoading ? (
+            <div className="loading-state">Loading orders...</div>
+          ) : displayOrders.length === 0 ? (
+            <div className="empty-state">
+              <p>No orders found</p>
+            </div>
+          ) : (
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Phone</th>
+                  <th>Product</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {displayOrders.map((order) => (
+                  <tr key={order.id}>
+                    <td>{order.id}</td>
+                    <td>{order.customer}</td>
+                    <td>{order.phone}</td>
+                    <td>{order.product}</td>
+                    <td>{order.amount}</td>
+                    <td><span className={`status ${order.status.toLowerCase()}`}>{order.status}</span></td>
+                    <td>{order.date}</td>
+                    <td>
+                      <div className="action-buttons">
+                        <button className="btn-view">View</button>
+                        <button className="btn-edit">Edit</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
-      <div className="table-container">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Customer</th>
-              <th>Product</th>
-              <th>Amount</th>
-              <th>Status</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {getSampleOrders(10).map((order, index) => (
-              <tr key={order.id}>
-                <td>{order.id}</td>
-                <td>{order.customer}</td>
-                <td>{order.product}</td>
-                <td>{order.amount}</td>
-                <td><span className={`status ${order.status.toLowerCase()}`}>{order.status}</span></td>
-                <td>{order.date}</td>
-                <td>
-                  <div className="action-buttons">
-                    <button className="btn-view">View</button>
-                    <button className="btn-edit">Edit</button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderProducts = () => {
     if (loading) {

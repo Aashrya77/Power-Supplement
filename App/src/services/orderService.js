@@ -61,3 +61,17 @@ export const updateOrderStatus = async (orderId, updateData) => {
         };
     }
 };
+
+export const getAllOrders = async () => {
+    try {
+        const response = await axios.get(`${BASE_URL}/api/v1/admin/orders`, getAuthHeader());
+        return response.data;
+    } catch (error) {
+        console.error('Get all orders error:', error);
+        return {
+            success: false,
+            data: [],
+            message: error.response?.data?.message || 'Failed to retrieve orders'
+        };
+    }
+};
