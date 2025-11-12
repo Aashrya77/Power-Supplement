@@ -6,7 +6,7 @@ const Product = require('../Models/Product');
 exports.getAllOrders = async (req, res) => {
     try {
         // Check if user is admin
-        if (req.user.role !== 'admin') {
+        if (!req.user.isAdmin) {
             return res.status(403).json({
                 success: false,
                 message: 'Not authorized to access this resource'
@@ -37,7 +37,7 @@ exports.getAllOrders = async (req, res) => {
 exports.getDashboardStats = async (req, res) => {
     try {
         // Check if user is admin
-        if (req.user.role !== 'admin') {
+        if (!req.user.isAdmin) {
             return res.status(403).json({
                 success: false,
                 message: 'Not authorized to access this resource'
@@ -97,7 +97,7 @@ exports.getDashboardStats = async (req, res) => {
 exports.updateOrderStatusAdmin = async (req, res) => {
     try {
         // Check if user is admin
-        if (req.user.role !== 'admin') {
+        if (!req.user.isAdmin) {
             return res.status(403).json({
                 success: false,
                 message: 'Not authorized to access this resource'
