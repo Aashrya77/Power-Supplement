@@ -28,7 +28,7 @@ const initiatePayment = async (req, res) => {
     const amount = order.totalAmount;
     const taxAmount = 0;
     const serviceCharge = 0;
-    const deliveryCharge = 150;
+    const deliveryCharge = 0;
     const totalAmount =
       parseInt(amount) + taxAmount + serviceCharge + deliveryCharge;
     // Generate unique transaction ID
