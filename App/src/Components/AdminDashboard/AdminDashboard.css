@@ -2049,6 +2049,220 @@
   transform: rotate(90deg);
 }
 
+/* Order Details Modal Styles */
+.order-details-modal {
+  background: rgba(20, 20, 20, 0.98);
+  border: 1px solid #333;
+  border-radius: 15px;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  position: relative;
+}
+
+.order-details-content {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.order-header-section {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #333;
+}
+
+.order-id-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.order-id-status h3 {
+  margin: 0 0 10px 0;
+  color: #ffffff;
+  font-size: 1.3rem;
+}
+
+.order-id-status .status {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.order-id-status .status.pending {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  border: 1px solid #ffc107;
+}
+
+.order-id-status .status.processing {
+  background: rgba(33, 150, 243, 0.2);
+  color: #2196f3;
+  border: 1px solid #2196f3;
+}
+
+.order-id-status .status.shipped {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+  border: 1px solid #4caf50;
+}
+
+.order-id-status .status.completed {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+  border: 1px solid #4caf50;
+}
+
+.order-id-status .status.failed {
+  background: rgba(244, 67, 54, 0.2);
+  color: #f44336;
+  border: 1px solid #f44336;
+}
+
+.order-date {
+  text-align: right;
+}
+
+.order-date p {
+  margin: 0;
+  color: #e0e0e0;
+  font-size: 0.95rem;
+}
+
+.order-section {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #333;
+}
+
+.order-section h4 {
+  margin: 0 0 15px 0;
+  color: #ffffff;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.info-item {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.info-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.info-item label {
+  display: block;
+  color: #999;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.info-item p {
+  margin: 0;
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  word-break: break-word;
+}
+
+.info-item.highlight {
+  background: rgba(211, 47, 47, 0.1);
+  border: 1px solid rgba(211, 47, 47, 0.3);
+}
+
+.info-item.highlight p {
+  color: #ff6b6b;
+}
+
+.total-amount {
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  color: #d32f2f !important;
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item-card {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-info {
+  flex: 1;
+}
+
+.item-info p {
+  margin: 6px 0;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.item-info strong {
+  color: #ffffff;
+}
+
+.item-total {
+  text-align: right;
+  padding-left: 20px;
+}
+
+.item-total p {
+  margin: 0;
+  color: #d32f2f;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* Scrollbar styling for modal */
+.order-details-modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.order-details-modal::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.order-details-modal::-webkit-scrollbar-thumb {
+  background: rgba(211, 47, 47, 0.5);
+  border-radius: 10px;
+}
+
+.order-details-modal::-webkit-scrollbar-thumb:hover {
+  background: rgba(211, 47, 47, 0.7);
+}
+
 /* Responsive improvements */
 @media (max-width: 768px) {
   .blog-modal .form-row {
@@ -2074,5 +2288,39 @@
   
   .btn-add {
     width: 100%;
+  }
+
+  .order-details-modal {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+
+  .order-details-content {
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .order-id-status {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .order-date {
+    text-align: left;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .item-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .item-total {
+    padding-left: 0;
+    padding-top: 10px;
+    text-align: left;
   }
 }

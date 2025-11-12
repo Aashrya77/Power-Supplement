@@ -67,6 +67,7 @@ const AdminDashboard = () => {
     thumbnailFile: null
   });
   const [blogSubmitting, setBlogSubmitting] = useState(false);
+  const [orderDetailsModal, setOrderDetailsModal] = useState({ isOpen: false, order: null });
 
   useEffect(() => {
     fetchData();
@@ -931,6 +932,20 @@ const AdminDashboard = () => {
 
   // ==================== END BLOG MANAGEMENT FUNCTIONS ====================
 
+  // ==================== ORDER DETAILS MODAL FUNCTIONS ====================
+
+  const handleViewOrder = (order) => {
+    setOrderDetailsModal({ isOpen: true, order });
+    document.body.style.overflow = 'hidden';
+  };
+
+  const handleCloseOrderDetails = () => {
+    setOrderDetailsModal({ isOpen: false, order: null });
+    document.body.style.overflow = '';
+  };
+
+  // ==================== END ORDER DETAILS MODAL FUNCTIONS ====================
+
   const renderOverview = () => (
     <div className="admin-overview">
       <div className="stats-grid">
@@ -1053,7 +1068,12 @@ const AdminDashboard = () => {
                     <td>{order.date}</td>
                     <td>
                       <div className="action-buttons">
-                        <button className="btn-view">View</button>
+                        <button 
+                          className="btn-view"
+                          onClick={() => handleViewOrder(order.fullOrder)}
+                        >
+                          View
+                        </button>
                         <button className="btn-edit">Edit</button>
                       </div>
                     </td>
@@ -2242,6 +2262,138 @@ const AdminDashboard = () => {
               </button>
               <button className="btn-delete-confirm" onClick={handleDeleteBlog}>
                 Delete Blog
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Order Details Modal */}
+      {orderDetailsModal.isOpen && orderDetailsModal.order && (
+        <div className="modal-overlay" onClick={handleCloseOrderDetails}>
+          <div className="order-details-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>📦 Order Details</h2>
+              <button className="close-btn" onClick={handleCloseOrderDetails}>×</button>
+            </div>
+            <div className="modal-content order-details-content">
+              {/* Order Header */}
+              <div className="order-header-section">
+                <div className="order-id-status">
+                  <div>
+                    <h3>Order ID: {orderDetailsModal.order._id?.slice(-6).toUpperCase() || 'N/A'}</h3>
+                    <span className={`status ${orderDetailsModal.order.status?.toLowerCase() || 'pending'}`}>
+                      {orderDetailsModal.order.status?.charAt(0).toUpperCase() + orderDetailsModal.order.status?.slice(1) || 'Pending'}
+                    </span>
+                  </div>
+                  <div className="order-date">
+                    <p><strong>Order Date:</strong> {new Date(orderDetailsModal.order.createdAt).toLocaleDateString()}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Customer Information */}
+              <div className="order-section">
+                <h4>👤 Customer Information</h4>
+                <div className="info-grid">
+                  <div className="info-item">
+                    <label>Name:</label>
+                    <p>{orderDetailsModal.order.user?.username || 'N/A'}</p>
+                  </div>
+                  <div className="info-item">
+                    <label>Email:</label>
+                    <p>{orderDetailsModal.order.user?.email || 'N/A'}</p>
+                  </div>
+                  <div className="info-item">
+                    <label>Phone:</label>
+                    <p>{orderDetailsModal.order.shippingAddress?.phone || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Shipping Address */}
+              <div className="order-section">
+                <h4>🚚 Shipping Address</h4>
+                <div className="info-grid">
+                  <div className="info-item full-width">
+                    <label>Address:</label>
+                    <p>{orderDetailsModal.order.shippingAddress?.address || 'N/A'}</p>
+                  </div>
+                  <div className="info-item">
+                    <label>City:</label>
+                    <p>{orderDetailsModal.order.shippingAddress?.city || 'N/A'}</p>
+                  </div>
+                  <div className="info-item">
+                    <label>State:</label>
+                    <p>{orderDetailsModal.order.shippingAddress?.state || 'N/A'}</p>
+                  </div>
+                  <div className="info-item">
+                    <label>Postal Code:</label>
+                    <p>{orderDetailsModal.order.shippingAddress?.postalCode || 'N/A'}</p>
+                  </div>
+                  <div className="info-item">
+                    <label>Country:</label>
+                    <p>{orderDetailsModal.order.shippingAddress?.country || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Order Items */}
+              <div className="order-section">
+                <h4>📋 Order Items</h4>
+                <div className="items-list">
+                  {orderDetailsModal.order.items && orderDetailsModal.order.items.length > 0 ? (
+                    orderDetailsModal.order.items.map((item, index) => (
+                      <div key={index} className="item-card">
+                        <div className="item-info">
+                          <p><strong>Product:</strong> {item.product?.name || 'Unknown'}</p>
+                          <p><strong>Quantity:</strong> {item.quantity}</p>
+                          <p><strong>Price:</strong> Rs. {item.price}</p>
+                          {item.flavor && <p><strong>Flavor:</strong> {item.flavor}</p>}
+                        </div>
+                        <div className="item-total">
+                          <p>Rs. {item.quantity * item.price}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No items in this order</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Payment Information */}
+              <div className="order-section">
+                <h4>💳 Payment Information</h4>
+                <div className="info-grid">
+                  <div className="info-item">
+                    <label>Subtotal:</label>
+                    <p>Rs. {orderDetailsModal.order.subtotal || 0}</p>
+                  </div>
+                  <div className="info-item">
+                    <label>Shipping:</label>
+                    <p>Rs. {orderDetailsModal.order.shippingCost || 0}</p>
+                  </div>
+                  <div className="info-item">
+                    <label>Tax:</label>
+                    <p>Rs. {orderDetailsModal.order.tax || 0}</p>
+                  </div>
+                  <div className="info-item highlight">
+                    <label>Total Amount:</label>
+                    <p className="total-amount">Rs. {orderDetailsModal.order.totalAmount || 0}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Method */}
+              <div className="order-section">
+                <h4>🏦 Payment Method</h4>
+                <p>{orderDetailsModal.order.paymentMethod || 'N/A'}</p>
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={handleCloseOrderDetails}>
+                Close
               </button>
             </div>
           </div>
