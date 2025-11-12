@@ -15,11 +15,29 @@ exports.createOrder = async (req, res) => {
             });
         }
 
+        // Validate shipping address fields including phone
+        if (!shippingAddress.street || !shippingAddress.city || !shippingAddress.state || 
+            !shippingAddress.postal_code || !shippingAddress.phone) {
+            return res.status(400).json({
+                success: false,
+                message: 'All shipping address fields including phone number are required'
+            });
+        }
+
         // Validate items array
         if (!Array.isArray(items) || items.length === 0) { 
             return res.status(400).json({
                 success: false,
                 message: 'Order must contain at least one item'
+            });
+        }
+
+        // Validate phone number format (basic validation)
+        const phoneRegex = /^[0-9]{7,15}$/;
+        if (!phoneRegex.test(shippingAddress.phone.replace(/[\s-]/g, ''))) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid phone number format'
             });
         }
 

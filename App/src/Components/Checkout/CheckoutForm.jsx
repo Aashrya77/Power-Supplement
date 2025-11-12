@@ -18,6 +18,7 @@ const CheckoutForm = () => {
         city: '',
         state: '',
         postal_code: '',
+        phone: '',
         country: 'Nepal'
     });
     const [formSubmitted, setFormSubmitted] = useState(false);
@@ -49,7 +50,7 @@ const CheckoutForm = () => {
         
         // Validate form
         if (!shippingAddress.street || !shippingAddress.city || 
-            !shippingAddress.state || !shippingAddress.postal_code) {
+            !shippingAddress.state || !shippingAddress.postal_code || !shippingAddress.phone) {
             setError('Please fill in all shipping address fields');
             return;
         }
@@ -197,6 +198,19 @@ const CheckoutForm = () => {
                         </div>
                     </div>
 
+                    <div className="form-group">
+                        <label htmlFor="phone">Phone Number</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            value={shippingAddress.phone}
+                            onChange={handleInputChange}
+                            placeholder="e.g., 9841234567"
+                            required
+                        />
+                    </div>
+
                     <button 
                         type="submit" 
                         className="continue-button"
@@ -217,6 +231,7 @@ const CheckoutForm = () => {
                     <div className="shipping-summary">
                         <h4>Shipping to:</h4>
                         <p>{shippingAddress.street}, {shippingAddress.city}, {shippingAddress.state} {shippingAddress.postal_code}, {shippingAddress.country}</p>
+                        <p><strong>Phone:</strong> {shippingAddress.phone}</p>
                         <button 
                             className="edit-button"
                             onClick={() => setFormSubmitted(false)}
