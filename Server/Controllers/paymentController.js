@@ -33,7 +33,6 @@ const initiatePayment = async (req, res) => {
       parseInt(amount) + taxAmount + serviceCharge + deliveryCharge;
     // Generate unique transaction ID
     const transactionUuid = generateTransactionId();
-console.log(amount, totalAmount)
     // Define signed fields
     const signedFieldNames = "total_amount,transaction_uuid,product_code";
     const signedFieldString = `total_amount=${totalAmount},transaction_uuid=${transactionUuid},product_code=${ESEWA_MERCHANT_CODE}`;
