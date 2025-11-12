@@ -2317,7 +2317,7 @@ const AdminDashboard = () => {
                 <div className="info-grid">
                   <div className="info-item full-width">
                     <label>Address:</label>
-                    <p>{orderDetailsModal.order.shippingAddress?.address || 'N/A'}</p>
+                    <p>{orderDetailsModal.order.shippingAddress?.street || 'N/A'}</p>
                   </div>
                   <div className="info-item">
                     <label>City:</label>
@@ -2329,7 +2329,7 @@ const AdminDashboard = () => {
                   </div>
                   <div className="info-item">
                     <label>Postal Code:</label>
-                    <p>{orderDetailsModal.order.shippingAddress?.postalCode || 'N/A'}</p>
+                    <p>{orderDetailsModal.order.shippingAddress?.postal_code || 'N/A'}</p>
                   </div>
                   <div className="info-item">
                     <label>Country:</label>
@@ -2348,11 +2348,10 @@ const AdminDashboard = () => {
                         <div className="item-info">
                           <p><strong>Product:</strong> {item.product?.name || 'Unknown'}</p>
                           <p><strong>Quantity:</strong> {item.quantity}</p>
-                          <p><strong>Price:</strong> Rs. {item.price}</p>
-                          {item.flavor && <p><strong>Flavor:</strong> {item.flavor}</p>}
+                          <p><strong>Price per unit:</strong> Rs. {item.product?.price || 'N/A'}</p>
                         </div>
                         <div className="item-total">
-                          <p>Rs. {item.quantity * item.price}</p>
+                          <p>Rs. {item.quantity * (item.product?.price || 0)}</p>
                         </div>
                       </div>
                     ))
@@ -2366,30 +2365,43 @@ const AdminDashboard = () => {
               <div className="order-section">
                 <h4>💳 Payment Information</h4>
                 <div className="info-grid">
-                  <div className="info-item">
-                    <label>Subtotal:</label>
-                    <p>Rs. {orderDetailsModal.order.subtotal || 0}</p>
-                  </div>
-                  <div className="info-item">
-                    <label>Shipping:</label>
-                    <p>Rs. {orderDetailsModal.order.shippingCost || 0}</p>
-                  </div>
-                  <div className="info-item">
-                    <label>Tax:</label>
-                    <p>Rs. {orderDetailsModal.order.tax || 0}</p>
-                  </div>
                   <div className="info-item highlight">
                     <label>Total Amount:</label>
                     <p className="total-amount">Rs. {orderDetailsModal.order.totalAmount || 0}</p>
                   </div>
+                  <div className="info-item">
+                    <label>Payment Method:</label>
+                    <p className="capitalize">{orderDetailsModal.order.paymentMethod || 'N/A'}</p>
+                  </div>
                 </div>
               </div>
 
-              {/* Payment Method */}
-              <div className="order-section">
-                <h4>🏦 Payment Method</h4>
-                <p>{orderDetailsModal.order.paymentMethod || 'N/A'}</p>
-              </div>
+              {/* Payment Details */}
+              {orderDetailsModal.order.paymentDetails && (
+                <div className="order-section">
+                  <h4>🔐 Payment Details</h4>
+                  <div className="info-grid">
+                    {orderDetailsModal.order.paymentDetails.transactionId && (
+                      <div className="info-item">
+                        <label>Transaction ID:</label>
+                        <p>{orderDetailsModal.order.paymentDetails.transactionId}</p>
+                      </div>
+                    )}
+                    {orderDetailsModal.order.paymentDetails.referenceId && (
+                      <div className="info-item">
+                        <label>Reference ID:</label>
+                        <p>{orderDetailsModal.order.paymentDetails.referenceId}</p>
+                      </div>
+                    )}
+                    {orderDetailsModal.order.paymentDetails.amount && (
+                      <div className="info-item">
+                        <label>Amount Paid:</label>
+                        <p>Rs. {orderDetailsModal.order.paymentDetails.amount}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
             <div className="modal-actions">
               <button className="btn-cancel" onClick={handleCloseOrderDetails}>
