@@ -9,6 +9,8 @@ const Contact = () => {
     subject: '',
     message: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
 
   const handleChange = (e) => {
     setFormData({
@@ -17,13 +19,60 @@ const Contact = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
-    // You can add actual form submission logic here
-    alert('Thank you for your message! We\'ll get back to you soon.');
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setLoading(true);
+    setSubmitStatus(null);
+
+    try {
+      // Create HTML email content
+      const htmlContent = `
+        <div style="font-family: 'Poppins', Arial, sans-serif; color: #333;">
+          <h2 style="color: #d32f2f;">New Contact Form Submission</h2>
+          <p><strong>Name:</strong> ${formData.name}</p>
+          <p><strong>Email:</strong> ${formData.email}</p>
+          <p><strong>Subject:</strong> ${formData.subject}</p>
+          <p><strong>Message:</strong></p>
+          <p style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; white-space: pre-wrap;">
+            ${formData.message}
+          </p>
+        </div>
+      `;
+
+      // Send email via backend
+      const response = await fetch('https://powersupplement.net/api/v1/email/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: 'support@powersupplement.com',
+          subject: `Contact Form: ${formData.subject} - From ${formData.name}`,
+          html: htmlContent
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
+      setSubmitStatus({
+        type: 'success',
+        message: 'Thank you for your message! We\'ll get back to you soon.'
+      });
+      setFormData({ name: '', email: '', subject: '', message: '' });
+
+      // Clear success message after 5 seconds
+      setTimeout(() => setSubmitStatus(null), 5000);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setSubmitStatus({
+        type: 'error',
+        message: 'Failed to send message. Please try again or contact us directly.'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -94,6 +143,11 @@ const Contact = () => {
 
         <div className="contact-form-section">
           <h2>Send Us a Message</h2>
+          {submitStatus && (
+            <div className={`submit-status ${submitStatus.type}`}>
+              {submitStatus.message}
+            </div>
+          )}
           <form className="contact-form" onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="name">Full Name *</label>
@@ -105,6 +159,7 @@ const Contact = () => {
                 onChange={handleChange}
                 required
                 placeholder="Enter your full name"
+                disabled={loading}
               />
             </div>
 
@@ -118,6 +173,7 @@ const Contact = () => {
                 onChange={handleChange}
                 required
                 placeholder="Enter your email address"
+                disabled={loading}
               />
             </div>
 
@@ -129,6 +185,7 @@ const Contact = () => {
                 value={formData.subject}
                 onChange={handleChange}
                 required
+                disabled={loading}
               >
                 <option value="">Select a subject</option>
                 <option value="product-inquiry">Product Inquiry</option>
@@ -149,11 +206,12 @@ const Contact = () => {
                 required
                 rows="6"
                 placeholder="Tell us how we can help you..."
+                disabled={loading}
               ></textarea>
             </div>
 
-            <button type="submit" className="submit-btn">
-              Send Message
+            <button type="submit" className="submit-btn" disabled={loading}>
+              {loading ? 'Sending...' : 'Send Message'}
             </button>
           </form>
         </div>
