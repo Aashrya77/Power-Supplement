@@ -18,6 +18,7 @@ const adminRoutes = require('./Routes/adminRoutes')
 const searchRoutes = require('./Routes/searchRoutes')
 const sitemapRoutes = require('./Routes/sitemapRoutes')
 const blogRoutes = require('./Routes/blogRoutes')
+const emailRoutes = require('./Routes/emailRoutes')
 
 // Middleware
 app.use(cors({
@@ -77,6 +78,7 @@ app.use('/api/v1/orders', orderRoutes)
 app.use('/api/v1/admin', adminRoutes)
 app.use('/api/v1/search', searchRoutes)
 app.use('/api/v1/blogs', blogRoutes)
+app.use('/api/v1/email', emailRoutes)
 
 // SEO routes - sitemap and robots.txt
 app.use('/', sitemapRoutes)
