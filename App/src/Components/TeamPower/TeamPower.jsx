@@ -7,6 +7,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Navigation } from "swiper/modules";
 import { FaStar, FaUsers, FaDollarSign, FaGift, FaArrowRight } from "react-icons/fa";
+import {useNavigate} from 'react-router-dom'
 const TeamPower = () => {
   const benefits = [
     {
@@ -31,6 +32,8 @@ const TeamPower = () => {
     }
   ];
 
+  const navigate = useNavigate()
+
   return (
     <div className="team">
       <section className="hero-section">
@@ -43,7 +46,7 @@ const TeamPower = () => {
             We're building more than just partnerships – we're creating a movement for growth, 
             success, and achieving your ultimate potential.
           </p>
-          <div className="hero-stats">
+          {/* <div className="hero-stats">
             <div className="stat">
               <span className="stat-number">500+</span>
               <span className="stat-label">Active Partners</span>
@@ -56,8 +59,8 @@ const TeamPower = () => {
               <span className="stat-number">95%</span>
               <span className="stat-label">Satisfaction Rate</span>
             </div>
-          </div>
-          <button className="join-btn">
+          </div> */}
+          <button className="join-btn" onClick={() => navigate('/underContruction')}>
             JOIN TEAM POWER <FaArrowRight />
           </button>
         </div>
@@ -124,7 +127,7 @@ const TeamPower = () => {
               <p>Dedicated gym-goers and fitness lifestyle advocates</p>
             </div>
           </div>
-          <button className="cta-btn">Apply Now <FaArrowRight /></button>
+          <button className="cta-btn" onClick={() => navigate('/underContruction')}>Apply Now <FaArrowRight /></button>
         </div>
       </section>
       <section className="signup-process">
@@ -147,19 +150,19 @@ const TeamPower = () => {
               </div>
             </div>
             <div className="gallery-item">
-              <img src="/TeamPower(1).jpeg" alt="Team Power Member" />
+              <img src="/contentcreator.png" alt="Team Power Member" />
               <div className="gallery-overlay">
                 <span>Content Creator</span>
               </div>
             </div>
             <div className="gallery-item">
-              <img src="/TeamPower(2).jpg" alt="Team Power Member" />
-              <div className="gallery-overlay">
+              <img src="/saru.jpg" alt="Team Power Member" />
+              <div className="gallery-overlay"> 
                 <span>Fitness Influencer</span>
               </div>
             </div>
             <div className="gallery-item">
-              <img src="/TeamPower(4).jpg" alt="Team Power Member" />
+              <img src="/Akash.jpg" alt="Team Power Member" />
               <div className="gallery-overlay">
                 <span>Professional Athlete</span>
               </div>

@@ -107,6 +107,7 @@ function App() {
             <Route path="/payment/success" element={<PaymentResult />} />
             <Route path="/payment/failure" element={<PaymentResult />} />
             {/* Under Construction routes */}
+            <Route path="/underContruction" element={<UnderConstruction/>}/>
             <Route path="/about" element={<UnderConstruction />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/stores" element={<LazyStoreLocations />} />
