@@ -53,6 +53,8 @@
   margin-bottom: 25px;
   border-bottom: 2px solid #00AEEF;
   padding-bottom: 15px;
+  display: flex;
+  gap: 1rem;
 }
 
 .store-card-header h3 {

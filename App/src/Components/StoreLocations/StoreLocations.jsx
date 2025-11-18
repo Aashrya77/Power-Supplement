@@ -60,6 +60,15 @@ const StoreLocations = () => {
       phone: "+977-9801234572",
       hours: "9:00 AM - 8:00 PM",
       mapLink: "https://maps.google.com"
+    },
+    {
+      id: 8,
+      name: "M.B Fitness pvt.ltd",
+      img: '/butwal.jpg',
+      location: "Kalika chok, Butwal, Nepal",
+      phone: "+977-9867586576",
+      hours: "9:00 AM - 8:00 PM",
+      mapLink: "https://maps.google.com"
     }
   ];
 
@@ -76,6 +85,8 @@ const StoreLocations = () => {
         {stores.map((store) => (
           <div className="store-card" key={store.id}>
             <div className="store-card-header">
+              {store.img && <img src={store.img} alt="" width={30} height={30}/>}
+              
               <h3>{store.name}</h3>
             </div>
             
