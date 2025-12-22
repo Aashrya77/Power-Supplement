@@ -511,6 +511,78 @@ const AdminDashboard = () => {
     }));
   };
 
+  // ==================== FLAVOR MANAGEMENT FUNCTIONS ====================
+  const handleCreateFlavor = async () => {
+    if (!newFlavor.trim()) {
+      alert('Please enter a flavor name');
+      return;
+    }
+    try {
+      const token = validateToken();
+      if (!token) {
+        alert('Authentication token not found. Please login again.');
+        logout();
+        return;
+      }
+      const response = await axios.post(
+        `${BASE_URL}/api/v1/flavors`,
+        { name: newFlavor.trim() },
+        { headers: { 'Authorization': `Bearer ${token}` } }
+      );
+      if (response.status === 201) {
+        const createdFlavor = response.data;
+        setFlavors(prev => [...prev, createdFlavor]);
+        setNewFlavor('');
+        return createdFlavor;
+      }
+    } catch (error) {
+      alert(`Failed to create flavor: ${error.response?.data?.message || error.message}`);
+    }
+  };
+
+  // Add existing flavor or create new one from input
+  const handleAddOrCreateFlavor = async () => {
+    const trimmed = newFlavor.trim();
+    if (!trimmed) return;
+    // check existing
+    const existing = flavors.find(f => f.name.toLowerCase() === trimmed.toLowerCase());
+    if (existing) {
+      if (!addForm.flavors.some(f => f._id === existing._id)) {
+        setAddForm(prev => ({ ...prev, flavors: [...prev.flavors, existing] }));
+      }
+      setNewFlavor('');
+      return;
+    }
+    // create
+    const created = await handleCreateFlavor();
+    if (created && !addForm.flavors.some(f => f._id === created._id)) {
+      setAddForm(prev => ({ ...prev, flavors: [...prev.flavors, created] }));
+    }
+  };
+
+  const handleDeleteFlavor = async (flavorId) => {
+    if (!window.confirm('Are you sure you want to delete this flavor?')) return;
+    try {
+      const token = validateToken();
+      if (!token) {
+        alert('Authentication token not found. Please login again.');
+        logout();
+        return;
+      }
+      await axios.delete(`${BASE_URL}/api/v1/flavors/${flavorId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      setFlavors(prev => prev.filter(f => f._id !== flavorId));
+      // Remove from selected flavors in add form if present
+      setAddForm(prev => ({
+        ...prev,
+        flavors: prev.flavors.filter(f => f._id !== flavorId)
+      }));
+    } catch (error) {
+      alert(`Failed to delete flavor: ${error.response?.data?.message || error.message}`);
+    }
+  };
+
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
     setAddForm(prev => ({
@@ -1796,32 +1868,28 @@ const AdminDashboard = () => {
                   <h3>🍓 Product Flavors</h3>
                   <div className="flavor-selection-group">
                     <div className="form-group">
-                      <label htmlFor="flavorSelect">Select Flavors</label>
-                      <select
-                        id="flavorSelect"
-                        onChange={(e) => {
-                          const selectedFlavor = flavors.find(f => f._id === e.target.value);
-                          if (selectedFlavor && !addForm.flavors.some(f => f._id === selectedFlavor._id)) {
-                            setAddForm(prev => ({
-                              ...prev,
-                              flavors: [...prev.flavors, selectedFlavor]
-                            }));
-                          }
-                          e.target.value = '';
-                        }}
-                        className="flavor-dropdown"
-                      >
-                        <option value="">Choose a flavor to add</option>
-                        {flavors.map(flavor => (
-                          <option 
-                            key={flavor._id} 
-                            value={flavor._id}
-                            disabled={addForm.flavors.some(f => f._id === flavor._id)}
-                          >
-                            {flavor.name}
-                          </option>
-                        ))}
-                      </select>
+                      <label>
+                        <input
+                          type="text"
+                          id="flavorInput"
+                          list="flavor-options"
+                          placeholder="Type flavor name and press Enter"
+                          value={newFlavor}
+                          onChange={(e) => setNewFlavor(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleAddOrCreateFlavor();
+                            }
+                          }}
+                          className="flavor-input"
+                        />
+                        <datalist id="flavor-options">
+                          {flavors.map(flavor => (
+                            <option key={flavor._id} value={flavor.name} />
+                          ))}
+                        </datalist>
+                      </label>
                     </div>
                   </div>
                   
@@ -1839,6 +1907,14 @@ const AdminDashboard = () => {
                               title="Remove flavor"
                             >
                               ×
+                            </button>
+                            <button 
+                              type="button" 
+                              onClick={() => handleCreateFlavor()}
+                              className="btn-create-flavor"
+                              title="Create flavor"
+                            >
+                              +
                             </button>
                           </div>
                         ))}
