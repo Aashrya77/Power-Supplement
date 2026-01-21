@@ -22,7 +22,7 @@ const emailRoutes = require('./Routes/emailRoutes')
 
 // Middleware
 app.use(cors({
-    origin: ['https://powersupplement.net','https://powersupplement.onrender.com', 'http://localhost:5173'],
+    origin: ['https://powersupplement.net', 'https://www.powersupplement.net','https://powersupplement.onrender.com', 'http://localhost:5173'],
     credentials: true,  
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization']
