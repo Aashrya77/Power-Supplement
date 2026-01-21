@@ -41,6 +41,25 @@ app.use((req, res, next) => {
     next();
 })
 
+const allowedOrigins = [
+  'https://powersupplement.net',
+  'https://www.powersupplement.net',
+  'https://powersupplement.onrender.com',
+  'http://localhost:5173'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
+
 // Serve static files from uploads directory with proper MIME types
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
     setHeaders: (res, filePath) => {
