@@ -154,6 +154,7 @@ exports.createBlog = async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating blog:', error);
+    console.log(error)
     
     // Clean up uploaded files on error
     if (req.files) {
