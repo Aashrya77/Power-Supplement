@@ -12,7 +12,7 @@ const AdminDashboard = () => {
     totalOrders: 0,
     totalRevenue: 0,
     totalProducts: 0,
-    totalUsers: 0
+    totalUsers: 2
   });
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -130,14 +130,20 @@ const AdminDashboard = () => {
       const flavorsResponse = await axios.get(`${BASE_URL}/api/v1/flavors`);
       setFlavors(flavorsResponse.data || []);
 
-      // Calculate stats from real data
-      const totalRevenue = productsData.reduce((sum, product) => sum + product.price, 0);
+      // Fetch orders for real stats
+      const ordersResponse = await getAllOrders();
+      const ordersData = ordersResponse.data || [];
+      
+      // Calculate stats from real order data
+      const totalOrders = ordersData.length;
+      const totalRevenue = ordersData.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+      const uniqueUsers = new Set(ordersData.map(order => order.userId)).size;
       
       setStats({
-        totalOrders: productsData.reduce((sum, product) => sum + (product.sales || 0), 0), // Sum of all sales
+        totalOrders: totalOrders,
         totalRevenue: totalRevenue,
         totalProducts: productsData.length,
-        totalUsers: Math.floor(totalRevenue / 1000) // Estimate users based on revenue
+        totalUsers: uniqueUsers > 0 ? uniqueUsers : 0
       });
       
     } catch (error) {
@@ -191,36 +197,6 @@ const AdminDashboard = () => {
     });
   };
 
-  // Generate sample orders with real product names (for demo purposes)
-  const getSampleOrders = (count = 5) => {
-    if (products.length === 0) return [];
-    
-    const customers = ['Rajesh Kumar', 'Priya Sharma', 'Amit Singh', 'Sneha Patel', 'Vikram Thapa', 'Anita Rai', 'Suresh Gurung'];
-    const statuses = ['Completed', 'Processing', 'Shipped', 'Pending'];
-    
-    return Array.from({ length: count }, (_, index) => {
-      const randomProduct = products[index % products.length];
-      
-      // Safety check for product
-      if (!randomProduct || !randomProduct.name) {
-        return null;
-      }
-      
-      const randomCustomer = customers[index % customers.length];
-      const randomStatus = statuses[index % statuses.length];
-      const date = new Date();
-      date.setDate(date.getDate() - index);
-      
-      return {
-        id: `#PS${(1000 + index).toString()}`,
-        customer: randomCustomer,
-        product: randomProduct.name.length > 35 ? randomProduct.name.substring(0, 35) + '...' : randomProduct.name,
-        amount: `Rs. ${randomProduct.price}`,
-        status: randomStatus,
-        date: date.toISOString().split('T')[0]
-      };
-    }).filter(order => order !== null);
-  };
 
   // Helper function to format price
   const formatPrice = (price) => {
@@ -1059,30 +1035,36 @@ const AdminDashboard = () => {
         <div className="activity-section">
           <h3>Recent Orders</h3>
           <div className="table-container">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Customer</th>
-                  <th>Product</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {getSampleOrders().map(order => (
-                  <tr key={order.id}>
-                    <td>{order.id}</td>
-                    <td>{order.customer}</td>
-                    <td>{order.product}</td>
-                    <td>{order.amount}</td>
-                    <td><span className={`status ${order.status.toLowerCase()}`}>{order.status}</span></td>
-                    <td>{order.date}</td>
+            {orders.length === 0 ? (
+              <div className="empty-state">
+                <p>No orders yet</p>
+              </div>
+            ) : (
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Date</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {formatOrdersForDisplay(orders).slice(0, 5).map(order => (
+                    <tr key={order.id}>
+                      <td>{order.id}</td>
+                      <td>{order.customer}</td>
+                      <td>{order.product}</td>
+                      <td>{order.amount}</td>
+                      <td><span className={`status ${order.status.toLowerCase()}`}>{order.status}</span></td>
+                      <td>{order.date}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>
