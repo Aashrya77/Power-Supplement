@@ -11,6 +11,11 @@
     padding: 4rem;
     border-bottom: 1px solid grey;
   }
+
+  .icons a{
+    text-decoration: none;
+    color: white;
+  }
   
   .footerSection2 {
     background-color: #111111;
@@ -64,7 +69,7 @@
   }
   
   .icon:hover {
-    color: #d32f2f;
+    color: #00AEEF;
     cursor: pointer;
     transform: translateY(-5px);
     transition: 0.3s ease-in;
@@ -93,7 +98,7 @@
   }
   
   .quickLinks a:hover {
-    color: #d32f2f;
+    color: #00AEEF;
   }
   
   .legalTerms {
@@ -118,7 +123,7 @@
   }
   
   .legalTerms a:hover {
-    color: #d32f2f;
+    color: #00AEEF;
   }
   
   .moneyback {

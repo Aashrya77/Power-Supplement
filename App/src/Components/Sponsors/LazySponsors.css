@@ -1,0 +1,11 @@
+/* LazySponsors.css */
+
+.lazy-sponsors-container {
+  width: 100%;
+  min-height: 400px; /* Prevent layout shift */
+}
+
+/* Ensure smooth transitions */
+.lazy-sponsors-container > * {
+  transition: opacity 0.3s ease-in-out;
+}

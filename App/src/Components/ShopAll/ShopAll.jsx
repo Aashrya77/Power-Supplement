@@ -19,7 +19,7 @@ const ShopAll = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      let url = `${BASE_URL}/api/v1/products?page=${currentPage}&limit=9`;
+      let url = `https://powersupplement.net/api/v1/products?page=${currentPage}&limit=9`;
       
       // Add sorting parameter
       if (sortBy === 'featured') {
@@ -116,9 +116,9 @@ const ShopAll = () => {
                   </div>
                   <div className="product-info">
                     <h3>{product.name}</h3>
-                    <div className="product-rating">
+                    {/* <div className="product-rating">
                       {renderStars(product.rating || 0)}
-                    </div>
+                    </div> */}
                     <div className="product-price">
                       {product.salePrice ? (
                         <>

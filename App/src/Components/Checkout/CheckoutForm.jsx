@@ -34,7 +34,7 @@ const CheckoutForm = () => {
     // Calculate amounts
     const cartItems = cart?.items || [];
     const amount = cartItems.reduce((total, item) => total + (item.product.price * item.quantity), 0);
-    const delivery_charge = 150; // Example delivery charge
+    const delivery_charge = 0; // Example delivery charge
     const total_amount = amount;
 
     const handleInputChange = (e) => {

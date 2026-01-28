@@ -1,0 +1,249 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import './Recovery.css';
+import { FaStar } from 'react-icons/fa';
+import BASE_URL from '../../config';
+
+const Recovery = () => {
+  const [products, setProducts] = useState([]);
+  const [flavors, setFlavors] = useState([]);
+  const [selectedFlavor, setSelectedFlavor] = useState('all');
+  const [sortBy, setSortBy] = useState('featured');
+  const [categoryId, setCategoryId] = useState(null);
+
+  useEffect(() => {
+    fetchCategoryId();
+    fetchFlavors();
+  }, []);
+
+  useEffect(() => {
+    if (categoryId) {
+      fetchProducts();
+    }
+  }, [categoryId]);
+
+  const fetchCategoryId = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/api/v1/categories`);
+      
+      // Try different possible category names
+      const possibleNames = ['Recovery', 'recovery', 'recoveries', 'Recoveries'];
+      let recoveryCategory = null;
+      
+      for (const name of possibleNames) {
+        const found = response.data.find(
+          category => category.name.toLowerCase() === name.toLowerCase()
+        );
+        if (found) {
+          recoveryCategory = found;
+          break;
+        }
+      }
+
+      if (recoveryCategory) {
+        setCategoryId(recoveryCategory._id);
+      } else {
+        console.error('Recovery category not found in any format');
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const fetchFlavors = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/api/v1/flavors`);
+      setFlavors(response.data);
+    } catch (error) {
+      console.error('Error fetching flavors:', error);
+    }
+  };
+
+  const fetchProducts = async () => {
+    if (!categoryId) {
+      console.error('No category ID available');
+      return;
+    }
+    
+    try {
+      const response = await axios.get(`${BASE_URL}/api/v1/products?category=${categoryId}`);
+      setProducts(response.data.products || []);
+    } catch (error) {
+      console.error('Error fetching products:', error.response?.data || error.message);
+      // Fallback to fetch all products if category filtering fails
+      try {
+        const allResponse = await axios.get(`${BASE_URL}/api/v1/products`);
+        const filteredProducts = allResponse.data.products?.filter(
+          product => product.category?._id === categoryId
+        ) || [];
+        setProducts(filteredProducts);
+      } catch (fallbackError) {
+        console.error('Fallback error:', fallbackError);
+        setProducts([]);
+      }
+    }
+  };
+
+  const filteredAndSortedProducts = useMemo(() => {
+    // Ensure products is an array
+    if (!Array.isArray(products)) {
+      return [];
+    }
+
+    let result = [...products];
+
+    // Apply flavor filter
+    if (selectedFlavor !== 'all') {
+      result = result.filter(product => 
+        product.flavors?.some(flavor => flavor._id === selectedFlavor)
+      );
+    }
+
+    // Apply sorting
+    switch (sortBy) {
+      case 'price-low':
+        result.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        result.sort((a, b) => b.price - a.price);
+        break;
+      case 'name':
+        result.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      default:
+        break;
+    }
+
+    return result;
+  }, [products, selectedFlavor, sortBy]);
+
+  const renderStars = (rating) => {
+    return [...Array(5)].map((_, index) => (
+      <FaStar key={index} className={index < rating ? 'star filled' : 'star'} />
+    ));
+  };
+
+ 
+  return (
+    <div className="recovery-container">
+      <div className="recovery-header">
+        <h1>Recovery Supplements</h1>
+        <p>
+          Optimize your post-workout recovery with our premium recovery supplements.
+          Our scientifically formulated products deliver the nutrients your body needs
+          to recover faster and perform better.
+        </p>
+      </div>
+      <div className="filters-header">
+        <div className="filter-section">
+          <span>Filter:</span>
+          <select 
+            value={selectedFlavor} 
+            onChange={(e) => setSelectedFlavor(e.target.value)}
+            className="flavor-select"
+          >
+            <option value="all">All Flavors</option>
+            {flavors.map(flavor => (
+              <option key={flavor._id} value={flavor._id}>
+                {flavor.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="sort-section">
+          <span>Sort by:</span>
+          <select 
+            value={sortBy} 
+            onChange={(e) => setSortBy(e.target.value)}
+            className="sort-select"
+          >
+            <option value="featured">Featured</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="name">Name</option>
+          </select>
+          <span className="product-count">{filteredAndSortedProducts.length} products</span>
+        </div>
+      </div>
+
+      <div className="products-grid">
+        {filteredAndSortedProducts.map(product => (
+          <div key={product._id} className="product-card">
+            <Link to={`/product/${product._id}`} className="product-link">
+              <div className="product-image">
+                {product.images && product.images.length > 0 && (
+                  <img
+                    src={`${BASE_URL}${product.images[0]}`}
+                    alt={product.name} 
+                  />
+                )}
+                {product.stock === 0 && <div className="sold-out-badge">Sold out</div>}
+                {product.salePrice && <div className="sale-badge">Sale</div>}
+              </div>
+              <div className="product-info">
+                <h3>{product.name}</h3>
+                {/* <div className="product-rating">
+                  {renderStars(product.rating || 0)}
+                </div> */}
+                <div className="product-price">
+                  {product.salePrice ? (
+                    <>
+                      <span className="original-price">{product.price}</span>
+                      <span className="sale-price">{product.salePrice}</span>
+                    </>
+                  ) : (
+                    <span>Rs. {product.price} NPR</span>
+                  )}
+                </div>
+              </div>
+            </Link>
+          </div>
+        ))}
+      </div>
+
+      <div className="descriptions-recovery">
+        <div className="paragraph">
+          <h2>Premium Recovery Supplements</h2>
+          <p>
+            Our recovery supplements are crafted with the finest ingredients to support
+            your body's natural recovery process. Whether you're an athlete, bodybuilder,
+            or fitness enthusiast, our premium recovery products are designed to help
+            you recover faster and perform better.
+          </p>
+        </div>
+        <div className="paragraph">
+          <h2>Why Choose Our Recovery Supplements?</h2>
+          <p>
+            <strong>Quality recovery supplements</strong> are essential for muscle
+            repair and regeneration. Our products are formulated with high-quality ingredients
+            and are designed to reduce recovery time and enhance performance.
+          </p>
+        </div>
+        <div className="paragraph">
+          <h2>Benefits of Recovery Supplements</h2>
+          <ul>
+            <li>
+              <strong>Faster Recovery:</strong> Support your body's natural recovery
+              process after intense workouts.
+            </li>
+            <li>
+              <strong>Reduced Soreness:</strong> Minimize muscle soreness and fatigue
+              for better performance.
+            </li>
+            <li>
+              <strong>Quality Ingredients:</strong> Made with premium ingredients
+              and carefully selected nutrients.
+            </li>
+            <li>
+              <strong>Great Taste:</strong> Available in a variety of delicious
+              flavors to suit your preference.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Recovery;

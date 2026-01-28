@@ -1,0 +1,20 @@
+/* LazyBlogs.css */
+
+.lazy-blogs-wrapper {
+  min-height: 100vh;
+  background: #111111;
+}
+
+/* Smooth transition when component loads */
+.lazy-blogs-wrapper > * {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

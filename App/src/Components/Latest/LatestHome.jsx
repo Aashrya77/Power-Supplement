@@ -41,7 +41,7 @@ const LatestHome = () => {
   const fetchLatestProducts = async () => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/api/v1/products?sort=-createdAt&limit=4`
+        `https://powersupplement.net/api/v1/products?sort=-createdAt&limit=4`
       );
       setLatestProducts(response.data.products || []);
     } catch (error) {
@@ -49,6 +49,26 @@ const LatestHome = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function to get stock status
+  const getStockStatus = (product) => {
+    // If stockStatus is provided by the server, use it directly
+    if (product.stockStatus) {
+      return product.stockStatus;
+    }
+    
+    // Fallback to calculating based on stock quantity if no stockStatus from backend
+    if (product.stock === undefined || product.stock === null) return 'Coming Soon';
+    if (product.stock === 0) return 'Out of Stock';
+    if (product.stock < 10) return 'Low Stock';
+    return 'In Stock';
+  };
+
+  // Helper function to check if stock status should be displayed
+  const shouldShowStockTag = (product) => {
+    const status = getStockStatus(product);
+    return status === 'Out of Stock' || status === 'Coming Soon' || status === 'Low Stock';
   };
 
   if (loading) {
@@ -68,6 +88,11 @@ const LatestHome = () => {
           <div className="LatestHome-product product-ani" key={product._id}>
             <Link to={`/product/${product._id}`} className="LatestHome-product-link">
               {product.onSale && <span className="sale-badge">Sale</span>}
+              {shouldShowStockTag(product) && (
+                <span className={`stock-status-tag ${getStockStatus(product).toLowerCase().replace(/ /g, '-')}`}>
+                  {getStockStatus(product)}
+                </span>
+              )}
               <div className="LatestHomeImg">
                 {product.images && product.images[0] && (
                   <img

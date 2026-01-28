@@ -1,9 +1,11 @@
 import React from "react";
 import "./Footer.css";
+import { Link } from "react-router-dom";
 import { FaFacebook } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 import { FaCcMastercard } from "react-icons/fa";
+import { AiFillTikTok } from "react-icons/ai";
 const Footer = () => {
   return (
     <>
@@ -11,37 +13,39 @@ const Footer = () => {
         <div className="footer">
           <div className="logoSide">
             <div className="logoImg">
-              <img src="\PowerLogo.png" alt="" />
+              <img src="\BlueLogo.png" alt="" />
             </div>
 
             <div className="icons">
-              <FaFacebook className="icon"/>
-              <FaInstagram className="icon"/>
+             <Link to='https://www.facebook.com/share/1B4NWaGKAX/?mibextid=wwXIfr'><FaFacebook className="icon"/></Link> 
+              <Link to='https://www.instagram.com/powersupplement8/'><FaInstagram className="icon"/></Link>
+              <Link to='https://www.tiktok.com/@powersupplement'><AiFillTikTok className="icon"/></Link>
             </div>
           </div>
           <div className="quickLinks">
             <h3>POWER SUPPLEMENT</h3>
-            <a href="/auth">Login/Register</a>
-            <a href="">About Us</a>
-            <a href="">Contact Us</a>
-            <a href="">Articles</a>
-            <a href="">FAQ</a>
-            <a href="/partner-program">JOIN TEAM POWER</a>
+            <Link to="/auth">Login/Register</Link>
+            <Link to="/about">About Us</Link>
+            <Link to="/stores">Store Locations</Link>
+            <Link to="/contact">Contact Us</Link>
+            <Link to="/articles">Articles</Link>
+            <Link to="/faq">FAQ</Link>
+            <Link to="/partner-program">JOIN TEAM POWER</Link>
           </div>
           <div className="legalTerms">
             <h3>LEGAL</h3>
-            <a href="">Terms of service</a>
-            <a href="">Refund policy</a>
-            <a href="">Shipping Policy</a>
-            <a href="">Privacy Policy</a>
-            <a href="">Accessibility</a>
-            <a href="">Do not sell or share my personal information</a>
+            <Link to="/terms">Terms of service</Link>
+            <Link to="/refund-policy">Refund policy</Link>
+            <Link to="/shipping-policy">Shipping Policy</Link>
+            <Link to="/privacy-policy">Privacy Policy</Link>
+            <Link to="/accessibility">Accessibility</Link>
+            <Link to="/personal-info">Do not sell or share my personal information</Link>
           </div>
           <div className="moneyback">
             <h3>100% MONEY BACK GUARANTEE</h3>
             <p>
               Not happy with your purchase? Send it back within 30 days for your
-              money back. <span style={{color: '#d32f2f'}}>Money Back Guarantee</span> 
+              money back. <span style={{color: '#00AEEF'}}>Money Back Guarantee</span> 
             </p>
           </div>
         </div>

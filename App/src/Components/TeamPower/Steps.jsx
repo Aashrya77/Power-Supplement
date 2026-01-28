@@ -11,7 +11,7 @@ const StepsSection = () => {
       title: "Fill Out Our Athlete Form",
       content:
         "Click the button above to bring you to our sign up page. Fill it out and submit it to our athlete team.",
-      image: "TeamPower.jpeg",
+      image: "WhatsApp Image 2025-11-07 at 22.22.19_6077a88e.jpg",
     },
     {
       id: 2,
@@ -19,7 +19,7 @@ const StepsSection = () => {
       title: "Wait For Our Response",
       content:
         "Our athlete team will take a look at your application and make sure you fit into our team! You will receive an email or a DM if you have been accepted or not.",
-      image: "TeamPower(2).jpg",
+      image: "DSC09475.jpg",
     },
     {
       id: 3,
@@ -27,7 +27,7 @@ const StepsSection = () => {
       title: "Welcome To Team Power",
       content:
         "Looks like you got your approval email or DM? Welcome to Team BPI! Now you will receive your commission code and exclusive BPI discounts. And If you are a local athlete, be on the lookout for invites to our local shoots here in South Florida!",
-      image: "TeamPower(3).jpg",
+      image: "DSC09478.jpg",
     },
   ];
 

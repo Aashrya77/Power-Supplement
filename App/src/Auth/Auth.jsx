@@ -102,7 +102,7 @@ const Auth = () => {
   return (
     <div className="auth-container">
       <div className="auth-box">
-        <img src="/PowerLogo.png" alt="" />
+        <img src="/BlueLogo.png" alt="" />
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <h2>{isRegister ? "Register" : "Login"}</h2>

@@ -52,9 +52,7 @@ const PreWorkout = () => {
     }
     
     try {
-      console.log('Fetching products for category:', categoryId);
       const response = await axios.get(`${BASE_URL}/api/v1/products?category=${categoryId}`);
-      console.log('Fetched products:', response.data);
       setProducts(response.data.products || []); 
     } catch (error) {
       console.error('Error fetching products:', error.response?.data || error.message);
@@ -122,7 +120,7 @@ const PreWorkout = () => {
 
   return (
     <div className="pre-workout-container">
-      {category && <CategorySEO category={category} products={filteredProducts} />}
+      {category && <CategorySEO category={category} products={filteredAndSortedProducts} />}
       <div className="preworkout-header">
         <h1>Pre-Workout Supplements</h1>
         <p>
@@ -179,9 +177,9 @@ const PreWorkout = () => {
               </div>
               <div className="product-info">
                 <h3>{product.name}</h3>
-                <div className="product-rating">
+                {/* <div className="product-rating">
                   {renderStars(product.rating || 0)}
-                </div>
+                </div> */}
                 <div className="product-price">
                   {product.salePrice ? (
                     <>

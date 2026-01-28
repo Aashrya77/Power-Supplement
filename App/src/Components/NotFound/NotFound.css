@@ -1,0 +1,117 @@
+.not-found-container {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #111111;
+  font-family: 'Poppins', sans-serif;
+}
+
+.not-found-content {
+  text-align: center;
+  background: rgba(17, 17, 17, 0.95);
+  padding: 3rem 2rem;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid #333;
+  max-width: 500px;
+  width: 100%;
+}
+
+.not-found-icon {
+  margin-bottom: 1.5rem;
+}
+
+.not-found-icon span {
+  font-size: 6rem;
+  font-weight: 800;
+  background: linear-gradient(45deg, #00AEEF, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+  line-height: 1;
+}
+
+.not-found-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.not-found-content p {
+  font-size: 1.1rem;
+  color: #e0e0e0;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.not-found-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-home,
+.btn-shop {
+  padding: 12px 24px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  display: inline-block;
+}
+
+.btn-home {
+  background: #00AEEF;
+  color: white;
+}
+
+.btn-home:hover {
+  background: #b71c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
+}
+
+.btn-shop {
+  background: transparent;
+  color: #00AEEF;
+  border-color: #00AEEF;
+}
+
+.btn-shop:hover {
+  background: #00AEEF;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
+}
+
+@media (max-width: 768px) {
+  .not-found-content {
+    padding: 2rem 1.5rem;
+  }
+  
+  .not-found-icon span {
+    font-size: 4rem;
+  }
+  
+  .not-found-content h1 {
+    font-size: 2rem;
+  }
+  
+  .not-found-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-home,
+  .btn-shop {
+    width: 200px;
+  }
+}

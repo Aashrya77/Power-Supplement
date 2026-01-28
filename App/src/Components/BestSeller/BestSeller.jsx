@@ -14,9 +14,9 @@ const BestSeller = () => {
   }, []);
 
   const fetchBestProducts = async () => {
-    try {
+    try { 
       const response = await axios.get(
-        `${BASE_URL}/api/v1/products?sort=-sales&limit=4`
+        `https://powersupplement.net/api/v1/products?sort=-sales&limit=4`
       );
       setBestProducts(response.data.products || []);
     } catch (error) {
@@ -53,6 +53,8 @@ const BestSeller = () => {
                   <img
                     src={`${BASE_URL}${product.images[0]}`}
                     alt={product.name}
+                    loading="lazy"
+                    decoding="async"
                   />
                 )}
               </div>

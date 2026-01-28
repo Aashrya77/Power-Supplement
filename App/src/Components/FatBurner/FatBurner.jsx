@@ -26,7 +26,6 @@ const FatBurner = () => {
   const fetchCategoryId = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/api/v1/categories`);
-      console.log('All categories:', response.data);
       
       // Try different possible category names
       const possibleNames = ['Fat Burners', 'fat-burners', 'fat burners', 'fatburners'];
@@ -37,17 +36,14 @@ const FatBurner = () => {
           category => category.name.toLowerCase() === name.toLowerCase()
         );
         if (found) {
-          console.log(`Found category with name: ${name}`, found);
           fatBurnerCategory = found;
           break;
         }
       }
 
       if (fatBurnerCategory) {
-        console.log('Setting category ID:', fatBurnerCategory._id);
         setCategoryId(fatBurnerCategory._id);
       } else {
-        console.log('Available category names:', response.data.map(c => c.name));
         console.error('Fat burner category not found in any format');
       }
     } catch (error) {
@@ -156,7 +152,7 @@ const FatBurner = () => {
               <div className="product-image">
                 {product.images && product.images.length > 0 && (
                   <img
-                    src={`http://localhost:5500${product.images[0]}`}
+                    src={`${BASE_URL}${product.images[0]}`}
                     alt={product.name} 
                   />
                 )}
@@ -165,9 +161,9 @@ const FatBurner = () => {
               </div>
               <div className="product-info">
                 <h3>{product.name}</h3>
-                <div className="product-rating">
+                {/* <div className="product-rating">
                   {renderStars(product.rating || 0)}
-                </div>
+                </div> */}
                 <div className="product-price">
                   {product.salePrice ? (
                     <>

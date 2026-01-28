@@ -73,6 +73,34 @@
   z-index: 1;
 }
 
+.stock-status-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  z-index: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stock-status-tag.out-of-stock {
+  background-color: #00AEEF;
+}
+
+.stock-status-tag.coming-soon {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.stock-status-tag.low-stock {
+  background-color: #ff9800;
+  color: #fff;
+}
+
 .LatestHome-texts {
   flex-grow: 1;
   display: flex;

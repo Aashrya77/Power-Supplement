@@ -1,9 +1,11 @@
-import React from 'react'
-import './Home.css'
+import React from 'react';
+import './Home.css';
+import LazyImage from '../LazyImage.jsx';
 const Home = () => {
   return (
     <div className="home">
-        <img src="\Home.png" alt="" />
+      
+        <LazyImage src="/Originals/Originals/Homebg.webp" alt="Home background" className="home-hero" />
     </div>
   )
 }

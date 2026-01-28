@@ -45,7 +45,7 @@
 .edit-button, .add-button {
   background: none;
   border: none;
-  color: #d32f2f;
+  color: #00AEEF;
   cursor: pointer;
   font-size: 14px;
   display: flex;
@@ -84,7 +84,7 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #d32f2f;
+  border-color: #00AEEF;
   box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.1);
 }
 
@@ -115,7 +115,7 @@
 }
 
 .save-button {
-  background-color: #d32f2f;
+  background-color: #00AEEF;
   color: white;
 }
 
@@ -193,7 +193,7 @@
 .remove-button {
   background: none;
   border: none;
-  color: #d32f2f;
+  color: #00AEEF;
   cursor: pointer;
   font-size: 14px;
   padding: 5px 10px;
