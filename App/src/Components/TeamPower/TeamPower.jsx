@@ -37,7 +37,7 @@ const TeamPower = () => {
 
   const leadership = [
     {
-      name: "Sohan Shrestha",
+      name: "Sohen Shrestha",
       title: "Founder/CEO/Board of Director",
       bio: "Leading the vision and long-term growth of Power Supplement.",
       description: "With over 15 years of experience in the fitness and supplement industry, Sohan founded Power Supplement with a mission to deliver premium quality products to athletes and fitness enthusiasts across Nepal and beyond. His strategic vision has transformed the company into a market leader, focusing on innovation, customer satisfaction, and community building. Sohan is passionate about empowering athletes to achieve their fitness goals through science-backed supplementation and mentorship.",

@@ -67,6 +67,7 @@ const AdminDashboard = () => {
     thumbnailFile: null
   });
   const [blogSubmitting, setBlogSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [orderDetailsModal, setOrderDetailsModal] = useState({ isOpen: false, order: null });
 
   useEffect(() => {
@@ -745,6 +746,10 @@ const AdminDashboard = () => {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setUploadProgress(percentCompleted);
           }
         }
       );
@@ -773,6 +778,7 @@ const AdminDashboard = () => {
       alert('Failed to create blog. Please try again.');
     } finally {
       setBlogSubmitting(false);
+      setUploadProgress(0);
     }
   };
 
@@ -2113,6 +2119,17 @@ const AdminDashboard = () => {
                 </label>
               </div>
             </div>
+
+            {blogSubmitting && uploadProgress > 0 && (
+              <div className="upload-progress-container">
+                <div className="progress-info">
+                  <span>Uploading: {uploadProgress}%</span>
+                </div>
+                <div className="progress-bar">
+                  <div className="progress-fill" style={{ width: `${uploadProgress}%` }}></div>
+                </div>
+              </div>
+            )}
 
             <div className="modal-actions">
               <button 

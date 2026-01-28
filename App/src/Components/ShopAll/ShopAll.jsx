@@ -75,7 +75,7 @@ const ShopAll = () => {
       <div className="shop-all-header">
         <h1>All Products</h1>
         <p>
-          Browse our complete collection of premium supplements designed to support
+          Browse our complete collection of premium supplements 'imported from USA' designed to support
           your fitness journey and help you achieve your goals.
         </p>
       </div>
