@@ -3,10 +3,13 @@ const path = require('path');
 const fs = require('fs');
 
 // Ensure uploads/blogs directory exists
-const blogsUploadDir = 'uploads/blogs';
+const blogsUploadDir = path.join(__dirname, '..', 'uploads', 'blogs');
 if (!fs.existsSync(blogsUploadDir)) {
     fs.mkdirSync(blogsUploadDir, { recursive: true });
 }
+
+const maxUploadMb = Number(process.env.BLOG_UPLOAD_MAX_MB) || 200;
+const maxUploadBytes = maxUploadMb * 1024 * 1024;
 
 // Configure storage
 const storage = multer.diskStorage({
@@ -47,7 +50,7 @@ const blogUpload = multer({
     storage: storage,
     fileFilter: fileFilter,
     limits: {
-        fileSize: 100 * 1024 * 1024 // 100MB limit (for videos)
+        fileSize: maxUploadBytes
     }
 });
 

@@ -115,9 +115,33 @@ app.use((req, res) => {
 // Global error handler
 app.use((err, req, res, next) => {
     console.error('Server error:', err.stack)
-    res.status(500).json({ 
-        message: 'Internal server error', 
-        error: process.env.NODE_ENV === 'development' ? err.message : undefined 
+
+    // Multer upload errors (e.g., file too large)
+    if (err && err.name === 'MulterError') {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            return res.status(413).json({
+                message: 'Uploaded file is too large',
+                error: process.env.NODE_ENV === 'development' ? err.message : undefined
+            })
+        }
+
+        return res.status(400).json({
+            message: 'File upload error',
+            error: process.env.NODE_ENV === 'development' ? err.message : undefined
+        })
+    }
+
+    // fileFilter errors / other upload validation errors
+    if (err instanceof Error && /Invalid file type/i.test(err.message)) {
+        return res.status(400).json({
+            message: err.message,
+            error: process.env.NODE_ENV === 'development' ? err.message : undefined
+        })
+    }
+
+    res.status(500).json({
+        message: 'Internal server error',
+        error: process.env.NODE_ENV === 'development' ? err.message : undefined
     })
 })
 

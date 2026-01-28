@@ -197,7 +197,7 @@ exports.updateBlog = async (req, res) => {
       if (req.files.image && req.files.image[0]) {
         // Delete old image if exists
         if (existingBlog.imageUrl) {
-          const oldImagePath = path.join(__dirname, '..', existingBlog.imageUrl);
+          const oldImagePath = path.join(__dirname, '..', existingBlog.imageUrl.replace(/^\//, ''));
           if (fs.existsSync(oldImagePath)) {
             fs.unlinkSync(oldImagePath);
           }
@@ -208,7 +208,7 @@ exports.updateBlog = async (req, res) => {
       if (req.files.video && req.files.video[0]) {
         // Delete old video if exists
         if (existingBlog.videoUrl) {
-          const oldVideoPath = path.join(__dirname, '..', existingBlog.videoUrl);
+          const oldVideoPath = path.join(__dirname, '..', existingBlog.videoUrl.replace(/^\//, ''));
           if (fs.existsSync(oldVideoPath)) {
             fs.unlinkSync(oldVideoPath);
           }
@@ -219,7 +219,7 @@ exports.updateBlog = async (req, res) => {
       if (req.files.thumbnail && req.files.thumbnail[0]) {
         // Delete old thumbnail if exists
         if (existingBlog.thumbnail) {
-          const oldThumbnailPath = path.join(__dirname, '..', existingBlog.thumbnail);
+          const oldThumbnailPath = path.join(__dirname, '..', existingBlog.thumbnail.replace(/^\//, ''));
           if (fs.existsSync(oldThumbnailPath)) {
             fs.unlinkSync(oldThumbnailPath);
           }
