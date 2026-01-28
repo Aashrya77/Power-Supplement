@@ -1,26 +1,16 @@
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-// Ensure uploads/blogs directory exists
-const blogsUploadDir = path.join(__dirname, '..', 'uploads', 'blogs');
-if (!fs.existsSync(blogsUploadDir)) {
-    fs.mkdirSync(blogsUploadDir, { recursive: true });
-}
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const maxUploadMb = Number(process.env.BLOG_UPLOAD_MAX_MB) || 200;
 const maxUploadBytes = maxUploadMb * 1024 * 1024;
-
-// Configure storage
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, blogsUploadDir);
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-    }
-});
 
 // File filter for images and videos
 const fileFilter = (req, file, cb) => {
@@ -35,7 +25,7 @@ const fileFilter = (req, file, cb) => {
         'video/x-matroska',
         'video/3gpp',
         'video/x-flv',
-        'application/octet-stream' // Fallback for some browsers
+        'application/octet-stream'
     ];
     
     if (allowedImageTypes.includes(file.mimetype) || allowedVideoTypes.includes(file.mimetype)) {
@@ -45,20 +35,87 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-// Create multer upload instance for blog media
-const blogUpload = multer({
-    storage: storage,
-    fileFilter: fileFilter,
-    limits: {
-        fileSize: maxUploadBytes
+// Configure Cloudinary storage for images
+const imageStorage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'power-supplement/blogs/images',
+        resource_type: 'auto',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'webp']
     }
 });
 
-// Middleware to handle multiple file fields
-const uploadBlogMedia = blogUpload.fields([
-    { name: 'image', maxCount: 1 },
-    { name: 'video', maxCount: 1 },
-    { name: 'thumbnail', maxCount: 1 }
-]);
+// Configure Cloudinary storage for videos
+const videoStorage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'power-supplement/blogs/videos',
+        resource_type: 'video',
+        allowed_formats: ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv', '3gp', 'flv']
+    }
+});
 
-module.exports = { uploadBlogMedia, blogUpload };
+// Configure Cloudinary storage for thumbnails
+const thumbnailStorage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'power-supplement/blogs/thumbnails',
+        resource_type: 'auto',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'webp']
+    }
+});
+
+// Create multer instances for different file types
+const imageUpload = multer({
+    storage: imageStorage,
+    fileFilter: fileFilter,
+    limits: { fileSize: maxUploadBytes }
+});
+
+const videoUpload = multer({
+    storage: videoStorage,
+    fileFilter: fileFilter,
+    limits: { fileSize: maxUploadBytes }
+});
+
+const thumbnailUpload = multer({
+    storage: thumbnailStorage,
+    fileFilter: fileFilter,
+    limits: { fileSize: maxUploadBytes }
+});
+
+// Middleware to handle multiple file fields with Cloudinary
+const uploadBlogMedia = (req, res, next) => {
+    const multiUpload = multer({
+        storage: new CloudinaryStorage({
+            cloudinary: cloudinary,
+            params: async (req, file) => {
+                let folder = 'power-supplement/blogs/images';
+                let resource_type = 'auto';
+                
+                if (file.fieldname === 'video') {
+                    folder = 'power-supplement/blogs/videos';
+                    resource_type = 'video';
+                } else if (file.fieldname === 'thumbnail') {
+                    folder = 'power-supplement/blogs/thumbnails';
+                    resource_type = 'auto';
+                }
+                
+                return {
+                    folder: folder,
+                    resource_type: resource_type
+                };
+            }
+        }),
+        fileFilter: fileFilter,
+        limits: { fileSize: maxUploadBytes }
+    }).fields([
+        { name: 'image', maxCount: 1 },
+        { name: 'video', maxCount: 1 },
+        { name: 'thumbnail', maxCount: 1 }
+    ]);
+
+    multiUpload(req, res, next);
+};
+
+module.exports = { uploadBlogMedia, blogUpload: { fields: uploadBlogMedia } };

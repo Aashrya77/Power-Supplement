@@ -1,6 +1,5 @@
 const Blog = require('../Models/Blog');
-const fs = require('fs');
-const path = require('path');
+const cloudinary = require('cloudinary').v2;
 
 // Get all published blogs
 exports.getAllBlogs = async (req, res) => {
@@ -115,16 +114,16 @@ exports.createBlog = async (req, res) => {
       published: published !== undefined ? published : true
     };
     
-    // Handle file uploads
+    // Handle file uploads (Cloudinary URLs)
     if (req.files) {
       if (req.files.image && req.files.image[0]) {
-        blogData.imageUrl = `/uploads/blogs/${req.files.image[0].filename}`;
+        blogData.imageUrl = req.files.image[0].path;
       }
       if (req.files.video && req.files.video[0]) {
-        blogData.videoUrl = `/uploads/blogs/${req.files.video[0].filename}`;
+        blogData.videoUrl = req.files.video[0].path;
       }
       if (req.files.thumbnail && req.files.thumbnail[0]) {
-        blogData.thumbnail = `/uploads/blogs/${req.files.thumbnail[0].filename}`;
+        blogData.thumbnail = req.files.thumbnail[0].path;
       }
     }
     
@@ -154,19 +153,6 @@ exports.createBlog = async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating blog:', error);
-    console.log(error)
-    
-    // Clean up uploaded files on error
-    if (req.files) {
-      Object.values(req.files).forEach(fileArray => {
-        fileArray.forEach(file => {
-          const filePath = path.join(__dirname, '..', file.path);
-          if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-          }
-        });
-      });
-    }
     
     res.status(500).json({
       success: false,
@@ -192,39 +178,18 @@ exports.updateBlog = async (req, res) => {
       });
     }
     
-    // Handle file uploads for update
+    // Handle file uploads for update (Cloudinary URLs)
     if (req.files) {
       if (req.files.image && req.files.image[0]) {
-        // Delete old image if exists
-        if (existingBlog.imageUrl) {
-          const oldImagePath = path.join(__dirname, '..', existingBlog.imageUrl.replace(/^\//, ''));
-          if (fs.existsSync(oldImagePath)) {
-            fs.unlinkSync(oldImagePath);
-          }
-        }
-        updateData.imageUrl = `/uploads/blogs/${req.files.image[0].filename}`;
+        updateData.imageUrl = req.files.image[0].path;
       }
       
       if (req.files.video && req.files.video[0]) {
-        // Delete old video if exists
-        if (existingBlog.videoUrl) {
-          const oldVideoPath = path.join(__dirname, '..', existingBlog.videoUrl.replace(/^\//, ''));
-          if (fs.existsSync(oldVideoPath)) {
-            fs.unlinkSync(oldVideoPath);
-          }
-        }
-        updateData.videoUrl = `/uploads/blogs/${req.files.video[0].filename}`;
+        updateData.videoUrl = req.files.video[0].path;
       }
       
       if (req.files.thumbnail && req.files.thumbnail[0]) {
-        // Delete old thumbnail if exists
-        if (existingBlog.thumbnail) {
-          const oldThumbnailPath = path.join(__dirname, '..', existingBlog.thumbnail.replace(/^\//, ''));
-          if (fs.existsSync(oldThumbnailPath)) {
-            fs.unlinkSync(oldThumbnailPath);
-          }
-        }
-        updateData.thumbnail = `/uploads/blogs/${req.files.thumbnail[0].filename}`;
+        updateData.thumbnail = req.files.thumbnail[0].path;
       }
     }
     
@@ -242,18 +207,6 @@ exports.updateBlog = async (req, res) => {
     });
   } catch (error) {
     console.error('Error updating blog:', error);
-    
-    // Clean up newly uploaded files on error
-    if (req.files) {
-      Object.values(req.files).forEach(fileArray => {
-        fileArray.forEach(file => {
-          const filePath = path.join(__dirname, '..', file.path);
-          if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-          }
-        });
-      });
-    }
     
     res.status(500).json({
       success: false,
@@ -278,25 +231,31 @@ exports.deleteBlog = async (req, res) => {
       });
     }
     
-    // Delete associated files
+    // Delete associated files from Cloudinary
     if (blog.imageUrl) {
-      const imagePath = path.join(__dirname, '..', blog.imageUrl);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
+      try {
+        const publicId = blog.imageUrl.split('/').slice(-2).join('/').split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+      } catch (err) {
+        console.log('Error deleting image from Cloudinary:', err);
       }
     }
     
     if (blog.videoUrl) {
-      const videoPath = path.join(__dirname, '..', blog.videoUrl);
-      if (fs.existsSync(videoPath)) {
-        fs.unlinkSync(videoPath);
+      try {
+        const publicId = blog.videoUrl.split('/').slice(-2).join('/').split('.')[0];
+        await cloudinary.uploader.destroy(publicId, { resource_type: 'video' });
+      } catch (err) {
+        console.log('Error deleting video from Cloudinary:', err);
       }
     }
     
     if (blog.thumbnail) {
-      const thumbnailPath = path.join(__dirname, '..', blog.thumbnail);
-      if (fs.existsSync(thumbnailPath)) {
-        fs.unlinkSync(thumbnailPath);
+      try {
+        const publicId = blog.thumbnail.split('/').slice(-2).join('/').split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+      } catch (err) {
+        console.log('Error deleting thumbnail from Cloudinary:', err);
       }
     }
     

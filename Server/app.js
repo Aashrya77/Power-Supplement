@@ -59,32 +59,8 @@ app.use(cors({
   credentials: true
 }));
 
-
-// Serve static files from uploads directory with proper MIME types
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
-    setHeaders: (res, filePath) => {
-        // Set proper MIME types for video files
-        if (filePath.endsWith('.mp4')) {
-            res.setHeader('Content-Type', 'video/mp4');
-        } else if (filePath.endsWith('.webm')) {
-            res.setHeader('Content-Type', 'video/webm');
-        } else if (filePath.endsWith('.ogg') || filePath.endsWith('.ogv')) {
-            res.setHeader('Content-Type', 'video/ogg');
-        } else if (filePath.endsWith('.mov')) {
-            res.setHeader('Content-Type', 'video/quicktime');
-        } else if (filePath.endsWith('.avi')) {
-            res.setHeader('Content-Type', 'video/x-msvideo');
-        } else if (filePath.endsWith('.mkv')) {
-            res.setHeader('Content-Type', 'video/x-matroska');
-        } else if (filePath.endsWith('.3gp')) {
-            res.setHeader('Content-Type', 'video/3gpp');
-        } else if (filePath.endsWith('.flv')) {
-            res.setHeader('Content-Type', 'video/x-flv');
-        }
-        // Allow CORS for video files
-        res.setHeader('Access-Control-Allow-Origin', '*');
-    }
-}))
+// Note: Blog media files are now served from Cloudinary
+// No need for local /uploads middleware
 
 // Route registrations
 app.use('/api/v1/auth', authRoutes)
