@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import EsewaPayment from '../../Components/EsewaPayment';
+import CouponInput from '../Coupon/CouponInput';
 import { createOrder } from '../../services/orderService';
 import './CheckoutForm.css';
 
@@ -22,6 +23,7 @@ const CheckoutForm = () => {
         country: 'Nepal'
     });
     const [formSubmitted, setFormSubmitted] = useState(false);
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
 
 
     // Check if user is logged in
@@ -33,9 +35,10 @@ const CheckoutForm = () => {
 
     // Calculate amounts
     const cartItems = cart?.items || [];
-    const amount = cartItems.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+    const subtotal = cartItems.reduce((total, item) => total + (item.product.price * item.quantity), 0);
     const delivery_charge = 0; // Example delivery charge
-    const total_amount = amount;
+    const discountAmount = appliedCoupon ? appliedCoupon.discount : 0;
+    const total_amount = subtotal - discountAmount + delivery_charge;
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -66,8 +69,10 @@ const CheckoutForm = () => {
                     quantity: item.quantity
                 })),
                 totalAmount: total_amount,
+                subtotal: subtotal,
                 shippingAddress,
-                paymentMethod: 'esewa'
+                paymentMethod: 'esewa',
+                couponCode: appliedCoupon ? appliedCoupon.code : null
             };
 
             console.log('Cart items being sent:', orderData)
@@ -131,8 +136,14 @@ const CheckoutForm = () => {
                 <div className="charges">
                     <div className="charge-item">
                         <span>Subtotal</span>
-                        <span>Rs. {amount}</span>
+                        <span>Rs. {subtotal}</span>
                     </div>
+                    {appliedCoupon && (
+                        <div className="charge-item discount-item">
+                            <span>Discount ({appliedCoupon.code})</span>
+                            <span className="discount-amount">- Rs. {discountAmount}</span>
+                        </div>
+                    )}
                     <div className="charge-item">
                         <span>Delivery Charge</span>
                         <span>Rs. {delivery_charge}</span>
@@ -140,9 +151,16 @@ const CheckoutForm = () => {
                 </div>
                 <div className="total">
                     <strong>Total</strong>
-                    <strong>Rs. {total_amount + delivery_charge}</strong>
+                    <strong>Rs. {total_amount}</strong>
                 </div>
             </div>
+
+            <CouponInput 
+                onApplyCoupon={setAppliedCoupon}
+                appliedCoupon={appliedCoupon}
+                onRemoveCoupon={() => setAppliedCoupon(null)}
+                subtotal={subtotal}
+            />
 
             {!formSubmitted ? (
                 <form onSubmit={handleSubmit} className="shipping-form">
