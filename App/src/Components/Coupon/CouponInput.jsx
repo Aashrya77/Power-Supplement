@@ -19,7 +19,14 @@ const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal })
         setError('');
         
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
+            
+            if (!token) {
+                setError('Please login to apply coupon codes');
+                setLoading(false);
+                return;
+            }
+            
             const response = await axios.post(
                 `${BASE_URL}/api/v1/coupons/validate`,
                 {
@@ -35,7 +42,6 @@ const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal })
             );
 
             const data = response.data;
-console.log(data)
             if (data.status === 'success') {
                 onApplyCoupon({
                     code: data.data.code,
