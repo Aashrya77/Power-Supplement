@@ -4,11 +4,11 @@ const { v4: uuidv4 } = require("uuid");
 const generateTransactionId = () => uuidv4();
 const Orders = require("../Models/Order");
 
-const ESEWA_MERCHANT_CODE = process.env.ESEWA_MERCHANT_CODE;
-const ESEWA_SECRET_KEY = process.env.ESEWA_SECRET_KEY;
-const ESEWA_TEST_URL = process.env.ESEWA_TEST_URL;
-const ESEWA_SUCCESS_URL = process.env.ESEWA_SUCCESS_URL;
-const ESEWA_FAILURE_URL = process.env.ESEWA_FAILURE_URL;
+const ESEWA_MERCHANT_CODE = 'NP-ES-PS';
+const ESEWA_SECRET_KEY = 'NRwSEhNTOBAJFR8AGgAdH183NV4gJEwjOF88NTI8KCAwKCAqNiwuMjg=';
+const ESEWA_TEST_URL = 'https://epay.esewa.com.np/api/epay/main/v2/form';
+const ESEWA_SUCCESS_URL = 'http://powersupplement.net/payment/success';
+const ESEWA_FAILURE_URL = 'http://powersupplement.net/payment/failure';
 const axios = require("axios");
 
 // Initiate eSewa payment
@@ -44,14 +44,6 @@ const initiatePayment = async (req, res) => {
       totalAmount,
       transactionAmount: totalAmount.toString()
     });
-    // Check if secret key is configured
-    if (!ESEWA_SECRET_KEY) {
-      console.error('ESEWA_SECRET_KEY is not configured in environment variables');
-      return res.status(500).json({ 
-        message: "Payment configuration error. Please contact support." 
-      });
-    }
-
     // Generate unique transaction ID
     const transactionUuid = generateTransactionId();
     // Define signed fields
