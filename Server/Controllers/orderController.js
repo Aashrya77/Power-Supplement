@@ -1,10 +1,11 @@
 const Order = require('../Models/Order');
 const User = require('../Models/User');
+const { applyCouponToOrder } = require('./couponController');
 
 // Create a new order
 exports.createOrder = async (req, res) => {
     try {
-        const { items, totalAmount, shippingAddress, paymentMethod } = req.body;
+        const { items, totalAmount, shippingAddress, paymentMethod, couponCode } = req.body;
         console.log(totalAmount)
         
         // Validate required fields
@@ -51,17 +52,91 @@ exports.createOrder = async (req, res) => {
             }
         }
         
-        // Create new order
+        // Calculate subtotal (original amount before discount)
+        let subtotal = totalAmount;
+        let finalAmount = totalAmount;
+        let couponData = null;
+        
+        // Apply coupon if provided
+        if (couponCode) {
+            try {
+                // Create a temporary order ID for coupon validation
+                const tempOrder = new Order({
+                    user: req.user._id,
+                    items: items.map(item => ({ 
+                        product: item.product,
+                        quantity: item.quantity
+                    })),
+                    totalAmount: subtotal,
+                    subtotal: subtotal,
+                    paymentMethod,
+                    shippingAddress,
+                    status: 'pending'
+                });
+                
+                // Save temporarily to get ID
+                await tempOrder.save();
+                
+                // Apply coupon
+                const couponResult = await applyCouponToOrder(
+                    couponCode,
+                    req.user._id,
+                    subtotal,
+                    tempOrder._id,
+                    items
+                );
+                
+                if (couponResult) {
+                    finalAmount = couponResult.finalAmount;
+                    couponData = {
+                        code: couponResult.couponCode,
+                        discountAmount: couponResult.discount,
+                        discountType: 'percentage', // Will be updated from coupon
+                        discountValue: 5 // Will be updated from coupon
+                    };
+                    
+                    // Update the order with coupon data
+                    tempOrder.totalAmount = finalAmount;
+                    tempOrder.couponApplied = couponData;
+                    await tempOrder.save();
+                    
+                    // Use the updated order
+                    const order = tempOrder;
+                    
+                    res.status(201).json({
+                        success: true,
+                        order,
+                        message: 'Order created successfully with coupon applied',
+                        discount: couponResult.discount
+                    });
+                    return;
+                } else {
+                    // If coupon failed, delete temp order and continue without coupon
+                    await tempOrder.deleteOne();
+                }
+            } catch (couponError) {
+                console.error('Coupon application error:', couponError);
+                // Continue without coupon if there's an error
+                return res.status(400).json({
+                    success: false,
+                    message: couponError.message || 'Invalid coupon code'
+                });
+            }
+        }
+        
+        // Create new order (without coupon)
         const order = new Order({
             user: req.user._id,
             items: items.map(item => ({ 
                 product: item.product,
                 quantity: item.quantity
             })),
-            totalAmount,
+            totalAmount: finalAmount,
+            subtotal: subtotal,
             paymentMethod,
             shippingAddress,
-            status: paymentMethod === 'cod' ? 'pending' : 'pending'
+            status: paymentMethod === 'cod' ? 'pending' : 'pending',
+            couponApplied: couponData
         });
         
         // Save order to database

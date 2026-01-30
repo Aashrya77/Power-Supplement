@@ -57,6 +57,16 @@ const orderSchema = new mongoose.Schema({
         referenceId: String,
         amount: Number 
     },
+    couponApplied: {
+        code: String,
+        discountAmount: Number,
+        discountType: String,
+        discountValue: Number
+    },
+    subtotal: {
+        type: Number,
+        required: true
+    },
     status: {
         type: String,
         enum: ['pending', 'paid', 'failed', 'delivered'],
