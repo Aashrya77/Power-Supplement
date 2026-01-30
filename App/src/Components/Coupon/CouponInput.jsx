@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import BASE_URL from '../../config';
 import './CouponInput.css';
 
 const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal }) => {
@@ -18,21 +20,23 @@ const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal })
         
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5500/api/v1/coupons/validate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
+            const response = await axios.post(
+                `${BASE_URL}/api/v1/coupons/validate`,
+                {
                     code: couponCode.trim(),
                     orderAmount: subtotal
-                })
-            });
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
 
-            const data = await response.json();
-
-            if (response.ok && data.status === 'success') {
+            const data = response.data;
+console.log(data)
+            if (data.status === 'success') {
                 onApplyCoupon({
                     code: data.data.code,
                     description: data.data.description,
@@ -48,7 +52,11 @@ const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal })
                 setError(data.message || 'Invalid coupon code');
             }
         } catch (err) {
-            setError('Failed to validate coupon. Please try again.');
+            if (err.response && err.response.data) {
+                setError(err.response.data.message || 'Invalid coupon code');
+            } else {
+                setError('Failed to validate coupon. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
