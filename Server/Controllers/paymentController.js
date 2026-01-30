@@ -5,7 +5,7 @@ const generateTransactionId = () => uuidv4();
 const Orders = require("../Models/Order");
 
 const ESEWA_MERCHANT_CODE = process.env.ESEWA_MERCHANT_CODE;
-const ESEWA_SECRET_KEY = process.env.ESEWA_SECRET_KEY || 'NRwSEhNTOBAJFR8AGgAdH183NV4gJEwjOF88NTI8KCAwKCAqNiwuMjg=';
+const ESEWA_SECRET_KEY = process.env.ESEWA_SECRET_KEY;
 const ESEWA_TEST_URL = process.env.ESEWA_TEST_URL;
 const ESEWA_SUCCESS_URL = process.env.ESEWA_SUCCESS_URL;
 const ESEWA_FAILURE_URL = process.env.ESEWA_FAILURE_URL;
@@ -44,15 +44,27 @@ const initiatePayment = async (req, res) => {
       totalAmount,
       transactionAmount: totalAmount.toString()
     });
+    // Check if secret key is configured
+    if (!ESEWA_SECRET_KEY) {
+      console.error('ESEWA_SECRET_KEY is not configured in environment variables');
+      return res.status(500).json({ 
+        message: "Payment configuration error. Please contact support." 
+      });
+    }
+
     // Generate unique transaction ID
     const transactionUuid = generateTransactionId();
     // Define signed fields
     const signedFieldNames = "total_amount,transaction_uuid,product_code";
     const signedFieldString = `total_amount=${totalAmount},transaction_uuid=${transactionUuid},product_code=NP-ES-PS`;
 
+    console.log('Signature generation:', {
+      signedFieldString,
+      secretKeyLength: ESEWA_SECRET_KEY.length,
+      environment: process.env.NODE_ENV || 'development'
+    });
    
     // Generate signature using Base64 encoding
-
     const hash = crypto
       .createHmac("sha256", ESEWA_SECRET_KEY)
       .update(signedFieldString, "utf8") // Ensure utf8
@@ -72,7 +84,7 @@ const initiatePayment = async (req, res) => {
       failure_url: ESEWA_FAILURE_URL,
       signed_field_names: signedFieldNames,
       signature: signature,
-      formUrl: "https://epay.esewa.com.np/api/epay/main/v2/form ",
+      formUrl: "https://epay.esewa.com.np/api/epay/main/v2/form",
     };
 
     res.status(200).json(paymentData);
