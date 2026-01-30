@@ -1,0 +1,317 @@
+/* Coupon Section Styles */
+.coupon-section {
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    transition: all 0.3s ease;
+}
+
+.coupon-section:hover {
+    border-color: #00AEEF;
+    box-shadow: 0 4px 20px rgba(0, 174, 239, 0.1);
+}
+
+.coupon-title {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.coupon-icon {
+    font-size: 1.3rem;
+}
+
+/* Input Wrapper */
+.coupon-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.coupon-input-group {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.coupon-input {
+    flex: 1;
+    padding: 12px 16px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    color: #333;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.coupon-input:focus {
+    outline: none;
+    border-color: #00AEEF;
+    box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.1);
+}
+
+.coupon-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #f5f5f5;
+}
+
+.coupon-input::placeholder {
+    color: #999;
+}
+
+/* Apply Button */
+.apply-coupon-btn {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #00AEEF 0%, #0099d4 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    min-width: 100px;
+}
+
+.apply-coupon-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 174, 239, 0.3);
+    background: linear-gradient(135deg, #0099d4 0%, #00AEEF 100%);
+}
+
+.apply-coupon-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.apply-coupon-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.loading-spinner {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Error and Success Messages */
+.coupon-error,
+.coupon-success {
+    padding: 10px 14px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    animation: slideIn 0.3s ease;
+}
+
+.coupon-error {
+    background: rgba(211, 47, 47, 0.1);
+    border: 1px solid rgba(211, 47, 47, 0.3);
+    color: #ff6b6b;
+}
+
+.coupon-success {
+    background: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    color: #4caf50;
+}
+
+.error-icon,
+.success-icon {
+    font-size: 1.1rem;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Available Codes Hint */
+.available-codes-hint {
+    margin-top: 8px;
+    padding: 10px;
+    background: rgba(255, 193, 7, 0.1);
+    border-left: 3px solid #ffc107;
+    border-radius: 4px;
+}
+
+.available-codes-hint p {
+    margin: 0;
+    color: #666;
+    font-size: 0.85rem;
+}
+
+/* Applied Coupon Display */
+.applied-coupon {
+    animation: fadeIn 0.4s ease;
+}
+
+.applied-coupon-card {
+    background: linear-gradient(135deg, rgba(0, 174, 239, 0.1) 0%, rgba(0, 153, 212, 0.1) 100%);
+    border: 1px solid rgba(0, 174, 239, 0.3);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.coupon-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.coupon-code-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.coupon-label {
+    color: #999;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.coupon-code-value {
+    color: #333;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.coupon-description {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.coupon-discount-info {
+    margin-top: 4px;
+}
+
+.discount-badge {
+    display: inline-block;
+    background: #00AEEF;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Remove Button */
+.remove-coupon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #666;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.remove-coupon-btn:hover {
+    background: rgba(211, 47, 47, 0.1);
+    border-color: #d32f2f;
+    color: #d32f2f;
+    transform: rotate(90deg);
+}
+
+/* Savings Display */
+.coupon-savings {
+    background: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #4caf50;
+    font-size: 0.95rem;
+}
+
+.coupon-savings strong {
+    color: #66bb6a;
+    font-size: 1.1rem;
+}
+
+.savings-icon {
+    font-size: 1.2rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .coupon-section {
+        padding: 16px;
+    }
+
+    .coupon-input-group {
+        flex-direction: column;
+    }
+
+    .apply-coupon-btn {
+        width: 100%;
+        padding: 14px;
+    }
+
+    .applied-coupon-card {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+
+    .remove-coupon-btn {
+        width: 100%;
+        border-radius: 8px;
+        height: 40px;
+    }
+
+    .coupon-savings {
+        flex-direction: column;
+        text-align: center;
+        padding: 14px;
+    }
+}

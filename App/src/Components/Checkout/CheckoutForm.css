@@ -11,6 +11,7 @@
     margin-bottom: 2rem;
     color: #333;
     text-align: center;
+    font-family: 'Poppins', sans-serif;
 }
 
 .order-summary {
@@ -23,6 +24,7 @@
 .order-summary h3 {
     margin-bottom: 1rem;
     color: #444;
+    font-family: 'Poppins', sans-serif;
 }
 
 .order-item {
@@ -30,6 +32,7 @@
     justify-content: space-between;
     padding: 0.75rem 0;
     border-bottom: 1px solid #eee;
+    color: #333;
 }
 
 .charges {
@@ -45,13 +48,25 @@
     color: #666;
 }
 
+.charge-item.discount-item {
+    color: #4caf50;
+    font-weight: 500;
+}
+
+.discount-amount {
+    color: #4caf50;
+    font-weight: 600;
+}
+
 .total {
     display: flex;
     justify-content: space-between;
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 2px solid #ddd;
+    border-top: 2px solid #00AEEF;
     font-size: 1.1rem;
+    color: #333;
+    font-weight: 600;
 }
 
 .shipping-form {
@@ -61,6 +76,7 @@
 .shipping-form h3 {
     margin-bottom: 1.5rem;
     color: #444;
+    font-family: 'Poppins', sans-serif;
 }
 
 .form-group {
@@ -71,19 +87,24 @@
     display: block;
     margin-bottom: 0.5rem;
     color: #555;
+    font-family: 'Poppins', sans-serif;
 }
 
 .form-group input {
     width: 100%;
     padding: 0.75rem;
+    background: white;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
+    color: #333;
+    font-family: 'Poppins', sans-serif;
 }
 
 .form-group input:focus {
     border-color: #00AEEF;
     outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.1);
 }
 
 .form-row {
@@ -95,18 +116,21 @@
 .pay-button, .continue-button {
     width: 100%;
     padding: 1rem;
-    background-color: #00AEEF;
+    background: linear-gradient(135deg, #00AEEF 0%, #0099d4 100%);
     color: white;
     border: none;
     border-radius: 4px;
     font-size: 1.1rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
 }
 
 .pay-button:hover, .continue-button:hover {
-    background-color: #00AEEF;
+    background: linear-gradient(135deg, #0099d4 0%, #00AEEF 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 174, 239, 0.3);
 }
 
 .pay-button:disabled, .continue-button:disabled {
@@ -118,7 +142,7 @@
     margin-top: 1rem;
     padding: 1rem;
     background-color: #ffebee;
-    color: #00AEEF;
+    color: #c62828;
     border-radius: 4px;
     text-align: center;
 }
@@ -131,6 +155,7 @@
 .payment-section h3 {
     margin-bottom: 1.5rem;
     color: #444;
+    font-family: 'Poppins', sans-serif;
 }
 
 .shipping-summary {
@@ -144,10 +169,12 @@
 .shipping-summary h4 {
     margin-bottom: 0.5rem;
     color: #555;
+    font-family: 'Poppins', sans-serif;
 }
 
 .shipping-summary p {
     margin-bottom: 0.5rem;
+    color: #666;
 }
 
 .edit-button {
@@ -162,6 +189,7 @@
     cursor: pointer;
     font-size: 0.9rem;
     transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
 }
 
 .edit-button:hover {
@@ -181,21 +209,24 @@
 .esewa-pay-button {
     width: 100%;
     padding: 1rem;
-    background-color: #00AEEF;
+    background: linear-gradient(135deg, #00AEEF 0%, #0099d4 100%);
     color: white;
     border: none;
     border-radius: 4px;
     font-size: 1.1rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: 'Poppins', sans-serif;
 }
 
 .esewa-pay-button:hover {
-    background-color: #00AEEF;
+    background: linear-gradient(135deg, #0099d4 0%, #00AEEF 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 174, 239, 0.3);
 }
 
 .esewa-pay-button:disabled {
@@ -207,7 +238,7 @@
     margin-top: 1rem;
     padding: 1rem;
     background-color: #ffebee;
-    color: #00AEEF;
+    color: #c62828;
     border-radius: 4px;
     text-align: center;
 }
@@ -224,21 +255,25 @@
     margin-bottom: 1.5rem;
     color: #666;
     font-size: 1.1rem;
+    font-family: 'Poppins', sans-serif;
 }
 
 .continue-shopping-button {
     padding: 0.75rem 1.5rem;
-    background-color: #00AEEF;
+    background: linear-gradient(135deg, #00AEEF 0%, #0099d4 100%);
     color: white;
     border: none;
     border-radius: 4px;
     font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
 }
 
 .continue-shopping-button:hover {
-    background-color: #00AEEF;
+    background: linear-gradient(135deg, #0099d4 0%, #00AEEF 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 174, 239, 0.3);
 }
 
 @media (max-width: 768px) {
