@@ -13,11 +13,7 @@ const Testimonials = () => {
             name: 'Uday K.', 
             description: "My trusted brand!"
         },
-        {
-            id: 3,
-            name: 'Ram P.',
-            description: "On time and very prompt"
-        }
+
     ]
   return (
     <div className="testimonials">

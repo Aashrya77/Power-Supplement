@@ -16,7 +16,7 @@ const StoreLocations = () => {
     {
       id: 2,
       name: "Rs Supplement",
-      location: "Kumari Party, Lalitpur, Nepal",
+      location: "Kumaripati, Lalitpur, Nepal",
       phone: "+977-9851345820",
       hours: "9:00 AM - 8:00 PM",
       mapLink: "https://www.google.com/maps/place/Rs+Supplement/@27.6721953,85.2978155,15z/data=!3m1!4b1!4m6!3m5!1s0x39eb1900606e3d8d:0x916bc89f0d6cd0ad!8m2!3d27.6721775!4d85.3162696!16s%2Fg%2F11xw27xnbm?entry=ttu&g_ep=EgoyMDI1MTExMi4wIKXMDSoASAFQAw%3D%3D"
@@ -55,7 +55,7 @@ const StoreLocations = () => {
     },
     {
       id: 7,
-      name: "Invictus Fitness - Chitwan",
+      name: "Invictus Fitness",
       location: "Jadibuti, Kathamndu, Nepal",
       phone: "+977-9801234572",
       hours: "9:00 AM - 8:00 PM",
@@ -69,7 +69,33 @@ const StoreLocations = () => {
       phone: "+977-9867586576",
       hours: "9:00 AM - 8:00 PM",
       mapLink: "https://maps.google.com"
-    }
+    },
+    {
+      id: 9,
+      name: "Revive Supplement",
+      location: "Baneshwor, Kathamandu, Nepal",
+      phone: "+977-9843567690",
+      hours: "9:00 AM - 8:00 PM",
+      mapLink: "https://maps.app.goo.gl/ChfPuD2ouhgWEp4a8"
+    },
+    {
+      id: 10,
+      name: "Peak x Supplement",
+      location: "Mukti Marga, Banepa, Nepal",
+      phone: "+977-9801115030",
+      hours: "9:00 AM - 8:00 PM",
+      mapLink: "https://maps.app.goo.gl/JbNmqz1kUfoUCZJC9"
+    },
+    {
+      id: 11,
+      name: "Power Pack Supplement",
+      location: "Mukti Marga, Bhaktapur, Nepal",
+      phone: "+977-9709390747",
+      hours: "9:00 AM - 8:00 PM",
+      mapLink: "https://maps.google.com"
+    },
+
+
   ];
 
   return (
