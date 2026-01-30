@@ -38,17 +38,6 @@ async function seedCoupons() {
 
     // Find an admin user to set as creator
     let adminUser = await User.findOne({ isAdmin: true });
-    
-    if (!adminUser) {
-      console.log('No admin user found. Creating a default admin user...');
-      adminUser = await User.create({
-        name: 'Admin',
-        email: 'admin@powersupplement.net',
-        password: 'Admin@123', // Change this in production
-        isAdmin: true
-      });
-      console.log('Default admin user created');
-    }
 
     // Clear existing coupons (optional - comment out if you want to keep existing)
     // await Coupon.deleteMany({});

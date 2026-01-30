@@ -38,7 +38,7 @@ const CheckoutForm = () => {
     const subtotal = cartItems.reduce((total, item) => total + (item.product.price * item.quantity), 0);
     const delivery_charge = 0; // Example delivery charge
     const discountAmount = appliedCoupon ? appliedCoupon.discount : 0;
-    const total_amount = subtotal - discountAmount + delivery_charge;
+    const total_amount = Math.round(subtotal - discountAmount + delivery_charge);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;

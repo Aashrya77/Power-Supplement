@@ -17,7 +17,14 @@ const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal })
         setError('');
         
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
+            
+            if (!token) {
+                setError('Please login to apply coupon codes');
+                setLoading(false);
+                return;
+            }
+            
             const response = await fetch('http://localhost:5500/api/v1/coupons/validate', {
                 method: 'POST',
                 headers: {
@@ -31,7 +38,6 @@ const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal })
             });
 
             const data = await response.json();
-
             if (response.ok && data.status === 'success') {
                 onApplyCoupon({
                     code: data.data.code,
@@ -45,6 +51,7 @@ const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal })
                 setTimeout(() => setShowSuccess(false), 3000);
                 setCouponCode('');
             } else {
+               
                 setError(data.message || 'Invalid coupon code');
             }
         } catch (err) {
@@ -81,10 +88,10 @@ const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal })
                         <input
                             type="text"
                             className="coupon-input"
-                            placeholder="Enter athlete code (e.g., SAGAR10)"
-                            value={couponCode}
+                            placeholder="Enter athlete code"
+                            value={couponCode.toUpperCase()}
                             onChange={(e) => {
-                                setCouponCode(e.target.value.toUpperCase());
+                                setCouponCode(e.target.value);
                                 setError('');
                             }}
                             onKeyPress={handleKeyPress}
@@ -127,7 +134,7 @@ const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal })
                         <div className="coupon-details">
                             <div className="coupon-code-display">
                                 <span className="coupon-label">Code:</span>
-                                <span className="coupon-code-value">{appliedCoupon.code}</span>
+                                <span className="coupon-code-value">{appliedCoupon.code.toUpperCase()}</span>
                             </div>
                             <div className="coupon-description">
                                 {appliedCoupon.description}

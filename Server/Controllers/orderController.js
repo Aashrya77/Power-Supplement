@@ -5,8 +5,13 @@ const { applyCouponToOrder } = require('./couponController');
 // Create a new order
 exports.createOrder = async (req, res) => {
     try {
-        const { items, totalAmount, shippingAddress, paymentMethod, couponCode } = req.body;
-        console.log(totalAmount)
+        const { items, totalAmount, shippingAddress, paymentMethod, couponCode, subtotal } = req.body;
+        console.log('Order creation request:', {
+            totalAmount,
+            subtotal,
+            couponCode,
+            paymentMethod
+        });
         
         // Validate required fields
         if (!items || !totalAmount || !shippingAddress || !paymentMethod) {
@@ -52,79 +57,26 @@ exports.createOrder = async (req, res) => {
             }
         }
         
-        // Calculate subtotal (original amount before discount)
-        let subtotal = totalAmount;
+        // Frontend already sends the discounted totalAmount and original subtotal
         let finalAmount = totalAmount;
         let couponData = null;
         
-        // Apply coupon if provided
-        if (couponCode) {
-            try {
-                // Create a temporary order ID for coupon validation
-                const tempOrder = new Order({
-                    user: req.user._id,
-                    items: items.map(item => ({ 
-                        product: item.product,
-                        quantity: item.quantity
-                    })),
-                    totalAmount: subtotal,
-                    subtotal: subtotal,
-                    paymentMethod,
-                    shippingAddress,
-                    status: 'pending'
-                });
-                
-                // Save temporarily to get ID
-                await tempOrder.save();
-                
-                // Apply coupon
-                const couponResult = await applyCouponToOrder(
-                    couponCode,
-                    req.user._id,
-                    subtotal,
-                    tempOrder._id,
-                    items
-                );
-                
-                if (couponResult) {
-                    finalAmount = couponResult.finalAmount;
-                    couponData = {
-                        code: couponResult.couponCode,
-                        discountAmount: couponResult.discount,
-                        discountType: 'percentage', // Will be updated from coupon
-                        discountValue: 5 // Will be updated from coupon
-                    };
-                    
-                    // Update the order with coupon data
-                    tempOrder.totalAmount = finalAmount;
-                    tempOrder.couponApplied = couponData;
-                    await tempOrder.save();
-                    
-                    // Use the updated order
-                    const order = tempOrder;
-                    
-                    res.status(201).json({
-                        success: true,
-                        order,
-                        message: 'Order created successfully with coupon applied',
-                        discount: couponResult.discount
-                    });
-                    return;
-                } else {
-                    // If coupon failed, delete temp order and continue without coupon
-                    await tempOrder.deleteOne();
-                }
-            } catch (couponError) {
-                console.error('Coupon application error:', couponError);
-                // Continue without coupon if there's an error
-                return res.status(400).json({
-                    success: false,
-                    message: couponError.message || 'Invalid coupon code'
-                });
-            }
+        // If coupon code is provided, just record it (don't recalculate discount)
+        if (couponCode && subtotal) {
+            // Calculate the discount amount from subtotal and totalAmount
+            const discountAmount = subtotal - totalAmount;
+            
+            couponData = {
+                code: couponCode,
+                discountAmount: discountAmount,
+                discountType: 'percentage',
+                discountValue: Math.round((discountAmount / subtotal) * 100)
+            };
+            
+            console.log('Coupon data being saved:', couponData);
         }
         
-        // Create new order (without coupon)
+        // Create new order
         const order = new Order({
             user: req.user._id,
             items: items.map(item => ({ 
@@ -132,7 +84,7 @@ exports.createOrder = async (req, res) => {
                 quantity: item.quantity
             })),
             totalAmount: finalAmount,
-            subtotal: subtotal,
+            subtotal: subtotal || totalAmount,
             paymentMethod,
             shippingAddress,
             status: paymentMethod === 'cod' ? 'pending' : 'pending',
@@ -141,6 +93,13 @@ exports.createOrder = async (req, res) => {
         
         // Save order to database
         await order.save();
+        
+        console.log('Order saved with:', {
+            orderId: order._id,
+            subtotal: order.subtotal,
+            totalAmount: order.totalAmount,
+            couponApplied: order.couponApplied
+        });
         
         res.status(201).json({
             success: true,

@@ -24,13 +24,26 @@ const initiatePayment = async (req, res) => {
       return res.status(404).json({ msg: "Order not found." });
     }
 
-    // Calculate total amount
-    const amount = order.totalAmount;
+    console.log('Order details:', {
+      orderId: order._id,
+      subtotal: order.subtotal,
+      totalAmount: order.totalAmount,
+      couponApplied: order.couponApplied
+    });
+
+    // Calculate total amount - round to nearest integer for eSewa
+    const amount = Math.round(order.totalAmount);
     const taxAmount = 0;
     const serviceCharge = 0;
     const deliveryCharge = 0;
-    const totalAmount =
-      parseInt(amount) + taxAmount + serviceCharge + deliveryCharge;
+    const totalAmount = amount + taxAmount + serviceCharge + deliveryCharge;
+    
+    console.log('Payment amounts:', {
+      originalAmount: order.totalAmount,
+      roundedAmount: amount,
+      totalAmount,
+      transactionAmount: totalAmount.toString()
+    });
     // Generate unique transaction ID
     const transactionUuid = generateTransactionId();
     // Define signed fields
@@ -59,7 +72,7 @@ const initiatePayment = async (req, res) => {
       failure_url: ESEWA_FAILURE_URL,
       signed_field_names: signedFieldNames,
       signature: signature,
-      formUrl: "https://epay.esewa.com.np/api/epay/main/v2/form",
+      formUrl: "https://epay.esewa.com.np/api/epay/main/v2/form ",
     };
 
     res.status(200).json(paymentData);
