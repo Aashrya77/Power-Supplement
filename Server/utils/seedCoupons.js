@@ -6,23 +6,24 @@ const connectDB = require('../db/connectDB');
 
 // Athlete coupon codes - 5% discount
 const athleteCodes = [
-  { code: 'sagar10', athleteName: 'Sagar' },
-  { code: 'susan10', athleteName: 'Susan' },
-  { code: 'sowen10', athleteName: 'Sowen' },
-  { code: 'saru10', athleteName: 'Saru' },
-  { code: 'akash10', athleteName: 'Akash' },
-  { code: 'karnik10', athleteName: 'Karnik' },
-  { code: 'nehal10', athleteName: 'Nehal' },
-  { code: 'rajani10', athleteName: 'Rajani' },
-  { code: 'kamal10', athleteName: 'Kamal' }
+  // { code: 'sagar10', athleteName: 'Sagar' },
+  // { code: 'susan10', athleteName: 'Susan' },
+  // { code: 'sowen10', athleteName: 'Sowen' },
+  // { code: 'saru10', athleteName: 'Saru' },
+  // { code: 'akash10', athleteName: 'Akash' },
+  // { code: 'karnik10', athleteName: 'Karnik' },
+  // { code: 'nehal10', athleteName: 'Nehal' },
+  // { code: 'rajani10', athleteName: 'Rajani' },
+  // { code: 'kamal10', athleteName: 'Kamal' },
+  { code: 'iconic10', athleteName: 'iconic' }
 ];
 
 // Generate athlete coupons with 5% discount
 const sampleCoupons = athleteCodes.map(athlete => ({
   code: athlete.code.toUpperCase(),
-  description: `${athlete.athleteName}'s athlete code - 5% off your order`,
+  description: `${athlete.athleteName}'s athlete code - 10% off your order`,
   discountType: 'percentage',
-  discountValue: 5,
+  discountValue: 10,
   minimumOrderAmount: 0, // No minimum order amount
   maxDiscountAmount: null, // No maximum discount cap
   usageLimit: null, // Unlimited total usage
@@ -33,7 +34,7 @@ const sampleCoupons = athleteCodes.map(athlete => ({
 async function seedCoupons() {
   try {
     // Connect to database
-    await connectDB(process.env.MONGO_URI);
+    await connectDB("mongodb+srv://Aashrya77:0908@nodejslearning.qeemezd.mongodb.net/Power_Supplement?retryWrites=true&w=majority&appName=NodeJsLearning");
     console.log('Connected to MongoDB');
 
     // Find an admin user to set as creator
