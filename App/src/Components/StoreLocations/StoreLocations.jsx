@@ -97,7 +97,6 @@ const StoreLocations = () => {
     {
       id: 12,
       name: "MK Nutrition",
-      img: '/butwal.jpg',
       location: "Bafal,Kalanki,Kathmandu",
       phone: "+977-9823397746",
       hours: "9:00 AM - 8:00 PM",
