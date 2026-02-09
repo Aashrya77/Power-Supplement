@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./TeamPower.css";
 import StepsSection from "./Steps";
 import { Swiper, SwiperSlide } from "swiper/react";

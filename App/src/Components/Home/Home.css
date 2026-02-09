@@ -4,9 +4,76 @@
    cursor: pointer;
 }
 
+ .home-hero-wrapper{
+     position: relative;
+ }
+
+ .usa-import-badge{
+     position: absolute;
+     top: 18px;
+     left: 18px;
+     z-index: 2;
+     padding: 10px 14px;
+     padding-top: 15px;
+     border-radius: 12px;
+     background: rgba(17, 17, 17, 0.72);
+     border: 1px solid rgba(211, 47, 47, 0.65);
+     color: #ffffff;
+     backdrop-filter: blur(8px);
+     -webkit-backdrop-filter: blur(8px);
+     box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+     max-width: calc(100% - 36px);
+     box-sizing: border-box;
+ }
+
+ .usa-import-badge-title{
+     font-size: 0.95rem;
+     font-weight: 700;
+     letter-spacing: 0.4px;
+     line-height: 1.1;
+     white-space: nowrap;
+     overflow: hidden;
+     text-overflow: ellipsis;
+ }
+
+ .usa-import-badge-subtitle{
+     margin-top: 2px;
+     font-size: 0.8rem;
+     color: #e0e0e0;
+     line-height: 1.1;
+ }
+
 @media (max-width: 768px) {
     .home img{
         width: 100%;
     }
+
+     .usa-import-badge{
+         top: auto;
+         bottom: 10px;
+         left: 10px;
+         padding: 6px 10px;
+         border-radius: 999px;
+         max-width: calc(100% - 20px);
+     }
+
+     .usa-import-badge-title{
+         font-size: 0.8rem;
+     }
+
+     .usa-import-badge-subtitle{
+         display: none;
+     }
 }
 
+@media (max-width: 480px) {
+     .usa-import-badge{
+         bottom: 8px;
+         left: 8px;
+         padding: 6px 9px;
+     }
+
+     .usa-import-badge-title{
+         font-size: 0.75rem;
+     }
+}

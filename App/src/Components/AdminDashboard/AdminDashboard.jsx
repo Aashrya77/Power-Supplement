@@ -12,7 +12,7 @@ const AdminDashboard = () => {
     totalOrders: 0,
     totalRevenue: 0,
     totalProducts: 0,
-    totalUsers: 0
+    totalUsers: 2
   });
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -64,9 +64,12 @@ const AdminDashboard = () => {
     published: true,
     imageFile: null,
     videoFile: null,
-    thumbnailFile: null
+    thumbnailFile: null,
+    videoSource: 'upload',
+    videoUrl: ''
   });
   const [blogSubmitting, setBlogSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [orderDetailsModal, setOrderDetailsModal] = useState({ isOpen: false, order: null });
 
   useEffect(() => {
@@ -130,14 +133,20 @@ const AdminDashboard = () => {
       const flavorsResponse = await axios.get(`${BASE_URL}/api/v1/flavors`);
       setFlavors(flavorsResponse.data || []);
 
-      // Calculate stats from real data
-      const totalRevenue = productsData.reduce((sum, product) => sum + product.price, 0);
+      // Fetch orders for real stats
+      const ordersResponse = await getAllOrders();
+      const ordersData = ordersResponse.data || [];
+      
+      // Calculate stats from real order data
+      const totalOrders = ordersData.length;
+      const totalRevenue = ordersData.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+      const uniqueUsers = new Set(ordersData.map(order => order.userId)).size;
       
       setStats({
-        totalOrders: productsData.reduce((sum, product) => sum + (product.sales || 0), 0), // Sum of all sales
+        totalOrders: totalOrders,
         totalRevenue: totalRevenue,
         totalProducts: productsData.length,
-        totalUsers: Math.floor(totalRevenue / 1000) // Estimate users based on revenue
+        totalUsers: uniqueUsers > 0 ? uniqueUsers : 0
       });
       
     } catch (error) {
@@ -191,36 +200,6 @@ const AdminDashboard = () => {
     });
   };
 
-  // Generate sample orders with real product names (for demo purposes)
-  const getSampleOrders = (count = 5) => {
-    if (products.length === 0) return [];
-    
-    const customers = ['Rajesh Kumar', 'Priya Sharma', 'Amit Singh', 'Sneha Patel', 'Vikram Thapa', 'Anita Rai', 'Suresh Gurung'];
-    const statuses = ['Completed', 'Processing', 'Shipped', 'Pending'];
-    
-    return Array.from({ length: count }, (_, index) => {
-      const randomProduct = products[index % products.length];
-      
-      // Safety check for product
-      if (!randomProduct || !randomProduct.name) {
-        return null;
-      }
-      
-      const randomCustomer = customers[index % customers.length];
-      const randomStatus = statuses[index % statuses.length];
-      const date = new Date();
-      date.setDate(date.getDate() - index);
-      
-      return {
-        id: `#PS${(1000 + index).toString()}`,
-        customer: randomCustomer,
-        product: randomProduct.name.length > 35 ? randomProduct.name.substring(0, 35) + '...' : randomProduct.name,
-        amount: `Rs. ${randomProduct.price}`,
-        status: randomStatus,
-        date: date.toISOString().split('T')[0]
-      };
-    }).filter(order => order !== null);
-  };
 
   // Helper function to format price
   const formatPrice = (price) => {
@@ -709,6 +688,10 @@ const AdminDashboard = () => {
 
   // Handle file uploads for blogs
   const handleBlogFileChange = (field, file) => {
+    if (file && field === 'videoFile' && file.size > 100 * 1024 * 1024) {
+      alert(`Video file is ${(file.size / 1024 / 1024).toFixed(1)} MB. Cloudinary free plan only supports files up to 100 MB. Please compress the video or use "Video URL" option instead.`);
+      return;
+    }
     setBlogForm(prev => ({ ...prev, [field]: file }));
   };
 
@@ -724,9 +707,15 @@ const AdminDashboard = () => {
       return;
     }
 
-    if (blogForm.mediaType === 'video' && !blogForm.videoFile) {
-      alert('Please upload a video');
-      return;
+    if (blogForm.mediaType === 'video') {
+      if (blogForm.videoSource === 'upload' && !blogForm.videoFile) {
+        alert('Please upload a video');
+        return;
+      }
+      if (blogForm.videoSource === 'url' && !blogForm.videoUrl.trim()) {
+        alert('Please enter a video URL');
+        return;
+      }
     }
 
     try {
@@ -754,8 +743,11 @@ const AdminDashboard = () => {
       }
 
       if (blogForm.mediaType === 'video') {
-        if (blogForm.videoFile) {
+        if (blogForm.videoSource === 'upload' && blogForm.videoFile) {
           formData.append('video', blogForm.videoFile);
+        }
+        if (blogForm.videoSource === 'url' && blogForm.videoUrl.trim()) {
+          formData.append('videoUrl', blogForm.videoUrl.trim());
         }
         if (blogForm.thumbnailFile) {
           formData.append('thumbnail', blogForm.thumbnailFile);
@@ -769,6 +761,11 @@ const AdminDashboard = () => {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
+          },
+          timeout: 600000,
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setUploadProgress(percentCompleted);
           }
         }
       );
@@ -787,16 +784,27 @@ const AdminDashboard = () => {
           published: true,
           imageFile: null,
           videoFile: null,
-          thumbnailFile: null
+          thumbnailFile: null,
+          videoSource: 'upload',
+          videoUrl: ''
         });
         document.body.style.overflow = '';
         alert('Blog created successfully!');
       }
     } catch (error) {
       console.error('Error creating blog:', error);
-      alert('Failed to create blog. Please try again.');
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        alert('Upload timed out. The video file may be too large. Try compressing it or using a shorter video.');
+      } else if (error.response?.status === 413) {
+        alert('File is too large. Please reduce the file size and try again.');
+      } else if (error.response?.data?.message) {
+        alert(error.response.data.message);
+      } else {
+        alert('Failed to create blog. Please try again.');
+      }
     } finally {
       setBlogSubmitting(false);
+      setUploadProgress(0);
     }
   };
 
@@ -831,8 +839,13 @@ const AdminDashboard = () => {
         formData.append('image', blogForm.imageFile);
       }
 
-      if (blogForm.videoFile) {
-        formData.append('video', blogForm.videoFile);
+      if (blogForm.mediaType === 'video') {
+        if (blogForm.videoSource === 'upload' && blogForm.videoFile) {
+          formData.append('video', blogForm.videoFile);
+        }
+        if (blogForm.videoSource === 'url' && blogForm.videoUrl.trim()) {
+          formData.append('videoUrl', blogForm.videoUrl.trim());
+        }
       }
 
       if (blogForm.thumbnailFile) {
@@ -846,6 +859,11 @@ const AdminDashboard = () => {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
+          },
+          timeout: 600000,
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setUploadProgress(percentCompleted);
           }
         }
       );
@@ -860,9 +878,18 @@ const AdminDashboard = () => {
       }
     } catch (error) {
       console.error('Error updating blog:', error);
-      alert('Failed to update blog. Please try again.');
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        alert('Upload timed out. The video file may be too large. Try compressing it or using a shorter video.');
+      } else if (error.response?.status === 413) {
+        alert('File is too large. Please reduce the file size and try again.');
+      } else if (error.response?.data?.message) {
+        alert(error.response.data.message);
+      } else {
+        alert('Failed to update blog. Please try again.');
+      }
     } finally {
       setBlogSubmitting(false);
+      setUploadProgress(0);
     }
   };
 
@@ -951,7 +978,9 @@ const AdminDashboard = () => {
       published: blog.published,
       imageFile: null,
       videoFile: null,
-      thumbnailFile: null
+      thumbnailFile: null,
+      videoSource: blog.videoUrl && !blog.videoUrl.includes('cloudinary') ? 'url' : 'upload',
+      videoUrl: blog.videoUrl || ''
     });
     document.body.style.overflow = 'hidden';
   };
@@ -974,7 +1003,9 @@ const AdminDashboard = () => {
       published: true,
       imageFile: null,
       videoFile: null,
-      thumbnailFile: null
+      thumbnailFile: null,
+      videoSource: 'upload',
+      videoUrl: ''
     });
     document.body.style.overflow = '';
   };
@@ -992,7 +1023,9 @@ const AdminDashboard = () => {
       published: true,
       imageFile: null,
       videoFile: null,
-      thumbnailFile: null
+      thumbnailFile: null,
+      videoSource: 'upload',
+      videoUrl: ''
     });
     document.body.style.overflow = '';
   };
@@ -1059,30 +1092,36 @@ const AdminDashboard = () => {
         <div className="activity-section">
           <h3>Recent Orders</h3>
           <div className="table-container">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Customer</th>
-                  <th>Product</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {getSampleOrders().map(order => (
-                  <tr key={order.id}>
-                    <td>{order.id}</td>
-                    <td>{order.customer}</td>
-                    <td>{order.product}</td>
-                    <td>{order.amount}</td>
-                    <td><span className={`status ${order.status.toLowerCase()}`}>{order.status}</span></td>
-                    <td>{order.date}</td>
+            {orders.length === 0 ? (
+              <div className="empty-state">
+                <p>No orders yet</p>
+              </div>
+            ) : (
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Date</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {formatOrdersForDisplay(orders).slice(0, 5).map(order => (
+                    <tr key={order.id}>
+                      <td>{order.id}</td>
+                      <td>{order.customer}</td>
+                      <td>{order.product}</td>
+                      <td>{order.amount}</td>
+                      <td><span className={`status ${order.status.toLowerCase()}`}>{order.status}</span></td>
+                      <td>{order.date}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>
@@ -2097,15 +2136,50 @@ const AdminDashboard = () => {
               {blogForm.mediaType === 'video' && (
                 <>
                   <div className="form-group">
-                    <label>Upload Video *</label>
-                    <input
-                      type="file"
-                      accept="video/*"
-                      onChange={(e) => handleBlogFileChange('videoFile', e.target.files[0])}
-                      className="form-input"
-                    />
-                    {blogForm.videoFile && <small>✓ {blogForm.videoFile.name}</small>}
+                    <label>Video Source *</label>
+                    <div className="video-source-toggle">
+                      <button
+                        type="button"
+                        className={`toggle-btn ${blogForm.videoSource === 'upload' ? 'active' : ''}`}
+                        onClick={() => handleBlogFormChange('videoSource', 'upload')}
+                      >
+                        Upload File
+                      </button>
+                      <button
+                        type="button"
+                        className={`toggle-btn ${blogForm.videoSource === 'url' ? 'active' : ''}`}
+                        onClick={() => handleBlogFormChange('videoSource', 'url')}
+                      >
+                        Video URL
+                      </button>
+                    </div>
                   </div>
+
+                  {blogForm.videoSource === 'upload' && (
+                    <div className="form-group">
+                      <label>Upload Video * <small style={{color: '#ff9800'}}>(max 100 MB)</small></label>
+                      <input
+                        type="file"
+                        accept="video/*"
+                        onChange={(e) => handleBlogFileChange('videoFile', e.target.files[0])}
+                        className="form-input"
+                      />
+                      {blogForm.videoFile && <small>✓ {blogForm.videoFile.name} ({(blogForm.videoFile.size / 1024 / 1024).toFixed(1)} MB)</small>}
+                    </div>
+                  )}
+
+                  {blogForm.videoSource === 'url' && (
+                    <div className="form-group">
+                      <label>Video URL * <small style={{color: '#999'}}>(YouTube, Vimeo, or direct link)</small></label>
+                      <input
+                        type="url"
+                        placeholder="https://www.youtube.com/watch?v=... or direct video URL"
+                        value={blogForm.videoUrl}
+                        onChange={(e) => handleBlogFormChange('videoUrl', e.target.value)}
+                        className="form-input"
+                      />
+                    </div>
+                  )}
 
                   <div className="form-group">
                     <label>Upload Thumbnail (Optional)</label>
@@ -2131,6 +2205,17 @@ const AdminDashboard = () => {
                 </label>
               </div>
             </div>
+
+            {blogSubmitting && uploadProgress > 0 && (
+              <div className="upload-progress-container">
+                <div className="progress-info">
+                  <span>Uploading: {uploadProgress}%</span>
+                </div>
+                <div className="progress-bar">
+                  <div className="progress-fill" style={{ width: `${uploadProgress}%` }}></div>
+                </div>
+              </div>
+            )}
 
             <div className="modal-actions">
               <button 
@@ -2261,15 +2346,50 @@ const AdminDashboard = () => {
               {blogForm.mediaType === 'video' && (
                 <>
                   <div className="form-group">
-                    <label>Update Video (Optional)</label>
-                    <input
-                      type="file"
-                      accept="video/*"
-                      onChange={(e) => handleBlogFileChange('videoFile', e.target.files[0])}
-                      className="form-input"
-                    />
-                    {blogForm.videoFile && <small>✓ New: {blogForm.videoFile.name}</small>}
+                    <label>Video Source</label>
+                    <div className="video-source-toggle">
+                      <button
+                        type="button"
+                        className={`toggle-btn ${blogForm.videoSource === 'upload' ? 'active' : ''}`}
+                        onClick={() => handleBlogFormChange('videoSource', 'upload')}
+                      >
+                        Upload File
+                      </button>
+                      <button
+                        type="button"
+                        className={`toggle-btn ${blogForm.videoSource === 'url' ? 'active' : ''}`}
+                        onClick={() => handleBlogFormChange('videoSource', 'url')}
+                      >
+                        Video URL
+                      </button>
+                    </div>
                   </div>
+
+                  {blogForm.videoSource === 'upload' && (
+                    <div className="form-group">
+                      <label>Update Video (Optional) <small style={{color: '#ff9800'}}>(max 100 MB)</small></label>
+                      <input
+                        type="file"
+                        accept="video/*"
+                        onChange={(e) => handleBlogFileChange('videoFile', e.target.files[0])}
+                        className="form-input"
+                      />
+                      {blogForm.videoFile && <small>✓ New: {blogForm.videoFile.name} ({(blogForm.videoFile.size / 1024 / 1024).toFixed(1)} MB)</small>}
+                    </div>
+                  )}
+
+                  {blogForm.videoSource === 'url' && (
+                    <div className="form-group">
+                      <label>Video URL <small style={{color: '#999'}}>(YouTube, Vimeo, or direct link)</small></label>
+                      <input
+                        type="url"
+                        placeholder="https://www.youtube.com/watch?v=... or direct video URL"
+                        value={blogForm.videoUrl}
+                        onChange={(e) => handleBlogFormChange('videoUrl', e.target.value)}
+                        className="form-input"
+                      />
+                    </div>
+                  )}
 
                   <div className="form-group">
                     <label>Update Thumbnail (Optional)</label>

@@ -1,6 +1,10 @@
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const { Readable } = require('stream');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
 // Configure Cloudinary
 cloudinary.config({
@@ -35,87 +39,128 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-// Configure Cloudinary storage for images
-const imageStorage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: 'power-supplement/blogs/images',
-        resource_type: 'auto',
-        allowed_formats: ['jpg', 'jpeg', 'png', 'webp']
-    }
-});
+// Helper: upload a buffer to Cloudinary using upload_stream (for images / small files)
+const uploadToCloudinary = (buffer, options) => {
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+            { ...options, timeout: 600000 },
+            (error, result) => {
+                if (error) return reject(error);
+                resolve(result);
+            }
+        );
 
-// Configure Cloudinary storage for videos
-const videoStorage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: 'power-supplement/blogs/videos',
-        resource_type: 'video',
-        allowed_formats: ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv', '3gp', 'flv']
-    }
-});
+        const readable = new Readable();
+        const CHUNK = 6 * 1024 * 1024;
+        for (let i = 0; i < buffer.length; i += CHUNK) {
+            readable.push(buffer.slice(i, i + CHUNK));
+        }
+        readable.push(null);
+        readable.pipe(uploadStream);
+    });
+};
 
-// Configure Cloudinary storage for thumbnails
-const thumbnailStorage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: 'power-supplement/blogs/thumbnails',
-        resource_type: 'auto',
-        allowed_formats: ['jpg', 'jpeg', 'png', 'webp']
-    }
-});
+// Helper: upload large files via upload_large (true multi-part chunked upload)
+// SDK v1 upload_large uses callbacks, not promises — wrap in a Promise
+const uploadLargeToCloudinary = (buffer, options) => {
+    return new Promise((resolve, reject) => {
+        const tmpFile = path.join(os.tmpdir(), `blog_video_${Date.now()}`);
+        fs.writeFileSync(tmpFile, buffer);
 
-// Create multer instances for different file types
-const imageUpload = multer({
-    storage: imageStorage,
+        cloudinary.uploader.upload_large(tmpFile, {
+            ...options,
+            chunk_size: 20 * 1024 * 1024, // 20 MB chunks
+            timeout: 600000
+        }, (error, result) => {
+            // Clean up temp file
+            try { fs.unlinkSync(tmpFile); } catch (_) { /* ignore */ }
+
+            if (error) return reject(error);
+            resolve(result);
+        });
+    });
+};
+
+// Use memory storage so we control the Cloudinary upload ourselves
+const memoryUpload = multer({
+    storage: multer.memoryStorage(),
     fileFilter: fileFilter,
     limits: { fileSize: maxUploadBytes }
-});
-
-const videoUpload = multer({
-    storage: videoStorage,
-    fileFilter: fileFilter,
-    limits: { fileSize: maxUploadBytes }
-});
-
-const thumbnailUpload = multer({
-    storage: thumbnailStorage,
-    fileFilter: fileFilter,
-    limits: { fileSize: maxUploadBytes }
-});
+}).fields([
+    { name: 'image', maxCount: 1 },
+    { name: 'video', maxCount: 1 },
+    { name: 'thumbnail', maxCount: 1 }
+]);
 
 // Middleware to handle multiple file fields with Cloudinary
 const uploadBlogMedia = (req, res, next) => {
-    const multiUpload = multer({
-        storage: new CloudinaryStorage({
-            cloudinary: cloudinary,
-            params: async (req, file) => {
-                let folder = 'power-supplement/blogs/images';
-                let resource_type = 'auto';
-                
-                if (file.fieldname === 'video') {
-                    folder = 'power-supplement/blogs/videos';
-                    resource_type = 'video';
-                } else if (file.fieldname === 'thumbnail') {
-                    folder = 'power-supplement/blogs/thumbnails';
-                    resource_type = 'auto';
-                }
-                
-                return {
-                    folder: folder,
-                    resource_type: resource_type
-                };
-            }
-        }),
-        fileFilter: fileFilter,
-        limits: { fileSize: maxUploadBytes }
-    }).fields([
-        { name: 'image', maxCount: 1 },
-        { name: 'video', maxCount: 1 },
-        { name: 'thumbnail', maxCount: 1 }
-    ]);
+    // Extend request timeout for large uploads (10 minutes)
+    req.setTimeout(600000);
+    if (res.connection) res.connection.setTimeout(600000);
 
-    multiUpload(req, res, next);
+    memoryUpload(req, res, function (err) {
+        if (err) {
+            console.error('[blogUpload] multer error:', err.message);
+            return next(err);
+        }
+
+        console.log('[blogUpload] multer done. req.files keys:', req.files ? Object.keys(req.files) : 'none');
+
+        // Run the async Cloudinary uploads, then call next() or send error
+        (async () => {
+            if (!req.files) return next();
+
+            // Upload image to Cloudinary (standard stream upload)
+            if (req.files.image && req.files.image[0]) {
+                console.log('[blogUpload] Uploading image to Cloudinary...');
+                const result = await uploadToCloudinary(req.files.image[0].buffer, {
+                    folder: 'power-supplement/blogs/images',
+                    resource_type: 'image'
+                });
+                req.files.image[0].path = result.secure_url;
+                console.log('[blogUpload] Image upload complete:', result.secure_url);
+            }
+
+            // Upload video to Cloudinary using upload_large (chunked multi-part)
+            if (req.files.video && req.files.video[0]) {
+                console.log(`[blogUpload] Uploading video (${(req.files.video[0].buffer.length / 1024 / 1024).toFixed(1)} MB) via chunked upload...`);
+                const result = await uploadLargeToCloudinary(req.files.video[0].buffer, {
+                    folder: 'power-supplement/blogs/videos',
+                    resource_type: 'video'
+                });
+                console.log('[blogUpload] upload_large result keys:', Object.keys(result || {}));
+                console.log('[blogUpload] upload_large result:', JSON.stringify(result, null, 2));
+                req.files.video[0].path = result.secure_url || result.url;
+                console.log('[blogUpload] Video upload complete:', req.files.video[0].path);
+            }
+
+            // Upload thumbnail to Cloudinary (standard stream upload)
+            if (req.files.thumbnail && req.files.thumbnail[0]) {
+                console.log('[blogUpload] Uploading thumbnail to Cloudinary...');
+                const result = await uploadToCloudinary(req.files.thumbnail[0].buffer, {
+                    folder: 'power-supplement/blogs/thumbnails',
+                    resource_type: 'image'
+                });
+                req.files.thumbnail[0].path = result.secure_url;
+                console.log('[blogUpload] Thumbnail upload complete:', result.secure_url);
+            }
+
+            console.log('[blogUpload] All uploads done, calling next()');
+            next();
+        })().catch((uploadError) => {
+            console.error('[blogUpload] Cloudinary upload error:', uploadError);
+
+            // Send error response directly — next(err) from inside multer's
+            // callback does not reliably reach Express's error handler
+            if (!res.headersSent) {
+                const status = uploadError.http_code || 500;
+                const message = uploadError.http_code === 413
+                    ? 'Video file is too large for Cloudinary. Please compress it or use the Video URL option.'
+                    : `Upload to cloud storage failed: ${uploadError.message || 'Unknown error'}`;
+                return res.status(status).json({ success: false, message });
+            }
+        });
+    });
 };
 
 module.exports = { uploadBlogMedia, blogUpload: { fields: uploadBlogMedia } };

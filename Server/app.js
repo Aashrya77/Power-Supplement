@@ -29,7 +29,7 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }))
 app.use(express.json({ limit: '300mb' }))
-app.use(express.urlencoded({ extended: true, limit: '10mb' }))
+app.use(express.urlencoded({ extended: true, limit: '300mb' }))
 
 // Add SEO-friendly headers
 app.use((req, res, next) => {
@@ -113,6 +113,15 @@ app.use((err, req, res, next) => {
     if (err instanceof Error && /Invalid file type/i.test(err.message)) {
         return res.status(400).json({
             message: err.message,
+            error: process.env.NODE_ENV === 'development' ? err.message : undefined
+        })
+    }
+
+    // Cloudinary upload errors (e.g., file too large for plan)
+    if (err && (err.http_code === 413 || (err.message && err.message.includes('413')))) {
+        return res.status(413).json({
+            success: false,
+            message: 'File is too large for the current Cloudinary plan. Please compress the video or upgrade your plan.',
             error: process.env.NODE_ENV === 'development' ? err.message : undefined
         })
     }

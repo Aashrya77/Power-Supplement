@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import BASE_URL from '../../config';
 import './CouponInput.css';
 
 const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal }) => {
@@ -25,20 +27,22 @@ const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal })
                 return;
             }
             
-            const response = await fetch('http://localhost:5500/api/v1/coupons/validate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
+            const response = await axios.post(
+                `${BASE_URL}/api/v1/coupons/validate`,
+                {
                     code: couponCode.trim(),
                     orderAmount: subtotal
-                })
-            });
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
 
-            const data = await response.json();
-            if (response.ok && data.status === 'success') {
+            const data = response.data;
+            if (data.status === 'success') {
                 onApplyCoupon({
                     code: data.data.code,
                     description: data.data.description,
@@ -51,11 +55,14 @@ const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal })
                 setTimeout(() => setShowSuccess(false), 3000);
                 setCouponCode('');
             } else {
-               
                 setError(data.message || 'Invalid coupon code');
             }
         } catch (err) {
-            setError('Failed to validate coupon. Please try again.');
+            if (err.response && err.response.data) {
+                setError(err.response.data.message || 'Invalid coupon code');
+            } else {
+                setError('Failed to validate coupon. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -88,10 +95,10 @@ const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal })
                         <input
                             type="text"
                             className="coupon-input"
-                            placeholder="Enter athlete code"
-                            value={couponCode.toUpperCase()}
+                            placeholder="Enter athlete code (e.g., SAGAR10)"
+                            value={couponCode}
                             onChange={(e) => {
-                                setCouponCode(e.target.value);
+                                setCouponCode(e.target.value.toUpperCase());
                                 setError('');
                             }}
                             onKeyPress={handleKeyPress}
@@ -134,7 +141,7 @@ const CouponInput = ({ onApplyCoupon, appliedCoupon, onRemoveCoupon, subtotal })
                         <div className="coupon-details">
                             <div className="coupon-code-display">
                                 <span className="coupon-label">Code:</span>
-                                <span className="coupon-code-value">{appliedCoupon.code.toUpperCase()}</span>
+                                <span className="coupon-code-value">{appliedCoupon.code}</span>
                             </div>
                             <div className="coupon-description">
                                 {appliedCoupon.description}

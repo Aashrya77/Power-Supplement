@@ -91,7 +91,8 @@ exports.createBlog = async (req, res) => {
       author,
       readTime,
       mediaType,
-      published
+      published,
+      videoUrl: bodyVideoUrl
     } = req.body;
     
     // Validate required fields
@@ -125,6 +126,11 @@ exports.createBlog = async (req, res) => {
       if (req.files.thumbnail && req.files.thumbnail[0]) {
         blogData.thumbnail = req.files.thumbnail[0].path;
       }
+    }
+    
+    // Accept external video URL from request body (YouTube, Vimeo, etc.)
+    if (mediaType === 'video' && !blogData.videoUrl && bodyVideoUrl) {
+      blogData.videoUrl = bodyVideoUrl;
     }
     
     // Validate media type requirements

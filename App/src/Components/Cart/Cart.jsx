@@ -136,7 +136,7 @@ const Cart = () => {
             </div>
           </div>
 
-          <div className="coupon-section">
+          {/* <div className="coupon-section">
             <form onSubmit={handleApplyCoupon}>
               <input
                 type="text"
@@ -149,7 +149,7 @@ const Cart = () => {
                 Apply
               </button>
             </form>
-          </div>
+          </div> */}
 
           <div className="cart-actions">
             <button className="clear-cart-btn" onClick={clearCart}>
