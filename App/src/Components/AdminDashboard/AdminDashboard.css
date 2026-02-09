@@ -2358,3 +2358,35 @@
   transition: width 0.3s ease;
   box-shadow: 0 0 10px rgba(211, 47, 47, 0.5);
 }
+
+/* Video Source Toggle */
+.video-source-toggle {
+  display: flex;
+  gap: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #333;
+}
+
+.video-source-toggle .toggle-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: #999;
+  font-size: 0.9rem;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.video-source-toggle .toggle-btn:hover {
+  background: rgba(211, 47, 47, 0.1);
+  color: #e0e0e0;
+}
+
+.video-source-toggle .toggle-btn.active {
+  background: #d32f2f;
+  color: #fff;
+  font-weight: 500;
+}
