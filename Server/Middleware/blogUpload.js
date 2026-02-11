@@ -99,12 +99,7 @@ const uploadBlogMedia = (req, res, next) => {
     if (res.connection) res.connection.setTimeout(600000);
 
     memoryUpload(req, res, function (err) {
-        if (err) {
-            console.error('[blogUpload] multer error:', err.message);
-            return next(err);
-        }
-
-        console.log('[blogUpload] multer done. req.files keys:', req.files ? Object.keys(req.files) : 'none');
+        if (err) return next(err);
 
         // Run the async Cloudinary uploads, then call next() or send error
         (async () => {
@@ -112,46 +107,35 @@ const uploadBlogMedia = (req, res, next) => {
 
             // Upload image to Cloudinary (standard stream upload)
             if (req.files.image && req.files.image[0]) {
-                console.log('[blogUpload] Uploading image to Cloudinary...');
                 const result = await uploadToCloudinary(req.files.image[0].buffer, {
                     folder: 'power-supplement/blogs/images',
                     resource_type: 'image'
                 });
                 req.files.image[0].path = result.secure_url;
-                console.log('[blogUpload] Image upload complete:', result.secure_url);
             }
 
             // Upload video to Cloudinary using upload_large (chunked multi-part)
             if (req.files.video && req.files.video[0]) {
-                console.log(`[blogUpload] Uploading video (${(req.files.video[0].buffer.length / 1024 / 1024).toFixed(1)} MB) via chunked upload...`);
                 const result = await uploadLargeToCloudinary(req.files.video[0].buffer, {
                     folder: 'power-supplement/blogs/videos',
                     resource_type: 'video'
                 });
-                console.log('[blogUpload] upload_large result keys:', Object.keys(result || {}));
-                console.log('[blogUpload] upload_large result:', JSON.stringify(result, null, 2));
                 req.files.video[0].path = result.secure_url || result.url;
-                console.log('[blogUpload] Video upload complete:', req.files.video[0].path);
             }
 
             // Upload thumbnail to Cloudinary (standard stream upload)
             if (req.files.thumbnail && req.files.thumbnail[0]) {
-                console.log('[blogUpload] Uploading thumbnail to Cloudinary...');
                 const result = await uploadToCloudinary(req.files.thumbnail[0].buffer, {
                     folder: 'power-supplement/blogs/thumbnails',
                     resource_type: 'image'
                 });
                 req.files.thumbnail[0].path = result.secure_url;
-                console.log('[blogUpload] Thumbnail upload complete:', result.secure_url);
             }
 
-            console.log('[blogUpload] All uploads done, calling next()');
             next();
         })().catch((uploadError) => {
-            console.error('[blogUpload] Cloudinary upload error:', uploadError);
+            console.error('Cloudinary upload error:', uploadError);
 
-            // Send error response directly — next(err) from inside multer's
-            // callback does not reliably reach Express's error handler
             if (!res.headersSent) {
                 const status = uploadError.http_code || 500;
                 const message = uploadError.http_code === 413
