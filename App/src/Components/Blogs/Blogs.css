@@ -138,6 +138,18 @@
   cursor: pointer;
 }
 
+.blog-video-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.blog-video-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
 .blog-image-placeholder {
   width: 100%;
   height: 100%;

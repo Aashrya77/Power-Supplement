@@ -73,9 +73,37 @@ const Blogs = () => {
     return mimeTypes[ext] || 'video/mp4';
   };
 
+  const getEmbedUrl = (url) => {
+    if (!url) return null;
+    // YouTube: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID
+    const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+    // TikTok: tiktok.com/@user/video/ID
+    const ttMatch = url.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
+    if (ttMatch) return `https://www.tiktok.com/embed/v2/${ttMatch[1]}`;
+    return null;
+  };
+
   // Helper function to render media (image or video)
   const renderMedia = (blog) => {
     if (blog.mediaType === 'video' && blog.videoUrl) {
+      const embedUrl = getEmbedUrl(blog.videoUrl);
+
+      if (embedUrl) {
+        return (
+          <div className="blog-video-wrapper">
+            <iframe
+              className="blog-video-iframe"
+              src={embedUrl}
+              title={blog.title}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        );
+      }
+
       const videoUrl = blog.videoUrl.startsWith('http') ? blog.videoUrl : `${BASE_URL}${blog.videoUrl}`;
       const posterUrl = blog.thumbnail ? (blog.thumbnail.startsWith('http') ? blog.thumbnail : `${BASE_URL}${blog.thumbnail}`) : '';
       const videoMimeType = getVideoMimeType(videoUrl);
