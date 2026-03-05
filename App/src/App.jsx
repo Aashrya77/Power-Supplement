@@ -4,6 +4,7 @@ import HomeSEO from "./Components/SEO/HomeSEO";
 import Navbar from "./Components/Nav/Nav";
 import Footer from "./Components/Footer/Footer.jsx";
 import Sidebar from './Components/Cart/Sidebar/Sidebar';
+import WhatsApp from './Components/WhatsApp/WhatsApp';
 import { Route, Routes } from "react-router-dom";
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -133,6 +134,7 @@ function App() {
           </Routes>
           </Suspense>
           <Footer />
+          <WhatsApp />
         </>
       </CartProvider>
     </AuthProvider>
